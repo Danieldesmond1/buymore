@@ -247,3 +247,190 @@ export const getFilteredProducts = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+// ✅ Toggle Like (Like/Unlike a Product)
+export const likeProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if the product exists
+    const checkProduct = await pool.query("SELECT like_count FROM products WHERE id = $1", [id]);
+    if (checkProduct.rows.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    let currentLikes = checkProduct.rows[0].like_count || 0;
+
+    // Toggle Like: If liked, unlike it. If not liked, like it.
+    let newLikes = currentLikes === 0 ? 1 : currentLikes - 1; // Unlike if already liked, like otherwise.
+
+    // Update like count
+    await pool.query("UPDATE products SET like_count = $1 WHERE id = $2", [newLikes, id]);
+
+    res.status(200).json({ message: `Product ${newLikes > currentLikes ? "liked" : "unliked"} successfully`, like_count: newLikes });
+  } catch (error) {
+    console.error("Error updating likes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Get Most Liked Products
+export const getMostLikedProducts = async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM products ORDER BY like_count DESC LIMIT 10");
+
+    res.status(200).json({ most_liked_products: result.rows });
+  } catch (error) {
+    console.error("Error fetching most liked products:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Like & Unlike a Product
+export const toggleProductLike = async (req, res) => {
+  try {
+    const { user_id, product_id } = req.body;
+
+    // Check if the user already liked the product
+    const checkQuery = "SELECT * FROM product_likes WHERE user_id = $1 AND product_id = $2";
+    const checkResult = await pool.query(checkQuery, [user_id, product_id]);
+
+    if (checkResult.rows.length > 0) {
+      // User already liked it, so unlike it
+      const deleteQuery = "DELETE FROM product_likes WHERE user_id = $1 AND product_id = $2";
+      await pool.query(deleteQuery, [user_id, product_id]);
+      return res.status(200).json({ message: "Product unliked successfully" });
+    } else {
+      // User hasn't liked it, so like it
+      const insertQuery = "INSERT INTO product_likes (user_id, product_id) VALUES ($1, $2)";
+      await pool.query(insertQuery, [user_id, product_id]);
+      return res.status(200).json({ message: "Product liked successfully" });
+    }
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Get Like Count for a Product
+export const getProductLikes = async (req, res) => {
+  try {
+    const { product_id } = req.params;
+    const query = "SELECT COUNT(*) FROM product_likes WHERE product_id = $1";
+    const result = await pool.query(query, [product_id]);
+
+    res.status(200).json({ product_id, like_count: parseInt(result.rows[0].count) });
+  } catch (error) {
+    console.error("Error fetching likes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Add or Update a Product Review
+export const addProductReview = async (req, res) => {
+  try {
+    const { user_id, product_id, rating, comment } = req.body;
+
+    // Check if user already reviewed this product
+    const existingReview = await pool.query(
+      "SELECT * FROM product_reviews WHERE user_id = $1 AND product_id = $2",
+      [user_id, product_id]
+    );
+
+    if (existingReview.rows.length > 0) {
+      // Update existing review
+      await pool.query(
+        "UPDATE product_reviews SET rating = $1, comment = $2 WHERE user_id = $3 AND product_id = $4",
+        [rating, comment, user_id, product_id]
+      );
+    } else {
+      // Insert new review
+      await pool.query(
+        "INSERT INTO product_reviews (user_id, product_id, rating, comment) VALUES ($1, $2, $3, $4)",
+        [user_id, product_id, rating, comment]
+      );
+    }
+
+    // ✅ Update the product's average rating
+    const avgRating = await pool.query(
+      "SELECT AVG(rating) AS average FROM product_reviews WHERE product_id = $1",
+      [product_id]
+    );
+
+    await pool.query("UPDATE products SET rating = $1 WHERE id = $2", [
+      avgRating.rows[0].average,
+      product_id,
+    ]);
+
+    res.status(200).json({ message: "Review submitted successfully" });
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Get All Reviews for a Product
+export const getProductReviews = async (req, res) => {
+  try {
+    const { product_id } = req.params;
+
+    const result = await pool.query(
+      "SELECT r.*, u.username FROM product_reviews r JOIN users u ON r.user_id = u.id WHERE r.product_id = $1 ORDER BY r.created_at DESC",
+      [product_id]
+    );
+
+    res.status(200).json({ reviews: result.rows });
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Add or Remove a Product from Wishlist
+export const toggleWishlist = async (req, res) => {
+  try {
+    const { user_id, product_id } = req.body;
+
+    // Check if product is already in wishlist
+    const existing = await pool.query(
+      "SELECT * FROM wishlist WHERE user_id = $1 AND product_id = $2",
+      [user_id, product_id]
+    );
+
+    if (existing.rows.length > 0) {
+      // Remove from wishlist
+      await pool.query(
+        "DELETE FROM wishlist WHERE user_id = $1 AND product_id = $2",
+        [user_id, product_id]
+      );
+      return res.status(200).json({ message: "Product removed from wishlist" });
+    } else {
+      // Add to wishlist
+      await pool.query(
+        "INSERT INTO wishlist (user_id, product_id) VALUES ($1, $2)",
+        [user_id, product_id]
+      );
+      return res.status(201).json({ message: "Product added to wishlist" });
+    }
+  } catch (error) {
+    console.error("Error updating wishlist:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// ✅ Get Wishlist for a User
+export const getWishlist = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    const result = await pool.query(
+      "SELECT w.product_id, p.name, p.price, p.image_url FROM wishlist w JOIN products p ON w.product_id = p.id WHERE w.user_id = $1 ORDER BY w.created_at DESC",
+      [user_id]
+    );
+
+    res.status(200).json({ wishlist: result.rows });
+  } catch (error) {
+    console.error("Error fetching wishlist:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

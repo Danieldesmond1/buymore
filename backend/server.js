@@ -5,6 +5,8 @@ import { authenticateToken } from "./middlewares/authMiddleware.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import productRoutes from "./routes/productRoutes.js"; // Import Product Routes
+import cartRoutes from "./routes/cartRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +21,8 @@ app.use("/api/users", userRoutes); // User authentication routes
 app.use("/profile", authenticateToken, profileRoutes);
 app.use("/admin", adminRoutes);
 
+app.use("/api/orders", orderRoutes);
+app.use("/api/cart", cartRoutes);
 app.use("/api/products", productRoutes); // Mount Product Routes
 
 // Base route
