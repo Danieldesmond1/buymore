@@ -1,0 +1,416 @@
+.hero {
+  display: flex;
+  /* flex-direction: row; */
+  flex-wrap: wrap;
+  height: 100vh; /* Make it full-screen height */
+  width: 100%; /* Full-screen width */
+  z-index: 1;
+}
+
+/* CTA Animation */
+.animate-cta {
+  animation: fadeInLeft 1s ease-out forwards;
+}
+
+/* Fade In + Slide Left */
+@keyframes fadeInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+    filter: blur(5px); /* Prevents blur effect */
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+  /* min-width: 300px; */
+ 
+  /* Diagonal split effect from top left to bottom right */
+  background: linear-gradient(
+    to bottom left, 
+    var(--hero-bg) 50%, 
+    var(--hero-secondary) 50%
+  );
+
+  color: white;
+  transition: background 0.3s;
+}
+
+/* Subtitle */
+.hero-subtitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffcc00; /* Yellow accent for attention */
+  margin-bottom: 10px;
+}
+
+/* Main Heading */
+/* Text Animation */
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: fadeUp 1s ease-out 0.5s forwards;
+}
+
+.hero-description {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  max-width: 500px;
+  opacity: 0;
+  animation: fadeUp 1s ease-out 0.7s forwards;
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Buttons */
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.primary-btn {
+  background: #ff2e00;
+  color: white;
+  padding: 12px 25px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.primary-btn:hover {
+  background: #9e1d00;
+}
+
+.secondary-btn {
+  background: transparent;
+  color: white;
+  padding: 12px 25px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  border: 2px solid white;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.secondary-btn:hover {
+  background: white;
+  color: #111;
+}
+
+/* Buttons Animation */
+.hero-buttons {
+  opacity: 0;
+  animation: bounceIn 1s ease-out 1s forwards;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale();
+  }
+}
+
+/* Trust Section */
+.hero-trust {
+  margin-top: 20px;
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  opacity: 0;
+  animation: fadeUp 1s ease-out 1.2s forwards;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+/* Image (Right Side) */
+.hero-image {
+  flex: 1;
+  background: url("../../assets/hero_image.png") center/contain no-repeat;
+  background-color: var(--hero-bg); /* ✅ Uses theme color */
+  width: 100%;
+  height: 100%;
+}
+
+/* CARD */
+
+.featured-products {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg); /* Normal light/dark mode */
+  color: var(--text);
+}
+
+.featured-products h2 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* Product List */
+.product-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+/* Product Card */
+.product-card {
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 250px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Product Image */
+.product-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+}
+
+/* Product Name */
+.product-card h3 {
+  font-size: 1.5rem;
+  margin: 12px 0;
+}
+
+/* Price */
+.product-card p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+/* Add to Cart Button */
+.product-card button {
+  background: #ff2e00;
+  padding: 12px 18px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.product-card button:hover {
+  background: #9e1d00;
+  transform: scale(1.05);
+}
+
+/* Scroll Animation - Fade In Effect */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover Effect */
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive for tablets & smaller screens */
+@media (max-width: 1024px) {
+  .hero {
+    flex-direction: column; /* Stack content & image */
+    height: auto; /* Remove fixed height */
+  }
+  
+  .hero-content {
+    padding: 30px;
+    text-align: center;
+  }
+
+  .hero-image {
+    height: 300px; /* Adjust image height */
+  }
+}
+
+/* Responsive for mobile devices */
+@media (max-width: 768px) {
+  .hero-content {
+    padding: 20px;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem; /* Reduce title size */
+  }
+
+  .hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    max-width: 500px;
+    opacity: 0;
+    animation: fadeUp 1s ease-out 0.7s forwards;
+  }
+
+  /* Fix Blur in Fade-Up Animation */
+  @keyframes fadeUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+      filter: blur(5px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  /* Buttons */
+  .hero-buttons {
+    display: flex;
+    justify-content: center; /* ✅ Centered properly */
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center; /* ✅ Fix vertical alignment */
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: 0.3s;
+    text-align: center;
+  }
+
+  .primary-btn {
+    background: #ff2e00;
+    color: white;
+    text-decoration: none;
+  }
+  
+  .primary-btn:hover {
+    background: #9e1d00;
+  }
+  
+  .secondary-btn {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    text-decoration: none;
+  }
+  
+  .secondary-btn:hover {
+    background: white;
+    color: #111;
+  }
+
+  /* Buttons Animation */
+.hero-buttons {
+  opacity: 0;
+  animation: bounceIn 1s ease-out 1s forwards;
+}
+
+/* Fix Blur in Button Animation */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(5px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Image (Right Side) */
+.hero-image {
+  flex: 1;
+  background: url("../../assets/hero_image.png") center/cover no-repeat;
+  height: 100%;
+  /* min-width: 300px; */
+}
+
+  .hero-image {
+    height: 250px; /* Further adjust for smaller screens */
+  }
+}
+
+/* Responsive for extra small screens */
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero-description {
+    font-size: 0.9rem;
+  }
+
+  .hero-buttons {
+    gap: 5px;
+  }
+}
+
+/* CARD */
+
+/* Responsive */
+@media (max-width: 768px) {
+  .featured-products h2 {
+    font-size: 2rem;
+  }
+
+  .product-card {
+    width: 90%;
+    max-width: 300px;
+  }
+}

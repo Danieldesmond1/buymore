@@ -1,0 +1,254 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111;
+  padding: 15px 30px;
+  color: white;
+  position: relative;
+}
+
+/* Wrap logo, search bar, and theme toggle to align properly */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Adjust spacing between items */
+}
+
+/* Wrap nav links and theme toggle to align properly */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Adjust spacing between items */
+}
+
+.logo a {
+  font-size: 1.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Nav Links */
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-links a:hover {
+  color: #f4a261;
+}
+
+/* Search Bar */
+.search-bar {
+  width: 250px; /* Adjust width as needed */
+  position: relative;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: white;
+  transition: opacity 0.3s;
+}
+
+.theme-toggle:hover {
+  opacity: 0.7;
+}
+
+/* Mobile Menu */
+.menu-icon {
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: none;
+}
+
+@media only screen and (max-width: 900px) {
+  /* Search Bar */
+.search-bar {
+  width: 150px; /* Adjust width as needed */
+  position: relative;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+}
+
+@media only screen and (max-width: 770px) {
+  /* ✅ Show only Logo, Search Bar, Theme Toggle, and Menu Icon */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111;
+    padding: 12px 20px;
+    width: auto;
+  }
+
+  /* ✅ Hide Nav Links initially */
+  .navbar-right {
+    display: none;
+    z-index: 1000;
+  }
+
+  /* ✅ Ensure Menu Icon is visible */
+  .menu-icon {
+    display: block;
+    font-size: 2rem;
+    cursor: pointer;
+    color: white;
+  }
+
+  /* ✅ Show the Nav Links when Menu is Open */
+  .navbar-right.open {
+    display: flex !important;
+    /* flex-direction: row; ✅ Keep items in a single line */
+    align-items: center;
+    justify-content: center; /* ✅ Center items horizontally */
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background: #111;
+    width: 100%;
+    padding: 10px 0;
+    gap: 25px;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* ✅ Nav Links should be visible when Menu is Open */
+  .nav-links {
+    display: flex;
+    /* flex-direction: column; */
+    gap: 40px;
+  }
+
+  .nav-links a {
+    font-size: 1.2rem;
+    padding: 10px 0;
+    color: white;
+    text-decoration: none;
+  }
+}
+
+@media only screen and (max-width: 590px) { 
+  .navbar-right.open {
+    gap: 10px;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 20px;
+  }
+}
+
+@media only screen and (max-width: 490px) { 
+  .search-bar {
+    width: 130px; /* Adjust width as needed */
+    position: relative;
+  }
+
+  .navbar-right {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: -100%; /* Initially hidden off-screen */
+    width: 60%; /* Adjust width as needed */
+    min-height: 250px; /* Adjust height dynamically based on content */
+    background: #111;
+    padding: 20px 0; /* Reduce top padding */
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    transition: right 0.4s ease-in-out, opacity 0.3s ease-in-out;
+    align-items: center;
+    justify-content: center; /* Center items vertically */
+    gap: 15px; /* Reduce spacing between items */
+    opacity: 0; /* Hide it initially */
+    box-shadow: -5px 0px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .navbar-right.open {
+    right: 0; /* Slide in when open */
+    width: 30%;
+    opacity: 1; /* Smooth fade-in */
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Reduce gap for a more compact layout */
+    width: 100%;
+    align-items: center;
+  }
+
+  .nav-links a {
+    font-size: 1rem; /* Slightly reduce font size for a more professional look */
+    color: white;
+    text-decoration: none;
+    padding: 8px 0;
+    width: 100%;
+    text-align: center;
+    transition: color 0.3s ease-in-out;
+  }
+
+  .nav-links a:hover {
+    color: #f4a261;
+  }
+}
+
+@media only screen and (max-width: 350px) { 
+  
+  .logo a {
+    font-size: 1.2rem;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .search-bar {
+    width: 100px; /* Adjust width as needed */
+    position: relative;
+  }
+
+  .search-bar input {
+    font-size: 0.7rem;
+  }
+}
+
