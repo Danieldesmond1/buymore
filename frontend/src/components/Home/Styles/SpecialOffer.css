@@ -1,0 +1,127 @@
+/* 🔥 Special Offers Section */
+.special-offers {
+  background: var(--bg-light);
+  padding: 80px 5%;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Title & Description */
+.special-offers h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.special-offers p {
+  font-size: 1.2rem;
+  color: var(--text-gray);
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+}
+
+/* Fade-in animation */
+.special-offers h2.fade-in,
+.special-offers p.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 🔥 Offer Cards */
+.offer-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+/* Individual Offer Card */
+.offer-card {
+  background: var(--card-bg);
+  width: 320px;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: left;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Show animation when scrolled in */
+.offer-card.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Offer Image */
+.offer-image {
+  width: 100%;
+  border-radius: 8px;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* Offer Info */
+.offer-info {
+  margin-top: 15px;
+}
+
+/* Aligning Claim Offer Buttons */
+.offer-info h3 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+  min-height: 50px; /* Ensures all offer titles align */
+}
+
+.offer-info p {
+  font-size: 1rem;
+  color: var(--text-gray);
+  min-height: 60px; /* Ensures description alignment */
+}
+
+/* 🔥 Discount Badge */
+.discount-badge {
+  display: inline-block;
+  background: #ff2e00;
+  color: #fff;
+  padding: 5px 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+/* ⏳ Countdown Timer */
+.countdown-timer {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ff0000;
+  margin: 10px 0;
+}
+
+/* Claim Offer Button */
+.claim-offer {
+  background: #4CAF50;
+  padding: 12px 20px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  width: 100%;
+  transition: background 0.3s;
+  display: block;
+  text-align: center;
+  min-height: 45px; /* Ensures all buttons are aligned */
+}
+
+.claim-offer:hover {
+  background: #388E3C;
+}

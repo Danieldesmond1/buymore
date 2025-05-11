@@ -1,4 +1,4 @@
-import "./Home.css";
+import "./Styles/Hero.css";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { TbTruckDelivery } from "react-icons/tb";

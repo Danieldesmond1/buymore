@@ -1,0 +1,102 @@
+/* Best Sellers Section */
+.best-sellers {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* Best Sellers Heading Animation */
+.best-sellers h2 {
+  font-size: 2.5rem;
+  margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Product List */
+.product-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+/* Product Card */
+.product-card {
+  background: var(--card-bg);
+  color: var(--text);
+  padding-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 230px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.6s ease;
+  opacity: 0;
+  transform: translateY(50px);
+}
+
+/* Product Image */
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+/* Hover Effects */
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.product-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Product Name */
+.product-card h3 {
+  font-size: 1.5rem;
+  margin: 12px 0;
+}
+
+/* Price */
+.product-card p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+/* Add to Cart Button */
+.product-card button {
+  background: #ff2e00;
+  padding: 12px 18px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+/* Button Hover & Active State */
+.product-card button:hover {
+  background: #9e1d00;
+}
+
+.product-card button:active {
+  transform: scale(0.95);
+}
+
+/* Scroll Animations */
+.best-sellers.active h2 {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.best-sellers.active .product-card {
+  opacity: 1;
+  transform: translateY(0);
+}

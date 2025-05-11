@@ -1,0 +1,96 @@
+/* FAQ Section */
+.faq {
+  background: var(--bg-color);
+  padding: 80px 5%;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* FAQ Heading Animation */
+.faq h2 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.faq h2.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* FAQ List */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* FAQ Item */
+.faq-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  padding: 20px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Middle Line */
+.faq-item::before {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 80%;
+  background: var(--primary-color);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Question on Left */
+.faq-question {
+  flex: 1;
+  text-align: right;
+  font-size: 1.4rem;
+  color: var(--text-color);
+  font-weight: bold;
+  padding-right: 40px;
+  opacity: 0;
+  transform: translateX(-100px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Answer on Right */
+.faq-answer {
+  flex: 1;
+  text-align: left;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  padding-left: 40px;
+  opacity: 0;
+  transform: translateX(100px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* When the section is visible */
+.faq-item.show {
+  opacity: 1;
+}
+
+/* Animate Questions */
+.faq-item.show .faq-question.slide-left {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Animate Answers */
+.faq-item.show .faq-answer.slide-right {
+  opacity: 1;
+  transform: translateX(0);
+}
