@@ -1,2 +1,69 @@
-/* ProductGrid________________________________ */
-/*  */
+/* .product-grid-section {
+  padding: 2rem;
+  text-align: center;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.product-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  background: white;
+  transition: 0.2s;
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+}
+
+.product-card:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.price {
+  color: green;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.rating {
+  margin-bottom: 0.5rem;
+}
+
+.add-to-cart {
+  background: #222;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-to-cart:hover {
+  background: #444;
+}
+
+.show-more-container {
+  margin-top: 2rem;
+}
+
+.show-more-btn {
+  padding: 0.75rem 1.5rem;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.show-more-btn:hover {
+  background: #555;
+} */
