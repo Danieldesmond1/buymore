@@ -1,6 +1,6 @@
 import StoreBanner from "../components/StoreFront/StoreBanner.jsx";
 import CategoryMenu from "../components/StoreFront/CategoryMenu.jsx";
-// import CategorySidebar from "../components/StoreFront/CategorySidebar.jsx";
+import CategorySidebar from "../components/StoreFront/CategorySidebar.jsx";
 import ProductGrid from "../components/StoreFront/ProductGrid.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 
@@ -9,7 +9,7 @@ const StoreFront = () => {
     <>
       <StoreBanner />
       <CategoryMenu />
-      {/* <CategorySidebar /> */}
+      <CategorySidebar />
       <ProductGrid />
       <Footer />
     </>
@@ -17,3 +17,4 @@ const StoreFront = () => {
 };
 
 export default StoreFront;
+
