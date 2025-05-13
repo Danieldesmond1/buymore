@@ -5,6 +5,11 @@
   --primary-color: #f4a261;
   --hero-bg: #6b6b6b; /* Light mode main background */
   --hero-secondary: #4a4a4a; /* Light mode diagonal secondary */
+
+  --card-bg: #ffffff;
+  --border-color: #ddd;
+  --text: #222;
+  --primary-btn: #ff2e00;
 }
 
 /* Dark Mode */
@@ -14,6 +19,12 @@
   --primary-color: #f4a261;
   --hero-bg: rgba(0, 0, 0, 0.5); /* Dark mode background */
   --hero-secondary: #000000; /* Dark mode diagonal color */
+
+  --card-bg: #1e1e1e;
+  --border-color: #444;
+  --text: #f1f1f1;
+  --primary-btn: #ff2e00;
+
 }
 
 .hero-content {

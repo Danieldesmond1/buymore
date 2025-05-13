@@ -11,21 +11,27 @@ const BestSellers = () => {
     { id: 2, name: "Best Seller B", price: "$79.99", img: bestSellerB },
     { id: 3, name: "Best Seller C", price: "$59.99", img: bestSellerC },
     { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
+    { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
+    { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
+    { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
   ];
 
-  // Scroll Animation
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
 
   return (
-    <section ref={ref} className={`best-sellers ${inView ? "active" : ""}`}>
-      <h2 className={inView ? "active" : ""}>Best Sellers</h2>
+    <section ref={ref} className="best-sellers">
+      <h2 className={inView ? "fade-in-bestseller" : ""}>Best Sellers</h2>
       <div className="product-list">
-        {products.map((product) => (
-          <div key={product.id} className={`product-card ${inView ? "active" : ""}`}>
+        {products.map((product, index) => (
+          <div
+            key={product.id}
+            className={`product-card ${inView ? "show-bestseller" : ""}`}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
             <img src={product.img} alt={product.name} />
             <h3>{product.name}</h3>
             <p>{product.price}</p>
-            <button>Add to Cart</button>
+            <button>Add</button>
           </div>
         ))}
       </div>

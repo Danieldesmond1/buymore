@@ -1,5 +1,5 @@
 /* 🔥 Special Offers Section */
-.special-offers {
+.exclusive-offers {
   background: var(--bg-light);
   padding: 80px 5%;
   text-align: center;
@@ -7,7 +7,7 @@
 }
 
 /* Title & Description */
-.special-offers h2 {
+.exclusive-offers h2 {
   font-size: 2.5rem;
   margin-bottom: 10px;
   opacity: 0;
@@ -15,7 +15,7 @@
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-.special-offers p {
+.exclusive-offers p {
   font-size: 1.2rem;
   color: var(--text-gray);
   margin-bottom: 40px;
@@ -25,14 +25,14 @@
 }
 
 /* Fade-in animation */
-.special-offers h2.fade-in,
-.special-offers p.fade-in {
+.exclusive-offers h2.fade-in-title,
+.exclusive-offers p.fade-in-description {
   opacity: 1;
   transform: translateY(0);
 }
 
 /* 🔥 Offer Cards */
-.offer-cards {
+.offers-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -55,7 +55,7 @@
 }
 
 /* Show animation when scrolled in */
-.offer-card.show {
+.offer-card.show-card {
   opacity: 1;
   transform: translateY(0);
 }
@@ -73,7 +73,7 @@
   margin-top: 15px;
 }
 
-/* Aligning Claim Offer Buttons */
+/* Aligning Offer Titles */
 .offer-info h3 {
   font-size: 1.4rem;
   margin-bottom: 8px;
@@ -87,7 +87,7 @@
 }
 
 /* 🔥 Discount Badge */
-.discount-badge {
+.offer-discount-badge {
   display: inline-block;
   background: #ff2e00;
   color: #fff;
@@ -99,29 +99,32 @@
 }
 
 /* ⏳ Countdown Timer */
-.countdown-timer {
+.offer-countdown-timer {
   font-size: 1rem;
   font-weight: bold;
   color: #ff0000;
   margin: 10px 0;
 }
 
-/* Claim Offer Button */
-.claim-offer {
-  background: #4CAF50;
-  padding: 12px 20px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 1.1rem;
-  width: 100%;
-  transition: background 0.3s;
-  display: block;
-  text-align: center;
-  min-height: 45px; /* Ensures all buttons are aligned */
+/* Responsive Design */
+@media (max-width: 768px) {
+  .exclusive-offers h2 {
+    font-size: 2rem;
+  }
+
+  .offer-card {
+    max-width: 100%;
+  }
 }
 
-.claim-offer:hover {
-  background: #388E3C;
+@media (max-width: 640px) {
+  .offers-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .offers-container {
+    grid-template-columns: 1fr; /* Drop to 1 item on very small screens */
+  }
 }

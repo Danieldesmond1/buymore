@@ -68,29 +68,28 @@ const SpecialOffers = () => {
   }, []);
 
   return (
-    <section ref={ref} className="special-offers">
-      <h2 className={inView ? "fade-in" : ""}>🔥 Exclusive Special Offers</h2>
-      <p className={inView ? "fade-in" : ""}>
+    <section ref={ref} className="exclusive-offers">
+      <h2 className={inView ? "fade-in-title" : ""}>🔥 Exclusive Special Offers</h2>
+      <p className={inView ? "fade-in-description" : ""}>
         Unlock **limited-time deals** and **massive discounts** on top products!
       </p>
 
-      <div className="offer-cards">
+      <div className="offers-container">
         {specialOffers.map((offer, index) => {
           const timeLeftData = timeLeft.find((t) => t.id === offer.id)?.timeRemaining;
 
           return (
-            <div key={offer.id} className={`offer-card ${inView ? "show" : ""}`} style={{ animationDelay: `${index * 0.3}s` }}>
+            <div key={offer.id} className={`offer-card ${inView ? "show-card" : ""}`} style={{ animationDelay: `${index * 0.3}s` }}>
               <img src={offer.image} alt={offer.title} className="offer-image" />
               <div className="offer-info">
                 <h3>{offer.title}</h3>
                 <p>{offer.description}</p>
-                <span className="discount-badge">{offer.discount}</span>
+                <span className="offer-discount-badge">{offer.discount}</span>
                 {offer.timeLimited && timeLeftData && (
-                  <div className="countdown-timer">
+                  <div className="offer-countdown-timer">
                     ⏳ Offer ends in: {timeLeftData.hours}h {timeLeftData.minutes}m {timeLeftData.seconds}s
                   </div>
                 )}
-                <button className="claim-offer">Claim Offer</button>
               </div>
             </div>
           );
