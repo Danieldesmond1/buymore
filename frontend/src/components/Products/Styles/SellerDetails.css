@@ -1,0 +1,15 @@
+.seller-details {
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin-top: 24px;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.seller-details h2 {
+  margin-bottom: 10px;
+}
+
+.seller-details p {
+  margin: 4px 0;
+}

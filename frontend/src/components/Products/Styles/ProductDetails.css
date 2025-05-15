@@ -1,0 +1,109 @@
+.product-details-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px;
+  background-color: var(--bg-color);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.details-card {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  animation: fadeIn 0.5s ease-in-out;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.details-title {
+  font-size: 20px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.details-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.detail-value {
+  font-weight: 400;
+}
+
+.stock-status {
+  font-weight: 600;
+}
+
+.in-stock {
+  color: #0f9d58; /* green */
+}
+
+.out-of-stock {
+  color: #e53935; /* red */
+}
+
+.new-badge {
+  display: inline-block;
+  margin-top: 12px;
+  background-color: var(--primary-btn);
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 4px;
+  animation: popIn 0.3s ease forwards;
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.more-details {
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.more-details p {
+  margin: 4px 0;
+}

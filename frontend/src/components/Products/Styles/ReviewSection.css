@@ -1,0 +1,31 @@
+.review-section {
+  margin-top: 30px;
+  padding: 20px;
+  border-top: 1px solid #eee;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.review-section h2 {
+  margin-bottom: 16px;
+}
+
+.review {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.review:last-child {
+  border-bottom: none;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.review-comment {
+  font-size: 14px;
+  color: #444;
+}

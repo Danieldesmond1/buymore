@@ -1,0 +1,30 @@
+.delivery-options {
+  margin-top: 30px;
+  background: #f4f6f8;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.delivery-options h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.option {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.option h4 {
+  margin-bottom: 5px;
+  color: #111;
+}
+
+.option p {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
