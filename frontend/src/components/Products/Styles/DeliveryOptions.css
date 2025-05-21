@@ -1,30 +1,98 @@
 .delivery-options {
   margin-top: 30px;
-  background: #f4f6f8;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
 }
 
-.delivery-options h2 {
-  margin-bottom: 15px;
-  color: #333;
+.delivery-title {
+  font-size: 20px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: var(--text-color);
 }
 
 .option {
-  background: #fff;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: flex-start;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  gap: 14px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.option .icon {
+  font-size: 20px;
+  color: var(--primary-color);
+  margin-top: 2px;
 }
 
 .option h4 {
-  margin-bottom: 5px;
-  color: #111;
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
 }
 
 .option p {
   margin: 0;
-  color: #555;
   font-size: 14px;
+  color: var(--text);
+}
+
+/* Button Styles */
+.address-btn,
+.faq-toggle {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 16px;
+  margin-right: 10px;
+  transition: all 0.3s ease;
+}
+
+.address-btn:hover,
+.faq-toggle:hover {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.btn-icon {
+  margin-right: 6px;
+}
+
+/* FAQ Section */
+.faq-section {
+  margin-top: 14px;
+  padding-left: 10px;
+  font-size: 14px;
+  color: var(--text);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

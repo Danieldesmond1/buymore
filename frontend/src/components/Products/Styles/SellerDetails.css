@@ -1,15 +1,37 @@
 .seller-details {
-  border: 1px solid #ddd;
-  padding: 16px;
-  margin-top: 24px;
-  border-radius: 8px;
-  background-color: #fafafa;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  border-radius: 12px;
+  color: var(--text);
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
-.seller-details h2 {
-  margin-bottom: 10px;
+.seller-details:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.seller-title {
+  margin-bottom: 14px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-color);
 }
 
 .seller-details p {
-  margin: 4px 0;
+  margin: 10px 0;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.seller-details .icon {
+  margin-right: 8px;
+  color: var(--primary-color);
+}
+
+.star {
+  color: gold;
 }

@@ -1,0 +1,122 @@
+.cart-item {
+  display: flex;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  transition: background 0.3s;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.cart-item:hover {
+  background-color: var(--primary-color);
+  color: var(--bg-color);
+}
+
+.cart-item:hover .cart-item__price,
+.cart-item:hover .cart-item__subtotal {
+  color: var(--bg-color);
+}
+
+.cart-item__image img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.cart-item__image img:hover,
+.cart-item__image img:focus {
+  transform: scale(1.1);
+  outline: none;
+}
+
+.cart-item__details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 200px;
+}
+
+.cart-item__name {
+  font-size: 1.1rem;
+  color: var(--text-color);
+  margin: 0 0 8px;
+  font-weight: 600;
+  cursor: default;
+}
+
+.cart-item__price {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.cart-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+
+.cart-item__qty {
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  min-width: 80px;
+}
+
+.cart-item__qty:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(244, 162, 97, 0.5);
+}
+
+.cart-item__remove {
+  background: none;
+  border: none;
+  color: #e11d48;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cart-item__remove:hover,
+.cart-item__remove:focus {
+  color: #be123c;
+  outline: none;
+}
+
+.cart-item__subtotal {
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Screen reader only class for label */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}

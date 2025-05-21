@@ -1,0 +1,119 @@
+.cart-summary {
+  background-color: var(--card-bg);
+  padding: 24px 32px;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 0.12);
+  max-width: 380px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cart-summary__title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 8px;
+}
+
+.cart-summary__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cart-summary__row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.05rem;
+  font-weight: 600;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  color: var(--text-color-secondary);
+}
+
+.cart-summary__row:last-child {
+  border-bottom: none;
+}
+
+.cart-summary__discount {
+  color: #d32f2f;
+  font-weight: 700;
+}
+
+.cart-summary__total-row {
+  font-size: 1.5rem;
+  font-weight: 800;
+  border-top: 3px solid var(--primary-color);
+  padding-top: 14px;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--primary-color);
+}
+
+.cart-summary__total {
+  font-weight: 900;
+}
+
+.cart-summary__checkout-btn {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: var(--primary-color);
+  color: #fff;
+  font-weight: 800;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background-color 0.25s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+}
+
+.cart-summary__checkout-btn:hover,
+.cart-summary__checkout-btn:focus {
+  background-color: #d97633;
+  outline: none;
+  box-shadow: 0 0 18px var(--primary-color);
+}
+
+.icon {
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* Optional: Responsive for smaller screens */
+@media (max-width: 420px) {
+  .cart-summary {
+    max-width: 100%;
+    padding: 16px 20px;
+  }
+
+  .cart-summary__title {
+    font-size: 1.5rem;
+  }
+
+  .cart-summary__row,
+  .cart-summary__total-row {
+    font-size: 1rem;
+  }
+
+  .cart-summary__checkout-btn {
+    font-size: 1rem;
+    padding: 14px;
+  }
+}

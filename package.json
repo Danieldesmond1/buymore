@@ -1,0 +1,26 @@
+{
+  "name": "buymore",
+  "version": "1.0.0",
+  "description": "This project is an e-commerce web application that allows users to browse, like, comment, add products to the cart, and make purchases. It also includes an admin panel for managing users, orders, products, and monitoring financial details like payments. The admin can view user activities and transaction histories, ensuring efficient management of the platform.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Danieldesmond1/buymore.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Danieldesmond1/buymore/issues"
+  },
+  "homepage": "https://github.com/Danieldesmond1/buymore#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

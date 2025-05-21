@@ -1,0 +1,88 @@
+.signup-form {
+  max-width: 420px;
+  margin: 0 auto 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--card-bg);
+  padding: 32px 24px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.signup-form h2 {
+  margin-bottom: 24px;
+  color: var(--text-color);
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.signup-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.signup-form input {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.signup-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.error {
+  color: #e11d48;
+  font-size: 0.875rem;
+  margin-top: -12px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.signup-form__buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.btn-back,
+.btn-submit {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back {
+  background-color: #bbb;
+  color: white;
+}
+
+.btn-back:hover,
+.btn-back:focus {
+  background-color: #999;
+  outline: none;
+}
+
+.btn-submit {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-submit:hover,
+.btn-submit:focus {
+  background-color: #d96c3a;
+  outline: none;
+}

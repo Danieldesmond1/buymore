@@ -35,8 +35,8 @@ const RelatedProducts = () => {
         {relatedItems.map(item => (
           <div key={item.id} className="related-card">
             <img src={item.image} alt={item.title} className="related-img" />
-            <h3>{item.title}</h3>
-            <p>₦{item.price.toLocaleString()}</p>
+            <h3 className="product-title">{item.title}</h3>
+            <p className="product-price">₦{item.price.toLocaleString()}</p>
           </div>
         ))}
       </div>

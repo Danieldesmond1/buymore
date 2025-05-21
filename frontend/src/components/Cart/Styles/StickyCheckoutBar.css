@@ -1,0 +1,85 @@
+.sticky-checkout {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.sticky-checkout__summary {
+  display: flex;
+  gap: 20px;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.sticky-checkout__items {
+  white-space: nowrap;
+}
+
+.sticky-checkout__total {
+  color: var(--primary-color);
+}
+
+.sticky-checkout__btn {
+  background-color: var(--primary-color);
+  border: none;
+  color: #fff;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.sticky-checkout__btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.sticky-checkout__btn:hover:not(:disabled),
+.sticky-checkout__btn:focus:not(:disabled) {
+  background-color: #d96c3a;
+  outline: none;
+}
+
+/* Desktop version: sticky sidebar on right */
+@media (min-width: 768px) {
+  .sticky-checkout {
+    position: sticky;
+    top: 20px;
+    bottom: auto;
+    width: 320px;
+    flex-direction: column;
+    padding: 24px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    height: fit-content;
+    margin-left: auto;
+  }
+
+  .sticky-checkout__summary {
+    flex-direction: column;
+    gap: 12px;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+
+  .sticky-checkout__btn {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+}

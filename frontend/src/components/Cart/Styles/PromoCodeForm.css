@@ -1,0 +1,71 @@
+.promo-code-form {
+  max-width: 400px;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.promo-code-label {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.promo-code-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.promo-code-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.8px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--text-color);
+  background-color: var(--card-bg);
+  transition: border-color 0.3s;
+}
+
+.promo-code-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 6px var(--primary-color);
+}
+
+.promo-code-input.error {
+  border-color: #e11d48;
+}
+
+.promo-code-btn {
+  background-color: var(--primary-color);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  flex-shrink: 0;
+}
+
+.promo-code-btn:hover,
+.promo-code-btn:focus {
+  background-color: #d96c3a;
+  outline: none;
+}
+
+.promo-code-message {
+  font-size: 0.9rem;
+  min-height: 20px;
+  color: var(--text-color);
+}
+
+.promo-code-message.error {
+  color: #e11d48;
+}
+
+.promo-code-message.success {
+  color: #16a34a;
+}

@@ -4,7 +4,7 @@ import pool from "../utils/dbConnect.js"; // Correct import
 
 // User Sign-up
 export const signupUser = async (req, res) => {
-  const { username, email, password, location } = req.body;
+  const { username, email, password, location, role  } = req.body;
 
   try {
     // Convert email to lowercase
@@ -23,12 +23,13 @@ export const signupUser = async (req, res) => {
 
     // Insert the user into the database
     const createUserQuery =
-      "INSERT INTO users (username, email, password, location) VALUES ($1, $2, $3, $4) RETURNING *";
+      "INSERT INTO users (username, email, password, location, role) VALUES ($1, $2, $3, $4, $5) RETURNING *";
     const { rows: newUser } = await pool.query(createUserQuery, [
       username,
       normalizedEmail,
       hashedPassword,
       location,
+      role,
     ]);
 
     return res

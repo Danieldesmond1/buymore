@@ -1,5 +1,5 @@
 .product-details-container {
-  width: 100%;
+  /* width: 100%; */
   display: flex;
   justify-content: center;
   padding: 20px 16px;
@@ -86,6 +86,27 @@
   animation: popIn 0.3s ease forwards;
 }
 
+.icon {
+  margin-right: 6px;
+  color: var(--primary-color);
+  vertical-align: middle;
+}
+
+.stock-bar {
+  background-color: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 6px;
+  height: 8px;
+}
+
+.stock-bar-fill {
+  background-color: #0f9d58;
+  height: 100%;
+  transition: width 0.4s ease-in-out;
+}
+
+
 @keyframes popIn {
   from {
     opacity: 0;
@@ -106,4 +127,19 @@
 
 .more-details p {
   margin: 4px 0;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+.extra-info {
+  margin-top: 12px;
+  font-size: 14px;
+  animation: fadeIn 0.3s ease-in-out;
 }
