@@ -1,6 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaMapMarkerAlt,
+  FaUserTag,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
 import LocationPicker from "./LocationPicker/LocationPicker";
+import "./Styles/SignupForm.css";
 
 const SignupForm = ({ selectedRole = "buyer" }) => {
   const [formData, setFormData] = useState({
@@ -11,95 +21,163 @@ const SignupForm = ({ selectedRole = "buyer" }) => {
     role: selectedRole,
   });
 
+  const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setFormData((prev) => ({ ...prev, role: selectedRole }));
   }, [selectedRole]);
 
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.username.trim()) newErrors.username = "Username is required.";
+    if (!validateEmail(formData.email)) newErrors.email = "Enter a valid email.";
+    if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
+    if (!formData.location.trim()) newErrors.location = "Location is required.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleLocationChange = (loc) => {
     const locationString = `${loc.country} > ${loc.state} > ${loc.city}`;
     setFormData((prev) => ({ ...prev, location: locationString }));
+    setErrors((prev) => ({ ...prev, location: "" }));
   };
-
-  const validateEmail = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    // Basic validation
-    if (!formData.username.trim()) return setMessage("Username is required");
-    if (!validateEmail(formData.email)) return setMessage("Invalid email");
-    if (formData.password.length < 6)
-      return setMessage("Password must be at least 6 characters");
-    if (!formData.location)
-      return setMessage("Please select your location");
-
-    setMessage("");
     setLoading(true);
+    setMessage("");
 
     try {
       const res = await axios.post("/api/users/signup", formData);
-      setMessage(res.data.message);
-      setLoading(false);
-      console.log("User signed up:", res.data.user);
-      // Optionally reset form here
+      setMessage(res.data.message || "Signup successful!");
+      setFormData({
+        username: "",
+        email: "",
+        password: "",
+        location: "",
+        role: selectedRole,
+      });
+      setErrors({});
     } catch (error) {
+      setMessage(
+        error.response?.data?.message || "Signup failed. Please try again."
+      );
+    } finally {
       setLoading(false);
-      setMessage(error.response?.data?.message || "Signup failed");
-      console.error("Signup failed:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        onChange={handleChange}
-        value={formData.username}
-        required
-      />
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        onChange={handleChange}
-        value={formData.email}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password (min 6 chars)"
-        onChange={handleChange}
-        value={formData.password}
-        required
-      />
+    <div className="signup-form-container">
+      <form onSubmit={handleSubmit} className="signup-form" noValidate>
+        <h2>Create Account</h2>
 
-      <LocationPicker onChange={handleLocationChange} />
+        <div className="input-wrapper">
+          <FaUser className="input-icon" />
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            onChange={handleChange}
+            value={formData.username}
+            required
+            autoComplete="username"
+          />
+        </div>
+        {errors.username && <small className="error-text">{errors.username}</small>}
 
-      <p>Selected location: {formData.location || "None"}</p>
+        <div className="input-wrapper">
+          <FaEnvelope className="input-icon" />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            value={formData.email}
+            required
+            autoComplete="email"
+          />
+        </div>
+        {errors.email && <small className="error-text">{errors.email}</small>}
 
-      <select name="role" onChange={handleChange} value={formData.role}>
-        <option value="buyer">Buyer</option>
-        <option value="seller">Seller</option>
-      </select>
+        <div className="input-wrapper">
+          <FaLock className="input-icon" />
+          <input
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
+            value={formData.password}
+            required
+            autoComplete="new-password"
+          />
+          <span
+            className="password-toggle"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
+        </div>
+        {errors.password && <small className="error-text">{errors.password}</small>}
 
-      <button type="submit" disabled={loading}>
-        {loading ? "Signing up..." : "Sign Up"}
-      </button>
-      <p style={{ color: message.includes("successfully") ? "green" : "red" }}>
-        {message}
-      </p>
-    </form>
+        <div className="input-wrapper">
+          {/* <FaMapMarkerAlt className="input-icon" /> */}
+          <div className="location-section">
+            <LocationPicker onChange={handleLocationChange} />
+            <small>Selected: {formData.location || "None"}</small>
+          </div>
+        </div>
+        {errors.location && <small className="error-text">{errors.location}</small>}
+
+        <div className="input-wrapper">
+          <FaUserTag className="input-icon" />
+          <select
+            name="role"
+            onChange={handleChange}
+            value={formData.role}
+            className="select-field"
+          >
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
+          </select>
+        </div>
+
+        {formData.role === "seller" && (
+          <small className="role-tip">
+            As a seller, you’ll be able to list and manage your products.
+          </small>
+        )}
+
+        {message && (
+          <p className={`message ${message.toLowerCase().includes("success") ? "success" : "error"}`}>
+            {message}
+          </p>
+        )}
+
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? "Signing up..." : "Sign Up"}
+        </button>
+
+        <p className="login-prompt">
+          Already have an account? <a href="/login">Login here</a>
+        </p>
+      </form>
+    </div>
   );
 };
 

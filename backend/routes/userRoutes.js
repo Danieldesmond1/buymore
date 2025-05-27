@@ -1,12 +1,11 @@
 import express from "express";
-import { signupUser, signinUser } from "../controllers/userController.js"; // Import functions
+import { signupUser, signinUser, getMe } from "../controllers/userController.js";
+import { authenticateToken } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// User signup route
 router.post("/signup", signupUser);
-
-// User signin route
 router.post("/signin", signinUser);
+router.get("/me", authenticateToken, getMe); // ✅ Protected route
 
 export default router;

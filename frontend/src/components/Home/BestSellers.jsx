@@ -11,9 +11,9 @@ const BestSellers = () => {
     { id: 2, name: "Best Seller B", price: "$79.99", img: bestSellerB },
     { id: 3, name: "Best Seller C", price: "$59.99", img: bestSellerC },
     { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
-    { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
-    { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
-    { id: 4, name: "Best Seller D", price: "$99.99", img: bestSellerD },
+    { id: 5, name: "Best Seller D", price: "$99.99", img: bestSellerD },
+    { id: 6, name: "Best Seller D", price: "$99.99", img: bestSellerD },
+    { id: 7, name: "Best Seller D", price: "$99.99", img: bestSellerD },
   ];
 
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });

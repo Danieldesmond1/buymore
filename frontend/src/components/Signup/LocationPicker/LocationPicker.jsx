@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { LuMapPinHouse, LuFlag, LuLandmark  } from "react-icons/lu";
 import axios from "axios";
+import "../Styles/LocationPicker.css";
 
 const LocationPicker = ({ onChange }) => {
   const [countries, setCountries] = useState([]);
@@ -8,34 +10,33 @@ const LocationPicker = ({ onChange }) => {
 
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const [selectedCountryName, setSelectedCountryName] = useState("");
-  const [selectedStateCode, setSelectedStateCode] = useState(""); // NG-24 etc.
-  const [selectedStateName, setSelectedStateName] = useState(""); // Lagos etc.
+  const [selectedStateCode, setSelectedStateCode] = useState("");
+  const [selectedStateName, setSelectedStateName] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // ✅ Fetch countries on mount
+  // Fetch countries
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://countriesnow.space/api/v0.1/countries/positions");
-        const data = await response.json();
+        const res = await fetch("https://countriesnow.space/api/v0.1/countries/positions");
+        const data = await res.json();
         if (Array.isArray(data.data)) {
           setCountries(data.data);
         } else {
           setCountries([]);
         }
-      } catch (error) {
-        console.error("Error fetching countries:", error);
+      } catch (err) {
+        console.error("Error fetching countries:", err);
         setCountries([]);
       }
     };
-
     fetchCountries();
   }, []);
 
-  // ✅ Fetch states when country changes
+  // Fetch states
   useEffect(() => {
     if (!selectedCountryCode) {
       setStates([]);
@@ -59,7 +60,7 @@ const LocationPicker = ({ onChange }) => {
       });
   }, [selectedCountryCode]);
 
-  // ✅ Fetch cities when state changes
+  // Fetch cities
   useEffect(() => {
     if (!selectedStateCode) {
       setCities([]);
@@ -81,78 +82,85 @@ const LocationPicker = ({ onChange }) => {
       });
   }, [selectedStateCode]);
 
-  // ✅ Notify parent
+  // Notify parent
   useEffect(() => {
     if (selectedCountryName && selectedStateName && selectedCity) {
       onChange({
         country: selectedCountryName,
-        state: selectedStateName, // send real state name instead of "NG-24"
+        state: selectedStateName,
         city: selectedCity,
       });
     }
   }, [selectedCountryName, selectedStateName, selectedCity, onChange]);
 
-  if (loading) return <p>Loading locations...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p className="loading-text">Loading locations...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
   return (
-    <div>
-      {/* Country Selector */}
-      <select
-        value={selectedCountryCode}
-        onChange={(e) => {
-          const code = e.target.value;
-          const country = countries.find((c) => c.iso2 === code);
-          setSelectedCountryCode(code);
-          setSelectedCountryName(country?.name || "");
-          setSelectedStateCode("");
-          setSelectedStateName("");
-          setSelectedCity("");
-        }}
-      >
-        <option value="">Select a country</option>
-        {countries.map((c) => (
-          <option key={c.iso2} value={c.iso2}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+    <div className="location-picker">
+      {/* Country */}
+      <div className="input-wrapper">
+        <LuFlag className="input-icon" />
+        <select
+          value={selectedCountryCode}
+          onChange={(e) => {
+            const code = e.target.value;
+            const country = countries.find((c) => c.iso2 === code);
+            setSelectedCountryCode(code);
+            setSelectedCountryName(country?.name || "");
+            setSelectedStateCode("");
+            setSelectedStateName("");
+            setSelectedCity("");
+          }}
+        >
+          <option value="" disabled>Select Country</option>
+          {countries.map((c) => (
+            <option key={c.iso2} value={c.iso2}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* State Selector */}
-      <select
-        value={selectedStateCode}
-        onChange={(e) => {
-          const code = e.target.value;
-          const state = states.find((s) => s.code === code);
-          setSelectedStateCode(code); // NG-24 etc.
-          setSelectedStateName(state?.name || ""); // Lagos etc.
-          setSelectedCity("");
-        }}
-        required
-        disabled={!states.length}
-      >
-        <option value="">Select State</option>
-        {states.map((s) => (
-          <option key={s.code} value={s.code}>
-            {s.name}
-          </option>
-        ))}
-      </select>
+      {/* State */}
+      <div className="input-wrapper">
+        <LuLandmark className="input-icon" />
+        <select
+          value={selectedStateCode}
+          onChange={(e) => {
+            const code = e.target.value;
+            const state = states.find((s) => s.code === code);
+            setSelectedStateCode(code);
+            setSelectedStateName(state?.name || "");
+            setSelectedCity("");
+          }}
+          disabled={!states.length}
+        >
+          <option value="" disabled>Select State</option>
+          {states.map((s) => (
+            <option key={s.code} value={s.code}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* City Selector */}
-      <select
-        value={selectedCity}
-        onChange={(e) => setSelectedCity(e.target.value)}
-        required
-        disabled={!cities.length}
-      >
-        <option value="">Select City</option>
-        {cities.map((city) => (
-          <option key={city.id} value={city.name}>
-            {city.name}
-          </option>
-        ))}
-      </select>
+      {/* City */}
+      <div className="input-wrapper">
+        <LuMapPinHouse className="input-icon" />
+        <select
+          value={selectedCity}
+          onChange={(e) => setSelectedCity(e.target.value)}
+          disabled={!cities.length}
+        >
+          <option value="" disabled>Select City</option>
+          {cities.map((c) => (
+            <option key={c.id} value={c.name}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };

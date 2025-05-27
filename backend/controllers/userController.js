@@ -42,11 +42,11 @@ export const signupUser = async (req, res) => {
 };
 
 // User Sign-in
+// User Sign-in
 export const signinUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Convert email to lowercase
     const normalizedEmail = email.toLowerCase();
 
     // Find the user by email
@@ -65,18 +65,56 @@ export const signinUser = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign(
-      { userId: user[0].id, email: user[0].email },
+      {
+        userId: user[0].id,
+        email: user[0].email,
+        username: user[0].username,
+        role: user[0].role,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
+    // Set the token in HttpOnly cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: 60 * 60 * 1000, // 1 hour
+    });
+
     return res.status(200).json({
       message: "Login successful",
       token,
-      user: { id: user[0].id, username: user[0].username, email: user[0].email },
+      user: {
+        id: user[0].id,
+        username: user[0].username,
+        email: user[0].email,
+        role: user[0].role,
+        location: user[0].location,
+      },
     });
+
   } catch (error) {
     console.error("Error signing in user:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Get logged-in user
+export const getMe = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const query = "SELECT id, username, email, location, role FROM users WHERE id = $1";
+    const { rows } = await pool.query(query, [userId]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(rows[0]);
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

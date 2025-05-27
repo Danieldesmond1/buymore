@@ -8,6 +8,40 @@
   position: relative;
 }
 
+.nav-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+}
+
+.user-dropdown {
+  position: relative;
+}
+
+.user-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dropdown-menu li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.dropdown-menu li:hover {
+  background-color: #f0f0f0;
+}
+
+
 /* Wrap logo, search bar, and theme toggle to align properly */
 .navbar-left {
   display: flex;
@@ -91,6 +125,84 @@
   font-size: 1.8rem;
   cursor: pointer;
   display: none;
+}
+
+/* User Dropdown Hover - show dropdown on hover */
+.user-dropdown {
+  position: relative;
+}
+
+.user-dropdown:hover .dropdown-menu,
+.user-dropdown:focus-within .dropdown-menu {
+  display: block;
+}
+
+/* Dropdown Menu Hidden by Default */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--hero-bg);
+  color: var(--text-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0.5rem 0;
+  border-radius: 8px;
+  z-index: 1000;
+  min-width: 160px;
+  display: none;
+  transition: opacity 0.2s ease;
+}
+
+
+
+/* Dropdown Menu Items */
+.dropdown-menu li {
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect for dropdown items */
+.dropdown-menu li:hover,
+.dropdown-menu li:focus {
+  background-color: var(--primary-color);
+  color: var(--card-bg);
+  outline: none;
+}
+
+/* Button inside dropdown (Logout) */
+.logout-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* User Button */
+.user-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Optional: Slight hover on user button */
+.user-btn:hover,
+.user-btn:focus {
+  color: var(--primary-color);
+  outline: none;
 }
 
 @media only screen and (max-width: 900px) {

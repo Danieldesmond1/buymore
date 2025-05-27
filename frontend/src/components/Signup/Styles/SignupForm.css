@@ -1,88 +1,175 @@
-.signup-form {
-  max-width: 420px;
-  margin: 0 auto 40px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: var(--card-bg);
-  padding: 32px 24px;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-}
-
-.signup-form h2 {
-  margin-bottom: 24px;
-  color: var(--text-color);
-  font-weight: 700;
-  font-size: 1.6rem;
-  text-align: center;
-}
-
-.signup-form label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.signup-form input {
-  width: 100%;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  border: 1.5px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-.signup-form input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-.error {
-  color: #e11d48;
-  font-size: 0.875rem;
-  margin-top: -12px;
-  margin-bottom: 12px;
-  display: block;
-}
-
-.signup-form__buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.btn-back,
-.btn-submit {
-  flex: 1;
-  padding: 12px 0;
-  font-size: 1rem;
-  font-weight: 700;
-  border-radius: 8px;
-  cursor: pointer;
-  user-select: none;
-  border: none;
+.signup-form-container {
+  max-width: 480px;
+  margin: 3rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  background-color: var(--card-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text);
   transition: background-color 0.3s ease;
 }
 
-.btn-back {
-  background-color: #bbb;
-  color: white;
+.signup-form-container h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.6rem;
+  color: var(--text);
 }
 
-.btn-back:hover,
-.btn-back:focus {
-  background-color: #999;
+.signup-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper input,
+.input-wrapper select {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--bg-color);
+  color: var(--text);
+  transition: border-color 0.2s, background-color 0.3s;
+  appearance: none;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 10px;
+  position: relative;
+
+}
+
+.input-wrapper select {
+  cursor: pointer;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus {
+  border-color: var(--primary-color);
   outline: none;
 }
 
-.btn-submit {
-  background-color: var(--primary-color);
-  color: white;
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.75rem;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  pointer-events: none;
 }
 
-.btn-submit:hover,
-.btn-submit:focus {
-  background-color: #d96c3a;
-  outline: none;
+.signup-form-container select:disabled {
+  background-color: #f9f9f9;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.location-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.location-section small {
+  font-size: 0.85rem;
+  color: var(--text-light, #888);
+  padding-left: 0.25rem;
+}
+
+.signup-form-container button {
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  background-color: var(--primary-btn);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form-container button:hover:not(:disabled) {
+  background-color: #d32800;
+}
+
+.signup-form-container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.message {
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 0.75rem;
+}
+
+.message.success {
+  color: green;
+}
+
+.message.error {
+  color: red;
+}
+
+/* Optional: Down arrow indicator for select dropdowns */
+.input-wrapper select {
+  background-image: url("data:image/svg+xml,%3Csvg fill='%23999' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--text-light, #888);
+}
+
+.role-tip {
+  font-size: 0.85rem;
+  color: var(--text-light, #888);
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+  padding-left: 0.25rem;
+}
+
+.login-prompt {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+}
+
+.login-prompt a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
+
+/* Responsive tweaks */
+@media screen and (max-width: 540px) {
+  .signup-form-container {
+    padding: 1.5rem 1rem;
+  }
 }
