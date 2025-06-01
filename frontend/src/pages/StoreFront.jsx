@@ -8,21 +8,38 @@ import Footer from "../components/Footer/Footer.jsx";
 
 const StoreFront = () => {
   const { addToCart } = useCart();
-  
-  // State to track the selected category
-  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  // Handler to update selected category
-  const handleSelectCategory = (category) => {
-    setSelectedCategory(category);
-  };
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [filters, setFilters] = useState({
+    price: [],
+    brand: [],
+    rating: [],
+    availability: [],
+    color: [],
+    condition: [],
+    discount: [],
+  });
 
   return (
     <>
-      <StoreBanner />
-      <CategoryMenu onSelectCategory={handleSelectCategory} />
-      <CategorySidebar />
-      <ProductGrid addToCart={addToCart} selectedCategory={selectedCategory} />
+      <StoreBanner
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSearch={setSearchQuery}  // Add this line
+      />
+      <CategoryMenu onSelectCategory={setSelectedCategory} />
+      <CategorySidebar filters={filters} setFilters={setFilters} />
+      <ProductGrid
+        addToCart={addToCart}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory} // <-- add this
+        filters={filters}
+        setFilters={setFilters}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
       <Footer />
     </>
   );

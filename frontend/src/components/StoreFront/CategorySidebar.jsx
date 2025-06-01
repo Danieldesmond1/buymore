@@ -1,17 +1,7 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
 import "./Styles/CategorySidebar.css";
 
-const CategorySidebar = () => {
-  const [filters, setFilters] = useState({
-    price: [],
-    brand: [],
-    rating: [],
-    availability: [],
-    color: [],
-    condition: [],
-    discount: [],
-  });
-
+const CategorySidebar = ({ filters, setFilters }) => {
   const handleChange = (section, value) => {
     setFilters((prev) => {
       const exists = prev[section].includes(value);

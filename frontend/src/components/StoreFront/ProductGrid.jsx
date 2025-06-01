@@ -2,14 +2,21 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import "./Styles/ProductGrid.css";
 
-// Same capitalize helper for consistency
 const capitalize = (str) =>
   str
     .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 
-const ProductGrid = ({ addToCart, selectedCategory }) => {
+const ProductGrid = ({
+  addToCart,
+  selectedCategory,
+  setSelectedCategory,
+  filters,
+  setFilters,
+  searchQuery,
+  setSearchQuery,
+}) => {
   const [products, setProducts] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [loading, setLoading] = useState(true);
@@ -40,17 +47,109 @@ const ProductGrid = ({ addToCart, selectedCategory }) => {
     };
   }, []);
 
-  // Filter products by category ignoring case, display capitalized
-  const filteredProducts = selectedCategory
-    ? products.filter(
-        (product) =>
-          capitalize(product.category) === capitalize(selectedCategory) &&
-          product.stock > 0
+  const applyFilters = (products) => {
+    return products.filter((product) => {
+      // Search query filter
+      if (searchQuery && searchQuery.trim() !== "") {
+        const query = searchQuery.trim().toLowerCase();
+        if (
+          !product.name.toLowerCase().includes(query) &&
+          !product.brand.toLowerCase().includes(query) &&
+          !product.category.toLowerCase().includes(query)
+        ) {
+          return false;
+        }
+      }
+
+      // Category filter
+      if (
+        selectedCategory &&
+        capitalize(product.category) !== capitalize(selectedCategory)
       )
-    : products;
+        return false;
+
+      // Price filter
+      if (filters.price.length) {
+        const price = product.discount_price || product.price;
+        const match = filters.price.some((range) => {
+          if (range === "Under $50") return price < 50;
+          if (range === "$50 - $100") return price >= 50 && price <= 100;
+          if (range === "$100 - $200") return price > 100 && price <= 200;
+          if (range === "$200 & Above") return price > 200;
+          return false;
+        });
+        if (!match) return false;
+      }
+
+      // Brand filter
+      if (filters.brand.length && !filters.brand.includes(product.brand))
+        return false;
+
+      // Rating filter
+      if (filters.rating.length) {
+        const ratingMatch = filters.rating.some((ratingLabel) => {
+          const minStars = parseInt(ratingLabel[0]);
+          return product.rating >= minStars;
+        });
+        if (!ratingMatch) return false;
+      }
+
+      // Availability filter
+      if (
+        filters.availability.length &&
+        !filters.availability.includes(
+          product.stock > 0 ? "In Stock" : "Out of Stock"
+        )
+      )
+        return false;
+
+      // Color filter (normalize to lowercase for comparison)
+      if (
+        filters.color.length &&
+        !filters.color.includes(product.color?.toLowerCase())
+      )
+        return false;
+
+      // Condition filter
+      if (filters.condition.length && !filters.condition.includes(product.condition))
+        return false;
+
+      // Discount filter
+      if (filters.discount.length) {
+        if (!product.discount_price) return false; // no discount if no discount_price
+        const discountPercent = Math.round(
+          ((product.price - product.discount_price) / product.price) * 100
+        );
+        const match = filters.discount.some((label) => {
+          const num = parseInt(label);
+          return discountPercent >= num;
+        });
+        if (!match) return false;
+      }
+
+      return true;
+    });
+  };
+
+  const filteredProducts = applyFilters(products);
 
   const handleShowMore = () => {
     setVisibleCount((prev) => prev + 6);
+  };
+
+  const handleClearFilters = () => {
+    setSelectedCategory(""); // resets category
+    setFilters({
+      price: [],
+      brand: [],
+      rating: [],
+      availability: [],
+      color: [],
+      condition: [],
+      discount: [],
+    });
+    setSearchQuery(""); // reset search query
+    setVisibleCount(6); // reset visible items
   };
 
   if (loading) return <p className="pg-loading">Loading products...</p>;
@@ -62,10 +161,24 @@ const ProductGrid = ({ addToCart, selectedCategory }) => {
         🛍️ {selectedCategory ? capitalize(selectedCategory) : "All Products"}
       </h2>
 
-      {selectedCategory && filteredProducts.length === 0 ? (
-        <p className="pg-no-products">
-          No products available in the "{capitalize(selectedCategory)}" category.
-        </p>
+      {filteredProducts.length === 0 ? (
+        <div className="pg-no-products">
+          {searchQuery && searchQuery.trim() !== "" ? (
+            <p>
+              Sorry, "{searchQuery}" isn’t available on any seller’s store. 😥
+            </p>
+          ) : (
+            <p>
+              No products found in "{capitalize(selectedCategory || "All")}" with the current filters.
+            </p>
+          )}
+          <button
+            className="pg-clear-filters-btn"
+            onClick={handleClearFilters}
+          >
+            Clear Filters
+          </button>
+        </div>
       ) : (
         <div className="pg-grid">
           {filteredProducts.slice(0, visibleCount).map((product, index) => (
@@ -105,10 +218,7 @@ const ProductGrid = ({ addToCart, selectedCategory }) => {
                   ? `In stock: ${product.stock}`
                   : "Out of stock"}
               </p>
-              <div
-                className="pg-rating"
-                aria-label={`Rated ${product.rating} stars`}
-              >
+              <div className="pg-rating" aria-label={`Rated ${product.rating} stars`}>
                 {"⭐".repeat(Math.floor(product.rating) || 0)}{" "}
                 <span className="pg-rating-score">
                   {typeof product.rating === "number"

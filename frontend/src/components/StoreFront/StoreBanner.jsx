@@ -1,39 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import "./Styles/StoreFront.css";
 
 import bannerImage from "../../assets/store_image_banner.png";
-import bannerImage1 from "../../assets/store_image_banner.png";
-import bannerImage2 from "../../assets/store_image_banner.png";
-import bannerImage3 from "../../assets/store_image_banner.png";
 
-const StoreBanner = () => {
-  const seasonalBanners = [bannerImage1, bannerImage2, bannerImage3];
-
-  const getSeasonalImage = () => {
-    const month = new Date().getMonth();
-    if (month === 11) return bannerImage1;
-    if (month === 3) return bannerImage2;
-    if (month === 10) return bannerImage3;
-    return null;
-  };
-
-  const [currentBanner, setCurrentBanner] = useState(bannerImage);
+const StoreBanner = ({ onSearch }) => {
+  const [currentBanner] = useState(bannerImage);
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    const seasonal = getSeasonalImage();
-    if (!seasonal) return;
-
-    let banners = [bannerImage, seasonal];
-    let index = 0;
-
-    const interval = setInterval(() => {
-      index = (index + 1) % banners.length;
-      setCurrentBanner(banners[index]);
-    }, 5000); // switch every 5s
-
-    return () => clearInterval(interval);
-  }, []);
 
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
@@ -58,18 +30,20 @@ const StoreBanner = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Placeholder search handler
+  // Now use the passed in onSearch prop or fallback to alert
   const handleSearch = () => {
     if (searchQuery.trim() === "") {
       alert("Please enter a search term.");
       return;
     }
-    // For now just alert or console log the query
-    alert(`Searching for: "${searchQuery}" (placeholder action)`);
-    // TODO: Replace with actual search/navigation logic later
+
+    if (typeof onSearch === "function") {
+      onSearch(searchQuery.trim());
+    } else {
+      alert(`Searching for: "${searchQuery}" (placeholder action)`);
+    }
   };
 
-  // Optional: allow pressing Enter to trigger search
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();

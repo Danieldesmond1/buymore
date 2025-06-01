@@ -109,4 +109,17 @@
   background-color: var(--button-hover, #333);
 }
 
+.pg-clear-filters-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #222;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
 
+.pg-clear-filters-btn:hover {
+  background-color: #444;
+}
