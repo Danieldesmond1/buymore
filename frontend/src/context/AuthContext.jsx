@@ -8,13 +8,11 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-
-  // Auto-login on refresh
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch("http://localhost:5000/api/users/me", {
-          credentials: "include", // 👈 crucial for cookie auth
+          credentials: "include",
         });
 
         if (res.ok) {
@@ -33,12 +31,21 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData) => setUser(userData);
-  const logout = () => {
+
+  const logout = async () => {
+    try {
+      await fetch("http://localhost:5000/api/users/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
   };
-
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>

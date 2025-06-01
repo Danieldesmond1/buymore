@@ -9,6 +9,7 @@
 }
 
 .nav-btn {
+  position: relative;
   background: none;
   border: none;
   color: inherit;
@@ -203,6 +204,39 @@
 .user-btn:focus {
   color: var(--primary-color);
   outline: none;
+}
+
+.cart-icon-wrapper {
+  position: relative;
+}
+
+.cart-label {
+  margin-left: 4px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background-color: crimson;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  line-height: 1;
+  animation: pop-in 0.3s ease-in-out;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @media only screen and (max-width: 900px) {

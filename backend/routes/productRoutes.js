@@ -8,7 +8,7 @@ import {
   getAllCategories,
   getProductsByCategory,
   searchProducts,
-  getFilteredProducts,
+  // getFilteredProducts,
   likeProduct,
   getMostLikedProducts,
   toggleProductLike,
@@ -38,7 +38,7 @@ router.get("/wishlist/:user_id", getWishlist); // ✅ Get User's Wishlist
 
 // Users Search Routes
 router.get("/search", searchProducts); // Search products by name
-router.get("/", getFilteredProducts); // Update existing route for filtering
+// router.get("/", getFilteredProducts); // Update existing route for filtering
 
 // Category Routes
 router.get("/categories", getAllCategories); // Get all categories

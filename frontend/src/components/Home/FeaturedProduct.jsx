@@ -1,57 +1,50 @@
 import "./Styles/FeaturedProduct.css";
 import { useInView } from "react-intersection-observer";
-import { useNavigate } from "react-router-dom"; // 👈 for navigation
-import { useAuth } from "../../context/AuthContext"; // 👈 for auth
-
-import productImageA from "../../assets/1polo.jpg";
-import productImageB from "../../assets/1jeans.jpg";
-import productImageC from "../../assets/1wrist-watch.jpg";
-import productImageD from "../../assets/2polo.jpg";
-
-import { useState } from "react";
-import Toast from "../Toast/Toast"; // ✅ Import custom Toast component
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
+import { useState, useEffect } from "react";
+import Toast from "../Toast/Toast";
 
 const FeaturedProducts = () => {
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
   const navigate = useNavigate();
-  const { user } = useAuth(); // 👈 Get current user
+  const { user } = useAuth();
+  const { addToCart } = useCart();
 
-    const [toast, setToast] = useState(null); // ✅ Toast state
+  const [toast, setToast] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const products = [
-    { id: 1, name: "Product A", price: "$99.99", img: productImageA },
-    { id: 2, name: "Product B", price: "$79.99", img: productImageB },
-    { id: 3, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 4, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 5, name: "Product A", price: "$99.99", img: productImageA },
-    { id: 6, name: "Product B", price: "$79.99", img: productImageB },
-    { id: 7, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 8, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 9, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 10, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 11, name: "Product A", price: "$99.99", img: productImageA },
-    { id: 12, name: "Product B", price: "$79.99", img: productImageB },
-    { id: 13, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 14, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 15, name: "Product A", price: "$99.99", img: productImageA },
-    { id: 16, name: "Product B", price: "$79.99", img: productImageB },
-    { id: 17, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 18, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 19, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 20, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 21, name: "Product A", price: "$99.99", img: productImageA },
-    { id: 22, name: "Product B", price: "$79.99", img: productImageB },
-    { id: 23, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 24, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 25, name: "Product A", price: "$99.99", img: productImageA },
-    { id: 26, name: "Product B", price: "$79.99", img: productImageB },
-    { id: 27, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 28, name: "Product D", price: "$99.99", img: productImageD },
-    { id: 29, name: "Product C", price: "$59.99", img: productImageC },
-    { id: 30, name: "Product D", price: "$99.99", img: productImageD },
-  ];
+  // Fetch products from backend on mount
+useEffect(() => {
+  let isMounted = true;
 
-  const handleAddToCart = (product) => {
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/products");
+      if (!response.ok) throw new Error("Failed to fetch products");
+      const data = await response.json();
+
+      if (isMounted) setProducts(Array.isArray(data.products) ? data.products : []);
+    } catch (error) {
+      if (isMounted) {
+        setToast({ message: error.message || "Error loading products", type: "error" });
+      }
+    } finally {
+      if (isMounted) setLoading(false);
+    }
+  };
+
+  fetchProducts();
+
+  return () => {
+    isMounted = false;
+  };
+}, []);
+
+
+  const handleAddToCart = async (product) => {
     if (!user) {
       setToast({
         message: "Please log in to add items to your cart.",
@@ -66,25 +59,43 @@ const FeaturedProducts = () => {
           },
           {
             label: "Keep Browsing",
-            onClick: () => {
-              setToast(null);
-            },
+            onClick: () => setToast(null),
           },
         ],
       });
-    } else {
-      setToast({
-        message: `${product.name} added to cart ✅`,
-        type: "success",
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/cart/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user.id,
+          product_id: product.id,
+          quantity: 1,
+        }),
       });
-      setTimeout(() => setToast(null), 3000);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        addToCart({ ...product, quantity: 1 });
+        setToast({ message: `${product.name} added to cart ✅`, type: "success" });
+        setTimeout(() => setToast(null), 3000);
+      } else {
+        setToast({ message: data.message || "Failed to add product to cart", type: "error" });
+      }
+    } catch (error) {
+      setToast({ message: "Error connecting to server", type: "error" });
+      console.error("Add to cart error:", error);
     }
   };
 
   const handleViewProduct = (product) => {
     if (!user) {
       setToast({
-        message: "Please log in to view more about this product.",
+        message: "Please log in to view product details.",
         type: "info",
         actions: [
           {
@@ -96,20 +107,14 @@ const FeaturedProducts = () => {
           },
           {
             label: "Keep Browsing",
-            onClick: () => {
-              setToast(null);
-            },
+            onClick: () => setToast(null),
           },
         ],
       });
-    } else {
-      navigate(`/products/${product.id}`);
+      return;
     }
+    navigate(`/products/${product.id}`);
   };
-
-
-
-  // const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
 
   return (
     <section ref={ref} className={`feature-section ${inView ? "active" : ""}`}>
@@ -119,36 +124,56 @@ const FeaturedProducts = () => {
         <p>Shop our top-selling items, carefully selected just for you!</p>
       </div>
 
-      <div className="feature-grid">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className={`feature-card scroll-reveal ${inView ? "active" : ""}`}
-            onClick={() => handleViewProduct(product)}
-            style={{ cursor: "pointer" }}
-          >
-            <img src={product.img} alt={product.name} className="feature-img" />
-            <h3 className="feature-name">{product.name}</h3>
-            <p className="feature-price">{product.price}</p>
-            <button
-              className="feature-btn"
-              onClick={(e) => {
-                e.stopPropagation(); // 👈 prevent card click
-                handleAddToCart(product);
-              }}
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="loading-placeholder">
+          {/* Replace this with a spinner or skeleton UI if you want */}
+          <p>Loading products...</p>
+        </div>
+      ) : products.length === 0 ? (
+        <p className="no-products">No products available.</p>
+      ) : (
+        <div className="feature-grid">
+          {products.map((product) => (
+  <article
+    key={product.id}
+    className={`feature-card scroll-reveal ${inView ? "active" : ""}`}
+    onClick={() => handleViewProduct(product)}
+    role="button"
+    tabIndex={0}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
+    }}
+    aria-label={`View details for ${product.name}`}
+  >
+    <img
+      src={`http://localhost:5000/images/${product.image_url}`}
+      alt={product.name}
+      className="feature-img"
+      loading="lazy"
+    />
+    <h3 className="feature-name">{product.name}</h3>
+    <p className="feature-price">${parseFloat(product.discount_price || product.price).toFixed(2)}</p>
+    <button
+      className="feature-btn"
+      onClick={(e) => {
+        e.stopPropagation();
+        handleAddToCart(product);
+      }}
+      aria-label={`Add ${product.name} to cart`}
+    >
+      Add to Cart
+    </button>
+  </article>
+))}
 
-      {/* ✅ Show Toast */}
+        </div>
+      )}
+
       {toast && (
         <Toast
           message={toast.message}
           type={toast.type}
-          actions={toast.actions} // ✅ pass actions!
+          actions={toast.actions}
           onClose={() => setToast(null)}
         />
       )}

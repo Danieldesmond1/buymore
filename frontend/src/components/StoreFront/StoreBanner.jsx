@@ -6,10 +6,6 @@ import bannerImage1 from "../../assets/store_image_banner.png";
 import bannerImage2 from "../../assets/store_image_banner.png";
 import bannerImage3 from "../../assets/store_image_banner.png";
 
-// import xmasBanner from "../../assets/xmas-banner.jpg";
-// import ramadanBanner from "../../assets/ramadan-banner.jpg";
-// import blackFridayBanner from "../../assets/black-friday.jpg";
-
 const StoreBanner = () => {
   const seasonalBanners = [bannerImage1, bannerImage2, bannerImage3];
 
@@ -22,6 +18,7 @@ const StoreBanner = () => {
   };
 
   const [currentBanner, setCurrentBanner] = useState(bannerImage);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const seasonal = getSeasonalImage();
@@ -61,6 +58,24 @@ const StoreBanner = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Placeholder search handler
+  const handleSearch = () => {
+    if (searchQuery.trim() === "") {
+      alert("Please enter a search term.");
+      return;
+    }
+    // For now just alert or console log the query
+    alert(`Searching for: "${searchQuery}" (placeholder action)`);
+    // TODO: Replace with actual search/navigation logic later
+  };
+
+  // Optional: allow pressing Enter to trigger search
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <section
       className="store-banner"
@@ -82,8 +97,15 @@ const StoreBanner = () => {
           </div>
 
           <div className="store-search">
-            <input type="text" placeholder="Search for products, categories..." />
-            <button>Search</button>
+            <input
+              type="text"
+              placeholder="Search for products, categories..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyPress}
+              aria-label="Search products"
+            />
+            <button onClick={handleSearch}>Search</button>
           </div>
 
           <button className="shop-now-btn">Shop Now</button>

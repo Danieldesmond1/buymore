@@ -7,6 +7,8 @@ import { RiHomeSmileFill } from "react-icons/ri";
 import { AiOutlineProduct } from "react-icons/ai";
 import { CiLogin } from "react-icons/ci";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
+
 import Toast from "../Toast/Toast";
 import "./Navbar.css";
 
@@ -14,6 +16,8 @@ const Navbar = ({ onSearch }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const { user, logout } = useAuth();
+  const { cartItems } = useCart();
+
   const navigate = useNavigate();
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -41,6 +45,9 @@ const Navbar = ({ onSearch }) => {
       closeMenu();
     }
   };
+
+  // ✅ Total cart quantity
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <nav className="navbar">
@@ -73,14 +80,19 @@ const Navbar = ({ onSearch }) => {
               Shop <FaShopify />
             </button>
           </li>
+
           <li>
             <button onClick={() => handleProtectedClick("/products")} className="nav-btn">
               Products <AiOutlineProduct />
             </button>
           </li>
-          <li>
+
+          {/* ✅ Cart Icon with Badge */}
+          <li className="cart-icon-wrapper">
             <button onClick={() => handleProtectedClick("/cart")} className="nav-btn">
-              Cart <FaOpencart />
+              <FaOpencart />
+              <span className="cart-label">Cart</span>
+              {totalQuantity > 0 && <span className="cart-badge">{totalQuantity}</span>}
             </button>
           </li>
 
@@ -93,16 +105,47 @@ const Navbar = ({ onSearch }) => {
             </li>
           ) : (
             <li className="user-dropdown">
-              {/* Note: Removed onClick for dropdown toggle */}
               <button className="nav-btn user-btn" aria-haspopup="true" aria-expanded="false">
                 {user.displayName || "Account"} ⌄
               </button>
               <ul className="dropdown-menu">
-                <li>
-                  <Link to="/dashboard" onClick={closeMenu}>
-                    Dashboard
-                  </Link>
-                </li>
+                {/* Buyer View */}
+                {user.role === "buyer" && (
+                  <>
+                    <li>
+                      <Link to="/buyer/dashboard" onClick={closeMenu}>My Dashboard</Link>
+                    </li>
+                    <li>
+                      <Link to="/wishlist" onClick={closeMenu}>Wishlist</Link>
+                    </li>
+                    <li>
+                      <Link to="/saved-items" onClick={closeMenu}>Saved Items</Link>
+                    </li>
+                    <li>
+                      <Link to="/orders" onClick={closeMenu}>Order History</Link>
+                    </li>
+                  </>
+                )}
+
+                {/* Seller View */}
+                {user.role === "seller" && (
+                  <>
+                    <li>
+                      <Link to="/seller/dashboard" onClick={closeMenu}>Seller Dashboard</Link>
+                    </li>
+                    <li>
+                      <Link to="/seller/products" onClick={closeMenu}>Manage Products</Link>
+                    </li>
+                    <li>
+                      <Link to="/seller/create" onClick={closeMenu}>Add New Product</Link>
+                    </li>
+                    <li>
+                      <Link to="/seller/orders" onClick={closeMenu}>Sales & Orders</Link>
+                    </li>
+                  </>
+                )}
+
+                {/* Logout */}
                 <li>
                   <button
                     className="nav-btn logout-btn"
@@ -126,9 +169,14 @@ const Navbar = ({ onSearch }) => {
         <ThemeToggle />
       </div>
 
-      {/* Toast Message */}
+      {/* ✅ Global Toast Handler */}
       {toast && (
-        <Toast message={toast.message} type={toast.type} actions={toast.actions} onClose={() => setToast(null)} />
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          actions={toast.actions}
+          onClose={() => setToast(null)}
+        />
       )}
     </nav>
   );

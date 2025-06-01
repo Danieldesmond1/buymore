@@ -1,10 +1,18 @@
-// src/components/Cart/CartHeader.jsx
 import { FaShoppingCart } from "react-icons/fa";
 import './Styles/CartHeader.css';
 
-const CartHeader = () => {
-  // Simulated cart total (in real case, you'd get this from context/store)
-  const totalAmount = 48320.00;
+const formatter = new Intl.NumberFormat('en-NG', {
+  style: 'currency',
+  currency: 'NGN',
+  minimumFractionDigits: 0,
+});
+
+const CartHeader = ({ cartItems = [] }) => {
+  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const tax = subtotal * 0.07;
+  const shippingFee = subtotal > 50000 ? 0 : 2000;
+  const discount = 0;
+  const totalAmount = subtotal + tax + shippingFee - discount;
 
   return (
     <div className="cart-header slide-in">
@@ -14,7 +22,9 @@ const CartHeader = () => {
       </div>
       <div className="cart-header__right">
         <div className="cart-header__info">
-          <span className="cart-header__total">Cart Total: ₦{totalAmount.toLocaleString()}</span>
+          <span className="cart-header__total">
+            Cart Total: {formatter.format(totalAmount)}
+          </span>
           <a href="/" className="cart-header__link">← Continue Shopping</a>
         </div>
       </div>

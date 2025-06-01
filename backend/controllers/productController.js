@@ -291,17 +291,21 @@ export const toggleProductLike = async (req, res) => {
   try {
     const { user_id, product_id } = req.body;
 
-    // Check if the user already liked the product
+    // Validate inputs
+    if (!user_id || !product_id) {
+      return res.status(400).json({ message: "user_id and product_id are required" });
+    }
+
     const checkQuery = "SELECT * FROM product_likes WHERE user_id = $1 AND product_id = $2";
     const checkResult = await pool.query(checkQuery, [user_id, product_id]);
 
     if (checkResult.rows.length > 0) {
-      // User already liked it, so unlike it
+      // Unlike
       const deleteQuery = "DELETE FROM product_likes WHERE user_id = $1 AND product_id = $2";
       await pool.query(deleteQuery, [user_id, product_id]);
       return res.status(200).json({ message: "Product unliked successfully" });
     } else {
-      // User hasn't liked it, so like it
+      // Like
       const insertQuery = "INSERT INTO product_likes (user_id, product_id) VALUES ($1, $2)";
       await pool.query(insertQuery, [user_id, product_id]);
       return res.status(200).json({ message: "Product liked successfully" });
@@ -311,6 +315,7 @@ export const toggleProductLike = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // ✅ Get Like Count for a Product
 export const getProductLikes = async (req, res) => {
