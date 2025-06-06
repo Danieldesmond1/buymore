@@ -8,34 +8,123 @@ import {
   FaUndo,
   FaUserShield,
   FaGlobe,
+  FaTag,
+  FaStar,
+  FaStarHalfAlt,
+  FaRegStar,
+  FaIndustry,
+  FaListAlt,
 } from "react-icons/fa";
 import "./Styles/ProductDetails.css";
 
-const ProductDetails = () => {
+const ProductDetailsInfo = ({ product }) => {
   const [showMore, setShowMore] = useState(false);
 
-  const color = "Space Black";
-  const stock = 5;
-  const size = "256GB";
-  const isNew = true;
+  const {
+    name,
+    description,
+    price,
+    discount_price,
+    stock,
+    category,
+    brand,
+    rating,
+    color,
+    size,
+    isNew,
+  } = product;
+
+  // ⭐ Generate star icons based on rating
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.3 && rating % 1 <= 0.7;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    const stars = [];
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<FaStar key={`full-${i}`} className="star-icon filled" />);
+    }
+
+    if (hasHalfStar) {
+      stars.push(<FaStarHalfAlt key="half" className="star-icon half" />);
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+      stars.push(<FaRegStar key={`empty-${i}`} className="star-icon empty" />);
+    }
+
+    return stars;
+  };
+
+  const renderRating = () => {
+    if (typeof rating === "number" && rating >= 0) {
+      return (
+        <span className="detail-value rating-stars">
+          {renderStars(rating)}
+          <span className="rating-score">{rating.toFixed(1)} / 5</span>
+        </span>
+      );
+    } else {
+      // Show 5 empty stars with "Not rated"
+      return (
+        <span className="detail-value rating-stars">
+          {[...Array(5)].map((_, i) => (
+            <FaRegStar key={i} className="star-icon empty" />
+          ))}
+          <span className="rating-score">Not rated</span>
+        </span>
+      );
+    }
+  };
+
 
   return (
     <div className="product-details-container">
       <div className="details-card">
-        <h2 className="details-title">Product Details</h2>
+        <h2 className="details-title">{name || "Product Details"}</h2>
+
+        <p className="product-description">{description}</p>
+
         <div className="details-wrapper">
           <div className="detail-row">
             <span className="detail-label">
-              <FaPalette className="icon" /> Color:
+              <FaTag className="icon" /> Price:
             </span>
-            <span className="detail-value">{color}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">
-              <FaBoxOpen className="icon" /> Size:
+            <span className="detail-value">
+              {discount_price ? (
+                <>
+                  <span className="discount-price">
+                    ${Number(discount_price).toFixed(2)}
+                  </span>{" "}
+                  <span className="original-price">
+                    ${Number(price).toFixed(2)}
+                  </span>
+                </>
+              ) : (
+                <>${Number(price).toFixed(2)}</>
+              )}
             </span>
-            <span className="detail-value">{size}</span>
           </div>
+
+          {color && (
+            <div className="detail-row">
+              <span className="detail-label">
+                <FaPalette className="icon" /> Color:
+              </span>
+              <span className="detail-value">{color}</span>
+            </div>
+          )}
+
+          {size && (
+            <div className="detail-row">
+              <span className="detail-label">
+                <FaBoxOpen className="icon" /> Size:
+              </span>
+              <span className="detail-value">{size}</span>
+            </div>
+          )}
+
           <div className="detail-row stock">
             <span className="detail-label">
               <FaWarehouse className="icon" /> Stock:
@@ -57,6 +146,31 @@ const ProductDetails = () => {
             </span>
           </div>
 
+          {category && (
+            <div className="detail-row">
+              <span className="detail-label">
+                <FaListAlt className="icon" /> Category:
+              </span>
+              <span className="detail-value">{category}</span>
+            </div>
+          )}
+
+          {brand && (
+            <div className="detail-row">
+              <span className="detail-label">
+                <FaIndustry className="icon" /> Brand:
+              </span>
+              <span className="detail-value">{brand}</span>
+            </div>
+          )}
+
+          <div className="detail-row">
+            <span className="detail-label">
+              <FaStar className="icon" /> Rating:
+            </span>
+            {renderRating()}
+          </div>
+
           {isNew && <div className="new-badge">New</div>}
         </div>
 
@@ -69,10 +183,7 @@ const ProductDetails = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowMore(!showMore)}
-          className="toggle-btn"
-        >
+        <button onClick={() => setShowMore(!showMore)} className="toggle-btn">
           {showMore ? "Hide Details ▲" : "More Details ▼"}
         </button>
 
@@ -94,4 +205,4 @@ const ProductDetails = () => {
   );
 };
 
-export default ProductDetails;
+export default ProductDetailsInfo;

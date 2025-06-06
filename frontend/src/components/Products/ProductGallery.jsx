@@ -1,14 +1,14 @@
 import "./Styles/ProductGallery.css";
 import { useState, useRef, useEffect } from "react";
 
-import front from "../../assets/iphone14promaxfront.jpg";
-import back from "../../assets/iphone14promax.jpg";
-import side from "../../assets/iphone14promaxside.jpg";
-import box from "../../assets/iphone14promaxpack.jpg";
+// import front from "../../assets/iphone14promaxfront.jpg";
+// import back from "../../assets/iphone14promax.jpg";
+// import side from "../../assets/iphone14promaxside.jpg";
+// import box from "../../assets/iphone14promaxpack.jpg";
 
-const ProductGallery = () => {
-  const images = [front, back, side, box];
-  const [selectedImage, setSelectedImage] = useState(images[0]);
+const ProductGallery = ({ images = [] }) => {
+  // const images = [front, back, side, box];
+  const [selectedImage, setSelectedImage] = useState(images[0] || "");
   const [fade, setFade] = useState(false);
   const [zoom, setZoom] = useState(1);
   const zoomAreaRef = useRef(null);

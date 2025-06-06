@@ -35,3 +35,36 @@
 .star {
   color: gold;
 }
+
+.verified-icon {
+  color: var(--success-color, #28a745);
+  margin-left: 6px;
+}
+
+.seller-header {
+  margin-bottom: 15px;
+}
+
+.seller-meta {
+  margin-top: 15px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+}
+
+.seller-about {
+  margin-top: 20px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 15px;
+}
+
+.seller-about h3 {
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.seller-name {
+  font-size: 16px;
+  font-weight: 500;
+}

@@ -1,70 +1,65 @@
 import "./Styles/ProductHeader.css";
-import front from "../../assets/iphone14promaxfront.jpg";
-import back from "../../assets/iphone14promax.jpg";
-import side from "../../assets/iphone14promaxside.jpg";
-import box from "../../assets/iphone14promaxpack.jpg";
-import { useState, useEffect } from "react";
 
-const ProductHeader = () => {
-  const title = "iPhone 14 Pro Max (256GB) - Deep Purple";
-  const price = 1250000;
-  const oldPrice = 1450000;
+const ProductHeader = ({ product }) => {
+  // If product is undefined or missing important fields, show a fallback
+  if (!product || (!product.name && !product.price)) {
+    return <p className="loading-message">Loading product details...</p>;
+  }
+
+  const title = product.name;
+  const price = product.discount_price ?? product.price ?? 0;
+  const oldPrice = product.price ?? 0;
   const savings = oldPrice - price;
-  const badges = ["Best Seller", "In Stock"];
-
-  const images = [front, back, side, box];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    let interval;
-
-    if (isHovered) {
-      interval = setInterval(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-      }, 1500);
-    } else {
-      setCurrentIndex(0);
-    }
-
-    return () => clearInterval(interval);
-  }, [isHovered]);
+  const badges = product.tags || ["In Stock"];
+  const imageUrl = product.image_url
+    ? `http://localhost:5000/images/${product.image_url}`
+    : "";
 
   return (
     <div className="product-header">
-      <div
-        className="product-image-container"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <img
-          src={images[currentIndex]}
-          alt={title}
-          className="product-image fade-image"
-        />
+      <div className="product-image-container">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={title}
+            className="product-image"
+          />
+        ) : (
+          <div className="no-image">No image available</div>
+        )}
       </div>
 
       <div className="product-info">
-        <h1 className="product-title">{title}</h1>
+        <h1 className="product-title">{title || "Unnamed Product"}</h1>
 
         <div className="product-pricing">
-          <div className="product-price">₦{price.toLocaleString()}</div>
-          <div className="old-price">₦{oldPrice.toLocaleString()}</div>
-          <div className="you-save">You save ₦{savings.toLocaleString()}</div>
+          <div className="product-price">${price.toLocaleString()}</div>
+          {oldPrice !== price && (
+            <>
+              <div className="old-price">${oldPrice.toLocaleString()}</div>
+              <div className="you-save">
+                You save ${savings.toLocaleString()}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="product-badges">
           {badges.map((badge, index) => (
             <span
               key={index}
-              className={`badge ${badge.toLowerCase().replace(/\s+/g, "-")}`}
+              className={`badge ${badge
+                .toLowerCase()
+                .replace(/\s+/g, "-")}`}
             >
               {badge}
             </span>
           ))}
         </div>
 
-        <div className="limited-stock">🔥 Only 3 left – order now!</div>
+        <div className="limited-stock">
+          🔥 Only {product.stock ?? 3} left – order now!
+        </div>
       </div>
     </div>
   );

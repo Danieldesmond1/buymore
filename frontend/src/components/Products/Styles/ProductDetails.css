@@ -143,3 +143,24 @@
   font-size: 14px;
   animation: fadeIn 0.3s ease-in-out;
 }
+
+.rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.star-icon {
+  color: #f4c150; /* gold star */
+  font-size: 1rem;
+}
+
+.star-icon.empty {
+  color: #ccc;
+}
+
+.rating-score {
+  font-weight: 500;
+  margin-left: 5px;
+  font-size: 0.95rem;
+}

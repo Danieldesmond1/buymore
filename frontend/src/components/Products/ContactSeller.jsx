@@ -13,7 +13,7 @@ const ContactSeller = () => {
     e.preventDefault();
 
     if (form.name && form.email && form.message) {
-      // You can handle sending logic here (e.g., API call)
+      // Handle message send logic here
       setSubmitted(true);
       setForm({ name: "", email: "", message: "" });
       setTimeout(() => setSubmitted(false), 3000);
@@ -21,8 +21,8 @@ const ContactSeller = () => {
   };
 
   return (
-    <div className="contact-seller">
-      <h2>Contact Seller</h2>
+    <section className="contact-seller">
+      <h2 className="contact-title">Contact Seller</h2>
       <form className="contact-form" onSubmit={handleSubmit}>
         <input
           type="text"
@@ -43,15 +43,15 @@ const ContactSeller = () => {
         <textarea
           name="message"
           placeholder="Your message to the seller..."
-          rows="4"
+          rows="5"
           value={form.message}
           onChange={handleChange}
           required
         />
         <button type="submit">Send Message</button>
-        {submitted && <span className="success-msg">Message sent successfully ✅</span>}
+        {submitted && <p className="success-msg">✅ Message sent successfully!</p>}
       </form>
-    </div>
+    </section>
   );
 };
 
