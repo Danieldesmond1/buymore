@@ -9,28 +9,35 @@ export const AuthProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
-          credentials: "include",
-        });
+  const fetchUser = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/users/me", {
+        credentials: "include",
+      });
 
-        if (res.ok) {
-          const user = await res.json();
-          setUser(user);
-        } else {
-          setUser(null);
-        }
-      } catch (err) {
-        console.error("Error fetching current user:", err);
+      if (res.ok) {
+        const user = await res.json();
+        setUser(user);
+        localStorage.setItem("user", JSON.stringify(user));
+      } else {
         setUser(null);
+        localStorage.removeItem("user");
       }
-    };
+    } catch (err) {
+      console.error("Error fetching current user:", err);
+      setUser(null);
+      localStorage.removeItem("user");
+    }
+  };
 
-    fetchUser();
-  }, []);
+  if (!user) fetchUser();
+}, [user]); // <- add `user` dependency
 
-  const login = (userData) => setUser(userData);
+  const login = (userData) => {
+  setUser(userData);
+  localStorage.setItem("user", JSON.stringify(userData)); // 🟢 Add this
+};
+
 
   const logout = async () => {
     try {

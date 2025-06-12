@@ -5,10 +5,8 @@ const SignupPage = () => {
   const [role, setRole] = useState("buyer");
 
   return (
-    <>
-      <SignupForm selectedRole={role} />
-    </>
-  )
-}
+    <SignupForm selectedRole={role} setRole={setRole} />
+  );
+};
 
 export default SignupPage;

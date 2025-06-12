@@ -4,44 +4,137 @@ import pool from "../utils/dbConnect.js"; // Correct import
 
 // User Sign-up
 export const signupUser = async (req, res) => {
-  const { username, email, password, location, role  } = req.body;
-
   try {
-    // Convert email to lowercase
+    const {
+      username,
+      email,
+      password,
+      location,
+      role,
+      bio,
+      // Seller-specific
+      shop_name,
+      shop_handle,
+      tagline,
+      shop_description,
+      store_type,
+      banner_image,
+      logo_image,
+      business_address,
+      estimated_shipping_time,
+      return_policy,
+      chat_enabled,
+      social_links,
+      verification_docs,
+      preferred_language,
+      seo_keywords,
+      welcome_message,
+      auto_reply
+    } = req.body;
+
+    const profileImageFile = req.file;
     const normalizedEmail = email.toLowerCase();
 
-    // Check if email already exists
     const checkEmailQuery = "SELECT * FROM users WHERE email = $1";
     const { rows: existingUser } = await pool.query(checkEmailQuery, [normalizedEmail]);
-
     if (existingUser.length > 0) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert the user into the database
-    const createUserQuery =
-      "INSERT INTO users (username, email, password, location, role) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+    const createUserQuery = `
+      INSERT INTO users (username, email, password, location, role, bio, profile_image)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id, username, email, location, role
+    `;
     const { rows: newUser } = await pool.query(createUserQuery, [
       username,
       normalizedEmail,
       hashedPassword,
       location,
       role,
+      bio,
+      profileImageFile ? profileImageFile.filename : null,
     ]);
 
-    return res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser[0] });
+    const userId = newUser[0].id;
+
+    if (role === "seller") {
+      const createShopQuery = `
+        INSERT INTO sellers_shop (
+          user_id, shop_name, shop_handle, tagline, shop_description,
+          store_type, banner_image, logo_image, business_address,
+          estimated_shipping_time, return_policy, chat_enabled,
+          social_links, verification_docs, preferred_language,
+          seo_keywords, welcome_message, auto_reply
+        )
+        VALUES (
+          $1, $2, $3, $4, $5,
+          $6, $7, $8, $9,
+          $10, $11, $12,
+          $13, $14, $15,
+          $16, $17, $18
+        )
+      `;
+
+      await pool.query(createShopQuery, [
+        userId, shop_name, shop_handle, tagline, shop_description,
+        store_type, banner_image, logo_image, business_address,
+        estimated_shipping_time, return_policy, chat_enabled ?? true,
+        social_links ? JSON.parse(social_links) : null,
+        verification_docs, preferred_language,
+        seo_keywords, welcome_message, auto_reply
+      ]);
+    }
+
+    return res.status(201).json({ message: "User created successfully", user: newUser[0] });
+
   } catch (error) {
-    console.error("Error signing up user:", error);
+    console.error("Signup error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// User Sign-in
+
+// updateBuyerProfile
+export const updateBuyerProfile = async (req, res) => {
+  try {
+    const bio = req.body.bio;
+    const profileImageFile = req.file;
+
+    if (!bio || !profileImageFile) {
+      return res.status(400).json({ message: "Bio and profile image are required." });
+    }
+
+    const profileImagePath = `/uploads/${profileImageFile.filename}`;
+    const userId = req.user.userId;
+
+    const updateQuery = `
+      UPDATE users
+      SET bio = $1, profile_image = $2
+      WHERE id = $3
+      RETURNING id, username, email, role, location, bio, profile_image
+    `;
+
+    const { rows: updatedUser } = await pool.query(updateQuery, [bio, profileImagePath, userId]);
+
+    if (updatedUser.length === 0) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.status(200).json({
+      message: "Profile updated successfully!",
+      user: updatedUser[0],
+    });
+  } catch (error) {
+    console.error("Error in updateBuyerProfile:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+
+
 // User Sign-in
 export const signinUser = async (req, res) => {
   const { email, password } = req.body;

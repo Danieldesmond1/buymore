@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import "./Styles/LoginForm.css";
@@ -17,6 +18,8 @@ const LoginForm = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -53,8 +56,11 @@ const LoginForm = () => {
 
         // Redirect example after 1 second delay
         setTimeout(() => {
-          window.location.href = "/"; // change as needed
+          navigate("/");
+          window.location.reload();
         }, 1000);
+
+
       } catch (error) {
         setMessage(
           error.response?.data?.message || "Login failed. Please check your credentials."

@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -18,6 +19,9 @@ dotenv.config();
 
 const app = express();
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+
+// Serve uploads folder statically so images can be accessed publicly
+app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
 app.use(cookieParser());
 

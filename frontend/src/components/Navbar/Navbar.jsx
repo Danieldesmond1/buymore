@@ -4,7 +4,8 @@ import SearchBar from "../Navbar/SearchBar.jsx";
 import ThemeToggle from "../Navbar/ThemeToggle.jsx";
 import { FaOpencart, FaShopify } from "react-icons/fa";
 import { RiHomeSmileFill } from "react-icons/ri";
-import { AiOutlineProduct } from "react-icons/ai";
+import { FaChartLine } from "react-icons/fa";
+import { FaStoreAlt } from "react-icons/fa";
 import { CiLogin } from "react-icons/ci";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
@@ -81,18 +82,29 @@ const Navbar = ({ onSearch }) => {
             </button>
           </li>
 
-          <li>
-            <button onClick={() => handleProtectedClick("/products")} className="nav-btn">
-              Products <AiOutlineProduct />
-            </button>
-          </li>
+          {user ? (
+            user.role === "buyer" ? (
+              <li>
+                <button onClick={() => handleProtectedClick("/stores")} className="nav-btn">
+                  Stores <FaStoreAlt />
+                </button>
+              </li>
+            ) : (
+              <li>
+                <button onClick={() => handleProtectedClick("/top-sellers")} className="nav-btn">
+                  Top Sellers <FaChartLine />
+                </button>
+              </li>
+            )
+          ) : null}
+
 
           {/* ✅ Cart Icon with Badge */}
           <li className="cart-icon-wrapper">
             <button onClick={() => handleProtectedClick("/cart")} className="nav-btn">
-              <FaOpencart />
-              <span className="cart-label">Cart</span>
+              <span className="cart-label">Cart</span> 
               {totalQuantity > 0 && <span className="cart-badge">{totalQuantity}</span>}
+              <FaOpencart />
             </button>
           </li>
 
@@ -106,8 +118,12 @@ const Navbar = ({ onSearch }) => {
           ) : (
             <li className="user-dropdown">
               <button className="nav-btn user-btn" aria-haspopup="true" aria-expanded="false">
+                {user.photoURL && (
+                  <img src={user.photoURL} alt="Profile" className="profile-avatar" />
+                )}
                 {user.displayName || "Account"} ⌄
               </button>
+
               <ul className="dropdown-menu">
                 {/* Buyer View */}
                 {user.role === "buyer" && (
