@@ -46,10 +46,14 @@ const SignupForm = ({ selectedRole = "buyer", onSignupSuccess }) => {
 
   const [errors, setErrors] = useState({});
   const [profileImage, setProfileImage] = useState(null);
+  const [bannerImage, setBannerImage] = useState(null);
+  const [logoImage, setLogoImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [shopHandleStatus, setShopHandleStatus] = useState(null);
+
 
   useEffect(() => {
     setForm((prev) => ({ ...prev, role: selectedRole }));
@@ -66,6 +70,21 @@ const SignupForm = ({ selectedRole = "buyer", onSignupSuccess }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const handleCheckShopHandle = async () => {
+  if (!form.shop_handle.trim()) return;
+
+  try {
+    const res = await axios.get(`/api/users/check-handle?handle=${form.shop_handle}`);
+    setShopHandleStatus({ available: true, message: "Shop handle is available ✅" });
+  } catch (err) {
+    setShopHandleStatus({
+      available: false,
+      message: err.response?.data?.message || "Shop handle is taken ❌",
+    });
+  }
+};
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -107,6 +126,22 @@ const handleSubmit = async (e) => {
 
     if (profileImage) {
       formData.append("profile_image", profileImage);
+    }
+
+    if (logoImage) {
+      formData.append("logo_image", logoImage);
+    }
+
+    if (bannerImage) {
+      formData.append("banner_image", bannerImage);
+    }
+
+    if (form.banner_image && typeof form.banner_image !== "string") {
+      formData.append("banner_image", form.banner_image);
+    }
+
+    if (form.logo_image && typeof form.logo_image !== "string") {
+      formData.append("logo_image", form.logo_image);
     }
 
     // ✅ Send signup request and let backend set the cookie
@@ -241,29 +276,201 @@ const handleSubmit = async (e) => {
 
         {form.role === "seller" && (
           <>
-            <h4>Seller Shop Details</h4>
-            <input name="shop_name" placeholder="Shop Name" value={form.shop_name} onChange={handleChange} />
-            <input name="shop_handle" placeholder="Shop Handle" value={form.shop_handle} onChange={handleChange} />
-            <input name="tagline" placeholder="Tagline" value={form.tagline} onChange={handleChange} />
-            <textarea name="shop_description" placeholder="Shop Description" value={form.shop_description} onChange={handleChange} />
-            <input name="store_type" placeholder="Store Type" value={form.store_type} onChange={handleChange} />
-            <input name="banner_image" placeholder="Banner Image URL" value={form.banner_image} onChange={handleChange} />
-            <input name="logo_image" placeholder="Logo Image URL" value={form.logo_image} onChange={handleChange} />
-            <input name="business_address" placeholder="Business Address" value={form.business_address} onChange={handleChange} />
-            <input name="estimated_shipping_time" placeholder="Estimated Shipping Time" value={form.estimated_shipping_time} onChange={handleChange} />
-            <textarea name="return_policy" placeholder="Return Policy" value={form.return_policy} onChange={handleChange} />
-            <label>
-              <input type="checkbox" name="chat_enabled" checked={form.chat_enabled} onChange={handleChange} />
-              Enable Chat
-            </label>
-            <input name="social_links" placeholder="Social Links (JSON)" value={form.social_links} onChange={handleChange} />
-            <input name="verification_docs" placeholder="Verification Docs" value={form.verification_docs} onChange={handleChange} />
-            <input name="preferred_language" placeholder="Preferred Language" value={form.preferred_language} onChange={handleChange} />
-            <input name="seo_keywords" placeholder="SEO Keywords" value={form.seo_keywords} onChange={handleChange} />
-            <textarea name="welcome_message" placeholder="Welcome Message" value={form.welcome_message} onChange={handleChange} />
-            <textarea name="auto_reply" placeholder="Auto Reply" value={form.auto_reply} onChange={handleChange} />
+            <h4 className="section-heading">🛍️ Seller Shop Details</h4>
+
+            <div className="section-group">
+              <h5 className="sub-section-title">🏷️ Brand Identity</h5>
+
+              <div className="input-wrapper">
+                <input
+                  name="shop_name"
+                  placeholder="Shop Name"
+                  value={form.shop_name}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper with-button">
+                <input
+                  name="shop_handle"
+                  placeholder="Shop Handle"
+                  value={form.shop_handle}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="check-btn"
+                  onClick={handleCheckShopHandle}
+                  disabled={!form.shop_handle.trim()}
+                >
+                  Check
+                </button>
+              </div>
+              {shopHandleStatus && (
+                <small
+                  className={`status-text ${shopHandleStatus.available ? "available" : "taken"}`}
+                >
+                  {shopHandleStatus.message}
+                </small>
+              )}
+
+              <div className="input-wrapper">
+                <input
+                  name="tagline"
+                  placeholder="Tagline"
+                  value={form.tagline}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <textarea
+                  name="shop_description"
+                  placeholder="Shop Description"
+                  value={form.shop_description}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <input
+                  name="store_type"
+                  placeholder="Store Type"
+                  value={form.store_type}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <label className="upload-label">Upload Banner Image</label>
+              <input type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) setBannerImage(file);
+              }} />
+
+              {form.banner_image && typeof form.banner_image !== "string" && (
+                <img
+                  src={URL.createObjectURL(form.banner_image)}
+                  alt="Banner Preview"
+                  className="image-preview"
+                />
+              )}
+
+              <label className="upload-label">Upload Logo Image</label>
+              <input type="file" accept="image/*" onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) setLogoImage(file);
+              }} />
+
+              {form.logo_image && typeof form.logo_image !== "string" && (
+                <img
+                  src={URL.createObjectURL(form.logo_image)}
+                  alt="Logo Preview"
+                  className="image-preview small"
+                />
+              )}
+            </div>
+
+            <div className="section-group">
+              <h5 className="sub-section-title">📍 Business Details</h5>
+
+              <div className="input-wrapper">
+                <input
+                  name="business_address"
+                  placeholder="Business Address"
+                  value={form.business_address}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <input
+                  name="estimated_shipping_time"
+                  placeholder="Estimated Shipping Time"
+                  value={form.estimated_shipping_time}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <textarea
+                  name="return_policy"
+                  placeholder="Return Policy"
+                  value={form.return_policy}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <input
+                  name="preferred_language"
+                  placeholder="Preferred Language"
+                  value={form.preferred_language}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <input
+                  name="verification_docs"
+                  placeholder="Verification Docs"
+                  value={form.verification_docs}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="section-group">
+              <h5 className="sub-section-title">⚙️ Store Settings</h5>
+
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="chat_enabled"
+                  checked={form.chat_enabled}
+                  onChange={handleChange}
+                />
+                Enable Chat
+              </label>
+
+              <div className="input-wrapper">
+                <input
+                  name="social_links"
+                  placeholder='Social Links (e.g. {"instagram": "...", "x": "..."})'
+                  value={form.social_links}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <input
+                  name="seo_keywords"
+                  placeholder="SEO Keywords"
+                  value={form.seo_keywords}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <textarea
+                  name="welcome_message"
+                  placeholder="Welcome Message"
+                  value={form.welcome_message}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="input-wrapper">
+                <textarea
+                  name="auto_reply"
+                  placeholder="Auto Reply"
+                  value={form.auto_reply}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
           </>
         )}
+
 
         {message && (
           <p className={`message ${message.toLowerCase().includes("success") ? "success" : "error"}`}>

@@ -32,7 +32,10 @@ export const signupUser = async (req, res) => {
       auto_reply
     } = req.body;
 
-    const profileImageFile = req.file;
+    const profileImageFile = req.files?.profile_image?.[0];
+    const bannerImageFile = req.files?.banner_image?.[0];
+    const logoImageFile = req.files?.logo_image?.[0];
+
     const normalizedEmail = email.toLowerCase();
 
     const checkEmailQuery = "SELECT * FROM users WHERE email = $1";
@@ -61,6 +64,15 @@ export const signupUser = async (req, res) => {
     const userId = newUser[0].id;
 
     if (role === "seller") {
+      // 🔍 Check if shop_handle exists
+      const checkHandleQuery = "SELECT * FROM sellers_shop WHERE shop_handle = $1";
+      const { rows: existingHandle } = await pool.query(checkHandleQuery, [shop_handle]);
+
+      if (existingHandle.length > 0) {
+        return res.status(400).json({ message: "Shop handle already exists. Please choose another." });
+      }
+
+      // ✅ Safe to insert now
       const createShopQuery = `
         INSERT INTO sellers_shop (
           user_id, shop_name, shop_handle, tagline, shop_description,
@@ -79,12 +91,24 @@ export const signupUser = async (req, res) => {
       `;
 
       await pool.query(createShopQuery, [
-        userId, shop_name, shop_handle, tagline, shop_description,
-        store_type, banner_image, logo_image, business_address,
-        estimated_shipping_time, return_policy, chat_enabled ?? true,
+        userId,
+        shop_name,
+        shop_handle,
+        tagline,
+        shop_description,
+        store_type,
+        bannerImageFile ? bannerImageFile.filename : null,
+        logoImageFile ? logoImageFile.filename : null,
+        business_address,
+        estimated_shipping_time,
+        return_policy,
+        chat_enabled ?? true,
         social_links ? JSON.parse(social_links) : null,
-        verification_docs, preferred_language,
-        seo_keywords, welcome_message, auto_reply
+        verification_docs,
+        preferred_language,
+        seo_keywords,
+        welcome_message,
+        auto_reply
       ]);
     }
 
