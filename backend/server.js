@@ -13,6 +13,7 @@ import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import shippingRoutes from "./routes/shippingRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import shopRoutes from "./routes/shopRoutes.js"; // 👈 Add this
 
 // Load environment variables
 dotenv.config();
@@ -40,6 +41,8 @@ app.use("/api/shipping", shippingRoutes);
 app.use("/api/payment", paymentRoutes);
 
 app.use("/api/locations", locationRoutes);
+
+app.use("/api/shops", shopRoutes); // 👈 This exposes /api/shops
 
 // Base route
 app.get("/", (req, res) => {

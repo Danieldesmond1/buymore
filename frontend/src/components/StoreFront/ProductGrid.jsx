@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 import "./Styles/ProductGrid.css";
+import Toast from "../Toast/Toast";
+
 
 const capitalize = (str) =>
   str
@@ -9,7 +14,6 @@ const capitalize = (str) =>
     .join(" ");
 
 const ProductGrid = ({
-  addToCart,
   selectedCategory,
   setSelectedCategory,
   filters,
@@ -21,6 +25,15 @@ const ProductGrid = ({
   const [visibleCount, setVisibleCount] = useState(6);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState(null);
+
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { addToCart } = useCart();
+
+  const handleViewProduct = (product) => {
+    navigate(`/products/${product.id}`);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -49,7 +62,6 @@ const ProductGrid = ({
 
   const applyFilters = (products) => {
     return products.filter((product) => {
-      // Search query filter
       if (searchQuery && searchQuery.trim() !== "") {
         const query = searchQuery.trim().toLowerCase();
         if (
@@ -61,14 +73,12 @@ const ProductGrid = ({
         }
       }
 
-      // Category filter
       if (
         selectedCategory &&
         capitalize(product.category) !== capitalize(selectedCategory)
       )
         return false;
 
-      // Price filter
       if (filters.price.length) {
         const price = product.discount_price || product.price;
         const match = filters.price.some((range) => {
@@ -81,11 +91,9 @@ const ProductGrid = ({
         if (!match) return false;
       }
 
-      // Brand filter
       if (filters.brand.length && !filters.brand.includes(product.brand))
         return false;
 
-      // Rating filter
       if (filters.rating.length) {
         const ratingMatch = filters.rating.some((ratingLabel) => {
           const minStars = parseInt(ratingLabel[0]);
@@ -94,7 +102,6 @@ const ProductGrid = ({
         if (!ratingMatch) return false;
       }
 
-      // Availability filter
       if (
         filters.availability.length &&
         !filters.availability.includes(
@@ -103,20 +110,17 @@ const ProductGrid = ({
       )
         return false;
 
-      // Color filter (normalize to lowercase for comparison)
       if (
         filters.color.length &&
         !filters.color.includes(product.color?.toLowerCase())
       )
         return false;
 
-      // Condition filter
       if (filters.condition.length && !filters.condition.includes(product.condition))
         return false;
 
-      // Discount filter
       if (filters.discount.length) {
-        if (!product.discount_price) return false; // no discount if no discount_price
+        if (!product.discount_price) return false;
         const discountPercent = Math.round(
           ((product.price - product.discount_price) / product.price) * 100
         );
@@ -138,7 +142,7 @@ const ProductGrid = ({
   };
 
   const handleClearFilters = () => {
-    setSelectedCategory(""); // resets category
+    setSelectedCategory("");
     setFilters({
       price: [],
       brand: [],
@@ -148,8 +152,21 @@ const ProductGrid = ({
       condition: [],
       discount: [],
     });
-    setSearchQuery(""); // reset search query
-    setVisibleCount(6); // reset visible items
+    setSearchQuery("");
+    setVisibleCount(6);
+  };
+
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
+    if (!user) {
+      setToast({ message: "Please login to add to cart", type: "warning" });
+      return;
+    }
+
+    addToCart(user.id, product, (message, type) => {
+      setToast({ message, type });
+      setTimeout(() => setToast(null), 3000);
+    });
   };
 
   if (loading) return <p className="pg-loading">Loading products...</p>;
@@ -183,11 +200,18 @@ const ProductGrid = ({
         <div className="pg-grid">
           {filteredProducts.slice(0, visibleCount).map((product, index) => (
             <motion.article
+              key={product.id}
+              onClick={() => handleViewProduct(product)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
+              }}
+              aria-label={`View details for ${product.name}`}
+              className="pg-card"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
-              className="pg-card"
-              key={product.id}
             >
               <img
                 src={`http://localhost:5000/images/${product.image_url}`}
@@ -231,7 +255,7 @@ const ProductGrid = ({
                 className="pg-btn"
                 aria-label={`Add ${product.name} to cart`}
                 disabled={product.stock === 0}
-                onClick={() => addToCart(product)}
+                onClick={(e) => handleAddToCart(e, product)}
               >
                 Add to Cart
               </button>
@@ -247,6 +271,9 @@ const ProductGrid = ({
           </button>
         </div>
       )}
+
+      {toast && <Toast message={toast.message} type={toast.type} />}
+
     </section>
   );
 };

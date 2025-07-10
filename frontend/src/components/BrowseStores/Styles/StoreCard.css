@@ -1,0 +1,117 @@
+.store-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.store-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Banner image */
+/* .store-banner-styles {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border-color);
+} */
+
+/* Header with logo + text */
+.store-card-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.store-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.store-info {
+  flex: 1;
+}
+
+.store-name {
+  font-size: 1.25rem;
+  margin: 0;
+  color: var(--text);
+}
+
+.store-owner,
+.store-category,
+.store-location {
+  font-size: 0.875rem;
+  color: var(--dropdown-text);
+  margin: 2px 0;
+}
+
+/* Description */
+.store-description {
+  padding: 0 1rem;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+/* Top products preview */
+.store-top-products {
+  padding: 0 1rem 1rem;
+}
+
+.store-top-products h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.product-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.product-thumb {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+/* Footer with rating + visit link */
+.store-footer {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+}
+
+.store-rating {
+  font-size: 0.9rem;
+  color: var(--primary-color);
+}
+
+.store-link {
+  text-decoration: none;
+  background-color: var(--primary-btn);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
+}
+
+.store-link:hover {
+  background-color: #e62400;
+}

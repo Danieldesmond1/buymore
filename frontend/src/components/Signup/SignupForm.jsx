@@ -341,33 +341,41 @@ const handleSubmit = async (e) => {
                 />
               </div>
 
-              <label className="upload-label">Upload Banner Image</label>
-              <input type="file" accept="image/*" onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) setBannerImage(file);
-              }} />
-
-              {form.banner_image && typeof form.banner_image !== "string" && (
-                <img
-                  src={URL.createObjectURL(form.banner_image)}
-                  alt="Banner Preview"
-                  className="image-preview"
-                />
-              )}
-
               <label className="upload-label">Upload Logo Image</label>
-              <input type="file" accept="image/*" onChange={(e) => {
-                const file = e.target.files[0];
-                if (file) setLogoImage(file);
-              }} />
-
-              {form.logo_image && typeof form.logo_image !== "string" && (
-                <img
-                  src={URL.createObjectURL(form.logo_image)}
-                  alt="Logo Preview"
-                  className="image-preview small"
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) setLogoImage(file);
+                  }}
                 />
-              )}
+
+                {logoImage && (
+                  <img
+                    src={URL.createObjectURL(logoImage)}
+                    alt="Logo Preview"
+                    className="logo-preview"
+                  />
+                )}
+
+              <label className="upload-label">Upload Banner Image</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) setBannerImage(file);
+                  }}
+                />
+
+                {bannerImage && (
+                  <img
+                    src={URL.createObjectURL(bannerImage)}
+                    alt="Banner Preview"
+                    className="banner-preview"
+                  />
+                )}
             </div>
 
             <div className="section-group">

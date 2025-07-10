@@ -1,0 +1,37 @@
+.store-directory {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.store-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: space-between;
+}
+
+.store-filters select,
+.store-filters input[type="text"] {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--card-bg);
+  color: var(--text);
+  min-width: 180px;
+  transition: all 0.2s;
+}
+
+.store-filters select:focus,
+.store-filters input[type="text"]:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
