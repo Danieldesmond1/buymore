@@ -1,0 +1,39 @@
+.buyer-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #eee;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar-left h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.topbar-icon {
+  font-size: 1.3rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.Topbar-logout-btn {
+  padding: 0.4rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}

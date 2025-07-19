@@ -129,17 +129,17 @@ const Navbar = ({ onSearch }) => {
                 {user.role === "buyer" && (
                   <>
                     <li>
-                      <Link to="/buyer/dashboard" onClick={closeMenu}>My Dashboard</Link>
+                      <Link to="/dashboard" onClick={closeMenu}>My Dashboard</Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to="/wishlist" onClick={closeMenu}>Wishlist</Link>
-                    </li>
+                    </li> */}
                     <li>
                       <Link to="/saved-items" onClick={closeMenu}>Saved Items</Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to="/orders" onClick={closeMenu}>Order History</Link>
-                    </li>
+                    </li> */}
                   </>
                 )}
 
