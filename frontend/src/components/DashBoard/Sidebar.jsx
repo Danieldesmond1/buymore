@@ -28,6 +28,7 @@ const Sidebar = () => {
           <NavLink
             key={item.name}
             to={item.path}
+            end={item.path === "/dashboard"}
             className={({ isActive }) =>
               `sidebar-link ${isActive ? "active" : ""}`
             }

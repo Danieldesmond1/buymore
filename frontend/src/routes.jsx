@@ -12,14 +12,14 @@ import Storeshop from "./pages/StoreShop.jsx";
 
 import BuyerDashboard from "./pages/BuyerDashboard.jsx";
 import DashboardHome from "./components/DashBoard/DashboardHome.jsx";
-// import Orders from "./components/DashBoard/Orders.jsx";
-// import Wishlist from "./components/DashBoard/Wishlist.jsx";
-// import Messages from "./components/DashBoard/Messages.jsx";
-// import Profile from "./components/DashBoard/Profile.jsx";
-// import AddressBook from "./components/DashBoard/AddressBook.jsx";
-// import Disputes from "./components/DashBoard/Disputes.jsx";
-// import Payments from "./components/DashBoard/Payments.jsx";
-// import Security from "./components/DashBoard/Security.jsx";
+import Orders from "./components/DashBoard/Orders.jsx";
+import Wishlist from "./components/DashBoard/Wishlist.jsx";
+import Messages from "./components/DashBoard/Messages.jsx";
+import Profile from "./components/DashBoard/Profile.jsx";
+import AddressBook from "./components/DashBoard/AddressBook.jsx";
+import Disputes from "./components/DashBoard/Disputes.jsx";
+import Payments from "./components/DashBoard/Payments.jsx";
+import Security from "./components/DashBoard/Security.jsx";
 
 
 const AppRoutes = () => {
@@ -44,14 +44,14 @@ const AppRoutes = () => {
         </ProtectedRoute>
       }>
         <Route index element={<DashboardHome />} />
-        {/* <Route path="orders" element={<Orders />} />
+        <Route path="orders" element={<Orders />} />
         <Route path="wishlist" element={<Wishlist />} />
         <Route path="messages" element={<Messages />} />
         <Route path="profile" element={<Profile />} />
         <Route path="addresses" element={<AddressBook />} />
         <Route path="disputes" element={<Disputes />} />
         <Route path="payments" element={<Payments />} />
-        <Route path="security" element={<Security />} /> */}
+        <Route path="security" element={<Security />} />
       </Route>
     </Routes>
   );

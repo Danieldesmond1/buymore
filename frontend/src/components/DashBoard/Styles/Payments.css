@@ -1,0 +1,87 @@
+/* Payments.css */
+
+.payments-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.payments-header h2 {
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #222;
+  text-align: center;
+}
+
+.subtext {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+.payments-table {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+}
+
+.payments-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 1fr;
+  background: #fff;
+  padding: 18px 25px;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+}
+
+.payments-row.header {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #333;
+}
+
+.status {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-align: center;
+  display: inline-block;
+  font-size: 13px;
+}
+
+.status.paid {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+.status.failed {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status.refunded {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.receipt-btn {
+  padding: 8px 14px;
+  font-size: 13px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.receipt-btn:hover {
+  background-color: #1d4ed8;
+}

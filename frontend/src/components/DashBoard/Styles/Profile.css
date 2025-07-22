@@ -1,0 +1,74 @@
+/* Profile.css */
+.profile-container {
+  padding: 30px;
+  max-width: 700px;
+  margin: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.05);
+}
+
+.profile-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.profile-image-section {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.profile-image-section img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #ccc;
+}
+
+.profile-image-section input[type="file"] {
+  display: block;
+  margin: 10px auto 0;
+}
+
+.profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-fields label {
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.profile-fields input,
+.profile-fields textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.profile-fields textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.profile-fields button {
+  margin-top: 15px;
+  padding: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.profile-fields button:hover {
+  background: #1d4ed8;
+}
