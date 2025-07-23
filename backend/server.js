@@ -14,6 +14,7 @@ import orderRoutes from "./routes/orderRoutes.js";
 import shippingRoutes from "./routes/shippingRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js"; // 👈 Add this
+import wishlistRoutes from "./routes/wishlistRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -41,8 +42,8 @@ app.use("/api/shipping", shippingRoutes);
 app.use("/api/payment", paymentRoutes);
 
 app.use("/api/locations", locationRoutes);
-
 app.use("/api/shops", shopRoutes); // 👈 This exposes /api/shops
+app.use("/api/wishlist", wishlistRoutes);
 
 // Base route
 app.get("/", (req, res) => {

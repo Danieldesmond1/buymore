@@ -189,7 +189,7 @@ export const signinUser = async (req, res) => {
         role: user[0].role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
     // Set the token in HttpOnly cookie
@@ -197,7 +197,7 @@ export const signinUser = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
-      maxAge: 60 * 60 * 1000, // 1 hour
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
     });
 
     return res.status(200).json({
