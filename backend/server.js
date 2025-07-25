@@ -32,7 +32,7 @@ app.use(express.json()); // Parse incoming JSON payloads
 
 // Routes
 app.use("/api/users", userRoutes); // User authentication routes
-app.use("/profile", authenticateToken, profileRoutes);
+app.use("/api/profile", authenticateToken, profileRoutes);
 app.use("/admin", adminRoutes);
 
 app.use("/api/orders", orderRoutes);
