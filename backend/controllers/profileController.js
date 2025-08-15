@@ -14,7 +14,8 @@ export const viewProfile = async (req, res) => {
 
   try {
     const result = await pool.query(
-      "SELECT id, username, email, location, bio, profile_image FROM users WHERE id = $1",
+      `SELECT id, username, email, location, phone, bio, profile_image 
+       FROM users WHERE id = $1`,
       [userId]
     );
 
@@ -29,20 +30,18 @@ export const viewProfile = async (req, res) => {
   }
 };
 
-
-
-// _________ Update Profile (with image and optional password) _________
+// _________ Update Profile _________
 export const updateProfile = async (req, res) => {
   const userId = req.user?.userId;
-  const { username, location, password, bio } = req.body;
-  const profileImage = req.file?.filename; // filename only (e.g. "abc.jpg")
+  const { username, location, password, bio, phone } = req.body;
+  const profileImage = req.file?.filename;
 
   if (!userId) {
     return res.status(400).json({ message: "User ID is missing" });
   }
 
   try {
-    // Get current image to delete if a new one is uploaded
+    // Get current image
     const oldResult = await pool.query("SELECT profile_image FROM users WHERE id = $1", [userId]);
     const oldImage = oldResult.rows[0]?.profile_image;
 
@@ -58,9 +57,10 @@ export const updateProfile = async (req, res) => {
         location = COALESCE($2, location),
         password = COALESCE($3, password),
         bio = COALESCE($4, bio),
-        profile_image = COALESCE($5, profile_image)
-      WHERE id = $6
-      RETURNING id, username, email, location, bio, profile_image;
+        phone = COALESCE($5, phone),
+        profile_image = COALESCE($6, profile_image)
+      WHERE id = $7
+      RETURNING id, username, email, location, phone, bio, profile_image;
     `;
 
     const values = [
@@ -68,6 +68,7 @@ export const updateProfile = async (req, res) => {
       location || null,
       hashedPassword || null,
       bio || null,
+      phone || null,
       profileImage || null,
       userId,
     ];
@@ -78,7 +79,6 @@ export const updateProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Delete old image file if a new one was uploaded
     if (profileImage && oldImage && oldImage !== profileImage) {
       const oldPath = path.join("uploads", oldImage);
       if (fs.existsSync(oldPath)) {
@@ -93,20 +93,16 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-
-
 // ______ Logout ______
 export const logout = (req, res) => {
   try {
-    req.session = null; // If using cookie-session
+    req.session = null;
     res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     console.error("Error during logout:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
 
 // ______ Authentication Middleware ______
 export const authenticateUser = (req, res, next) => {

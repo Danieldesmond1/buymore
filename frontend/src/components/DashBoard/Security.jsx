@@ -1,89 +1,175 @@
-// Security.jsx
-import { useState } from "react";
-import "./Styles/Security.css";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './Styles/Security.css';
 
-const Security = () => {
-  const [oldPass, setOldPass] = useState("");
-  const [newPass, setNewPass] = useState("");
-  const [confirmPass, setConfirmPass] = useState("");
-  const [twoFactor, setTwoFactor] = useState(false);
+const SecuritySettings = () => {
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [status, setStatus] = useState('');
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [show2FAForm, setShow2FAForm] = useState(false);
 
-  const handlePasswordChange = (e) => {
+  useEffect(() => {
+    const fetch2FAStatus = async () => {
+      try {
+        const res = await axios.get('/api/security/2fa-status', { withCredentials: true });
+        setIs2FAEnabled(res.data.enabled);
+      } catch {
+        // fail silently
+      }
+    };
+    fetch2FAStatus();
+  }, []);
+
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
-    // Perform validation and backend call
-    alert("Password change submitted!");
+    setStatus('');
+    try {
+      const res = await axios.put(
+        '/api/security/change-password',
+        { oldPassword, newPassword, confirmPassword },
+        { withCredentials: true }
+      );
+      setStatus(res.data.message);
+    } catch (err) {
+      setStatus(err.response?.data?.message || 'Error changing password.');
+    }
   };
 
-  const handleLogoutAll = () => {
-    alert("Logged out from all devices.");
+  const handleToggle2FA = () => {
+    if (is2FAEnabled) {
+      disable2FA();
+    } else {
+      setShow2FAForm(true);
+    }
+  };
+
+  const enable2FA = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        '/api/security/enable-2fa',
+        { email },
+        { withCredentials: true }
+      );
+      setStatus('✅ Verification code sent! Please check your email.');
+    } catch (err) {
+      setStatus(err.response?.data?.message || 'Error enabling 2FA.');
+    }
+  };
+
+  const verify2FA = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post(
+        '/api/security/verify-2fa',
+        { code },
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        setIs2FAEnabled(true); // instantly reflect change
+        setShow2FAForm(false); // hide form
+        setStatus('🎉 2FA enabled successfully! Your account is now more secure.');
+      } else {
+        setStatus(res.data.message || 'Invalid code.');
+      }
+    } catch (err) {
+      setStatus(err.response?.data?.message || 'Error verifying code.');
+    }
+  };
+
+  const disable2FA = async () => {
+    try {
+      const res = await axios.post('/api/security/disable-2fa', {}, { withCredentials: true });
+      if (res.data.success) {
+        setIs2FAEnabled(false); // instantly reflect change
+        setShow2FAForm(false);
+        setStatus('⚠️ Two-Factor Authentication has been disabled.');
+      } else {
+        setStatus(res.data.message || 'Error disabling 2FA.');
+      }
+    } catch (err) {
+      setStatus(err.response?.data?.message || 'Error disabling 2FA.');
+    }
   };
 
   return (
-    <div className="security-container">
+    <div className="security-section">
       <h2>Security Settings</h2>
-      <p className="subtext">Manage your account security and privacy</p>
 
-      <form className="password-section" onSubmit={handlePasswordChange}>
-        <h3>Change Password</h3>
+      {/* Change Password */}
+      <form onSubmit={handlePasswordChange} className="password-form">
         <input
           type="password"
-          placeholder="Current Password"
-          value={oldPass}
-          onChange={(e) => setOldPass(e.target.value)}
+          placeholder="Old Password"
+          value={oldPassword}
+          onChange={(e) => setOldPassword(e.target.value)}
           required
         />
         <input
           type="password"
           placeholder="New Password"
-          value={newPass}
-          onChange={(e) => setNewPass(e.target.value)}
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
           required
         />
         <input
           type="password"
           placeholder="Confirm New Password"
-          value={confirmPass}
-          onChange={(e) => setConfirmPass(e.target.value)}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
         <button type="submit">Update Password</button>
       </form>
 
+      {/* Two-Factor Authentication */}
       <div className="twofa-section">
-        <h3>Two-Factor Authentication</h3>
-        <label className="switch">
-          <input
-            type="checkbox"
-            checked={twoFactor}
-            onChange={() => setTwoFactor(!twoFactor)}
-          />
-          <span className="slider round"></span>
-        </label>
-        <p className="tip">
-          {twoFactor
-            ? "2FA is enabled for your account."
-            : "Enable 2FA to add extra protection to your account."}
-        </p>
+        <div className="toggle-label">
+          <label>Two-Factor Authentication (2FA)</label>
+          <label className="switch">
+            <input type="checkbox" checked={is2FAEnabled} onChange={handleToggle2FA} />
+            <span className="slider round"></span>
+          </label>
+        </div>
+
+        {/* 2FA Forms */}
+        {show2FAForm && !is2FAEnabled && (
+          <div className={`twofa-form-container ${show2FAForm ? 'open' : 'closed'}`}>
+            {/* Step 1: Send Code */}
+            <form onSubmit={enable2FA} className="twofa-form">
+              <input
+                type="email"
+                placeholder="Enter Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button type="submit">Send Verification Code</button>
+            </form>
+
+            {/* Step 2: Verify */}
+            <form onSubmit={verify2FA} className="twofa-form">
+              <input
+                type="text"
+                placeholder="Enter 2FA Code"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                required
+              />
+              <button type="submit">Verify</button>
+            </form>
+          </div>
+        )}
       </div>
 
-      <div className="activity-section">
-        <h3>Recent Login Activity</h3>
-        <ul>
-          <li>
-            <span>📱 iPhone - Lagos, NG</span>
-            <span>July 17, 2025 • 11:05am</span>
-          </li>
-          <li>
-            <span>💻 Chrome - Abuja, NG</span>
-            <span>July 16, 2025 • 8:44pm</span>
-          </li>
-        </ul>
-        <button onClick={handleLogoutAll} className="logout-all-btn">
-          Logout from All Devices
-        </button>
-      </div>
+      {/* Status Message */}
+      {status && <div className="animated-alert">{status}</div>}
     </div>
   );
 };
 
-export default Security;
+export default SecuritySettings;

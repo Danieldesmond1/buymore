@@ -1,97 +1,134 @@
-/* Addresses.css */
 .address-container {
-  padding: 30px;
-  max-width: 800px;
-  margin: auto;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .address-container h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
   text-align: center;
-  margin-bottom: 25px;
-}
-
-.address-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }
 
 .address-card {
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 10px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  padding: 2rem;
   position: relative;
-  background-color: #fafafa;
 }
 
-.address-info .name {
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 5px;
-}
-
-.address-info .phone,
-.address-info .location {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 5px;
-}
-
-.default-badge {
-  display: inline-block;
-  margin-top: 5px;
-  background: #2563eb;
-  color: #fff;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-}
-
-.address-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 12px;
-}
-
-.address-actions button {
-  padding: 8px 12px;
-  font-size: 0.9rem;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.address-actions button:hover {
-  opacity: 0.9;
-}
-
-.address-actions .delete-btn {
-  background: #e11d48;
-  color: white;
-}
-
-.address-actions button:not(.delete-btn) {
-  background: #3b82f6;
-  color: white;
-}
-
-.add-btn {
-  display: block;
-  margin: 30px auto 0;
-  padding: 12px 20px;
-  background: #10b981;
-  color: white;
+.address-info p {
+  margin-bottom: 10px;
   font-size: 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  color: #333;
 }
 
-.add-btn:hover {
-  background: #059669;
+.address-info strong {
+  font-weight: 600;
+}
+
+.address-info .edit-btn {
+  margin-top: 1rem;
+  padding: 10px 16px;
+  background-color: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.address-info .edit-btn:hover {
+  background-color: #333;
+}
+
+.address-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.address-form input,
+.address-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  transition: border 0.2s ease;
+}
+
+.address-form input:focus,
+.address-form textarea:focus {
+  border-color: #555;
+  outline: none;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.save-btn, .cancel-btn {
+  padding: 10px 18px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-btn {
+  background-color: #111;
+  color: #fff;
+}
+
+.save-btn:hover {
+  background-color: #333;
+}
+
+.cancel-btn {
+  background-color: transparent;
+  color: #111;
+  border: 1px solid #aaa;
+}
+
+.cancel-btn:hover {
+  background-color: #f2f2f2;
+}
+
+.success-toast {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4BB543;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  animation: fadeInOut 2.5s ease forwards;
+  z-index: 10;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+.loading {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+  margin-top: 2rem;
 }

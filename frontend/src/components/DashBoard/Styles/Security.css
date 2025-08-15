@@ -1,80 +1,10 @@
-/* Security.css */
-
-.security-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  background: #f9f9f9;
-  min-height: 100vh;
-}
-
-.security-container h2 {
-  font-size: 28px;
-  margin-bottom: 5px;
-  color: #222;
-  text-align: center;
-}
-
-.subtext {
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 30px;
-}
-
-.password-section,
-.twofa-section,
-.activity-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 25px;
-  margin-bottom: 30px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-}
-
-.password-section h3,
-.twofa-section h3,
-.activity-section h3 {
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: #111;
-}
-
-.password-section input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-.password-section button {
-  padding: 10px 20px;
-  background-color: #2563eb;
-  color: white;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.password-section button:hover {
-  background-color: #1d4ed8;
-}
-
-.tip {
-  font-size: 13px;
-  color: #555;
-  margin-top: 8px;
-}
-
+/* Toggle switch */
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
+  width: 52px;
   height: 28px;
+  margin-left: 10px;
 }
 
 .switch input {
@@ -86,62 +16,69 @@
 .slider {
   position: absolute;
   cursor: pointer;
+  inset: 0;
   background-color: #ccc;
-  transition: 0.3s;
+  transition: 0.4s;
   border-radius: 34px;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 }
 
 .slider:before {
-  content: "";
   position: absolute;
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
-  transition: 0.3s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #2563eb;
+  background-color: #0a66c2;
 }
 
 input:checked + .slider:before {
-  transform: translateX(22px);
+  transform: translateX(24px);
 }
 
-.activity-section ul {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 15px;
-}
-
-.activity-section li {
+.toggle-label {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  color: #333;
+  margin-top: 2rem;
 }
 
-.logout-all-btn {
-  padding: 8px 16px;
-  font-size: 13px;
-  background-color: #e11d48;
+.twofa-form input {
+  margin-top: 1rem;
+}
+
+.twofa-form-container {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: all 0.4s ease-in-out;
+}
+
+.twofa-form-container.open {
+  max-height: 500px; /* enough to show both forms */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animated-alert {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #0a66c2;
   color: white;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s ease;
+  border-radius: 5px;
+  animation: fadeInOut 3s ease-in-out forwards;
 }
 
-.logout-all-btn:hover {
-  background-color: #be123c;
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-5px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-5px); }
 }
