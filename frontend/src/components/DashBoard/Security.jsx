@@ -70,9 +70,14 @@ const SecuritySettings = () => {
         { withCredentials: true }
       );
       if (res.data.success) {
-        setIs2FAEnabled(true); // instantly reflect change
-        setShow2FAForm(false); // hide form
+        setIs2FAEnabled(true); // or false for disable
+        setShow2FAForm(false);
         setStatus('🎉 2FA enabled successfully! Your account is now more secure.');
+
+        // Delay just enough to show status before reload
+        setTimeout(() => {
+          window.location.reload(true); // true forces a full reload
+        }, 1200);
       } else {
         setStatus(res.data.message || 'Invalid code.');
       }
@@ -85,9 +90,12 @@ const SecuritySettings = () => {
     try {
       const res = await axios.post('/api/security/disable-2fa', {}, { withCredentials: true });
       if (res.data.success) {
-        setIs2FAEnabled(false); // instantly reflect change
+        setIs2FAEnabled(false);
         setShow2FAForm(false);
         setStatus('⚠️ Two-Factor Authentication has been disabled.');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       } else {
         setStatus(res.data.message || 'Error disabling 2FA.');
       }

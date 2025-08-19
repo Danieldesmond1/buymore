@@ -16,6 +16,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import shopRoutes from "./routes/shopRoutes.js"; // 👈 Add this
 import wishlistRoutes from "./routes/wishlistRoutes.js";
 import securityRoutes from "./routes/security.js";
+import messageRoutes from "./routes/messageRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -46,6 +47,7 @@ app.use("/api/locations", locationRoutes);
 app.use("/api/shops", shopRoutes); // 👈 This exposes /api/shops
 app.use("/api/wishlist", wishlistRoutes);
 app.use('/api/security', securityRoutes);
+app.use("/api/messages", messageRoutes);
 
 // Base route
 app.get("/", (req, res) => {

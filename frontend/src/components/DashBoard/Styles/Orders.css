@@ -1,6 +1,6 @@
 .orders-wrapper {
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: var(--bg-color);
   min-height: 100vh;
 }
 
@@ -8,11 +8,11 @@
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #222;
+  color: var(--text-color);
 }
 
 .order-card {
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   padding: 16px;
@@ -20,11 +20,13 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
-  transition: box-shadow 0.2s ease;
+  border: 1px solid var(--border-color);
+  transition: all 0.25s ease;
 }
 
 .order-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .order-left {
@@ -38,7 +40,7 @@
   height: 60px;
   object-fit: cover;
   border-radius: 8px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
 }
 
 .order-info {
@@ -49,16 +51,16 @@
 .order-info p {
   margin: 2px 0;
   font-size: 14px;
-  color: #444;
+  color: var(--text);
 }
 
 .order-info p.shop {
-  color: #777;
+  color: var(--dropdown-text);
   font-size: 13px;
 }
 
 .order-info p.date {
-  color: #aaa;
+  color: var(--dropdown-text);
   font-size: 13px;
 }
 
@@ -69,16 +71,16 @@
 .order-right p {
   margin: 3px 0;
   font-size: 14px;
-  color: #333;
+  color: var(--text);
 }
 
 .order-status.delivered {
-  color: #2e7d32;
+  color: #4caf50;
   font-weight: 600;
 }
 
 .order-status.pending {
-  color: #f9a825;
+  color: #ffca28;
   font-weight: 600;
 }
 
@@ -86,14 +88,15 @@
   margin-top: 6px;
   padding: 6px 12px;
   font-size: 13px;
-  background-color: #1e88e5;
+  background: var(--primary-btn);
   color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.25s ease, transform 0.2s ease;
 }
 
 .view-btn:hover {
-  background-color: #1565c0;
+  background: #e02500;
+  transform: scale(1.05);
 }

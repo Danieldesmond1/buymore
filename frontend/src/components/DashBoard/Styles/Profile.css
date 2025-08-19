@@ -3,14 +3,16 @@
   padding: 30px;
   max-width: 700px;
   margin: auto;
-  background: #fff;
+  background: var(--bg-color);
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  color: var(--text-color);
 }
 
 .profile-container h2 {
   text-align: center;
   margin-bottom: 25px;
+  color: var(--text-color);
 }
 
 .profile-image-section {
@@ -23,12 +25,13 @@
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  border: 3px solid #ccc;
+  border: 3px solid var(--border-color);
 }
 
 .profile-image-section input[type="file"] {
   display: block;
   margin: 10px auto 0;
+  color: var(--text-color);
 }
 
 .profile-fields {
@@ -40,16 +43,18 @@
 .profile-fields label {
   font-weight: bold;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-color);
 }
 
 .profile-fields input,
 .profile-fields textarea {
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 1rem;
   width: 100%;
+  background: var(--secondary-bg);
+  color: var(--text-color);
 }
 
 .profile-fields textarea {
@@ -60,8 +65,8 @@
 .profile-fields button {
   margin-top: 15px;
   padding: 12px;
-  background: #2563eb;
-  color: #fff;
+  background: var(--button-bg);
+  color: var(--button-text);
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -70,5 +75,5 @@
 }
 
 .profile-fields button:hover {
-  background: #1d4ed8;
+  background: var(--button-hover);
 }

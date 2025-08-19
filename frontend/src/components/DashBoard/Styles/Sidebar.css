@@ -1,11 +1,12 @@
 .buyer-sidebar {
   width: 250px;
-  background: #fff;
-  border-right: 1px solid #eee;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-color);
   padding: 2rem 1rem;
   position: sticky;
   top: 0;
   height: 100vh;
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .sidebar-title {
@@ -21,15 +22,19 @@
   align-items: center;
   gap: 1rem;
   padding: 0.8rem 1rem;
-  color: #333;
+  color: var(--text);
   text-decoration: none;
   border-radius: 8px;
   font-size: 0.95rem;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .sidebar-link:hover {
   background: rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .sidebar-link.active {

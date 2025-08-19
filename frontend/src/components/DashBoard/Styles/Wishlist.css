@@ -1,20 +1,22 @@
 /* Wishlist.css */
 .wishlist-container {
   padding: 20px;
-  background: #f9f9f9;
+  background: var(--bg-color);
   min-height: 80vh;
+  transition: background 0.3s ease;
 }
 
 .wishlist-title {
   font-size: 1.8rem;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--text-color);
+  transition: color 0.3s ease;
 }
 
 .wishlist-empty {
   font-size: 1rem;
-  color: #777;
+  color: var(--dropdown-text);
   text-align: center;
   padding: 40px 0;
 }
@@ -27,13 +29,20 @@
 
 .wishlist-card {
   display: flex;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   padding: 15px;
   align-items: center;
   justify-content: space-between;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.wishlist-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .wishlist-img {
@@ -41,6 +50,7 @@
   height: 100px;
   object-fit: cover;
   border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 
 .wishlist-details {
@@ -51,19 +61,20 @@
 .wishlist-details h4 {
   font-size: 1.1rem;
   margin-bottom: 6px;
-  color: #222;
+  color: var(--text-color);
+  transition: color 0.3s ease;
 }
 
 .wishlist-shop {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--dropdown-text);
 }
 
 .wishlist-price {
   font-size: 1rem;
   font-weight: 600;
   margin-top: 4px;
-  color: #000;
+  color: var(--text-color);
 }
 
 .wishlist-actions {
@@ -78,23 +89,25 @@
   border-radius: 6px;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s ease;
 }
 
 .wishlist-btn.add {
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: white;
 }
 
 .wishlist-btn.add:hover {
-  background: #1d4ed8;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: scale(1.05);
 }
 
 .wishlist-btn.remove {
-  background: #e11d48;
+  background: linear-gradient(135deg, #e11d48, #be123c);
   color: white;
 }
 
 .wishlist-btn.remove:hover {
-  background: #be123c;
+  background: linear-gradient(135deg, #be123c, #9f1239);
+  transform: scale(1.05);
 }

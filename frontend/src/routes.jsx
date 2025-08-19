@@ -9,7 +9,6 @@ import LoginPage from "./pages/Login.jsx";
 import StoreDirectoryPage from "./pages/BrowseStores.jsx";
 import Storeshop from "./pages/StoreShop.jsx";
 
-
 import BuyerDashboard from "./pages/BuyerDashboard.jsx";
 import DashboardHome from "./components/DashBoard/DashboardHome.jsx";
 import Orders from "./components/DashBoard/Orders.jsx";
@@ -20,7 +19,6 @@ import AddressBook from "./components/DashBoard/AddressBook.jsx";
 import Disputes from "./components/DashBoard/Disputes.jsx";
 import Payments from "./components/DashBoard/Payments.jsx";
 import Security from "./components/DashBoard/Security.jsx";
-
 
 const AppRoutes = () => {
   return (
@@ -46,7 +44,12 @@ const AppRoutes = () => {
         <Route index element={<DashboardHome />} />
         <Route path="orders" element={<Orders />} />
         <Route path="wishlist" element={<Wishlist />} />
+
+        {/* Messages list */}
         <Route path="messages" element={<Messages />} />
+        {/* Single conversation with chatId */}
+        <Route path="messages/:chatId" element={<Messages />} />
+        
         <Route path="profile" element={<Profile />} />
         <Route path="addresses" element={<AddressBook />} />
         <Route path="disputes" element={<Disputes />} />

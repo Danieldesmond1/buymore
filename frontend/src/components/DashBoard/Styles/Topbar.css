@@ -3,11 +3,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  border-bottom: 1px solid #eee;
-  background-color: #fff;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--card-bg);
   position: sticky;
   top: 0;
   z-index: 100;
+  transition: background-color 0.3s, border-color 0.3s;
 }
 
 .topbar-left h2 {
@@ -24,16 +25,18 @@
 
 .topbar-icon {
   font-size: 1.3rem;
-  color: #333;
+  color: var(--text);
   cursor: pointer;
+  transition: color 0.3s;
 }
 
 .Topbar-logout-btn {
   padding: 0.4rem 1rem;
   background: var(--primary-color);
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: background 0.3s;
 }

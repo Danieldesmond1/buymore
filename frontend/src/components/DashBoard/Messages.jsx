@@ -1,70 +1,158 @@
-// Messages.jsx
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import "./Styles/Messages.css";
 
-const dummyConversations = [
-  {
-    id: 1,
-    sellerName: "GadgetHub NG",
-    lastMessage: "Your order has been shipped.",
-    date: "2025-07-16",
-    messages: [
-      { from: "seller", text: "Thanks for your order!", time: "10:00 AM" },
-      { from: "buyer", text: "When will it be delivered?", time: "10:02 AM" },
-      { from: "seller", text: "It has been shipped today.", time: "10:05 AM" },
-    ],
-  },
-  {
-    id: 2,
-    sellerName: "StyleWave",
-    lastMessage: "Sure, we can restock it.",
-    date: "2025-07-15",
-    messages: [
-      { from: "buyer", text: "Will you restock size M?", time: "9:00 AM" },
-      { from: "seller", text: "Sure, we can restock it.", time: "9:03 AM" },
-    ],
-  },
-];
-
 const Messages = () => {
-  const [selected, setSelected] = useState(dummyConversations[0]);
+  const [conversations, setConversations] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const { chatId } = useParams();
+  const navigate = useNavigate();
+
+  // 0. Load logged in user
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/users/me", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          const user = await res.json();
+          setCurrentUser(user);
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // 1. Load conversations
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/messages/conversations", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to fetch conversations");
+
+        const data = await res.json();
+        setConversations(data);
+
+        if (chatId) {
+          const conv = data.find((c) => c.id === parseInt(chatId));
+          if (conv) setSelected(conv);
+        } else if (data.length > 0) {
+          setSelected(data[0]);
+          navigate(`/dashboard/messages/${data[0].id}`, { replace: true });
+        }
+      } catch (err) {
+        console.error("Error fetching conversations:", err);
+      }
+    };
+    fetchConversations();
+  }, [chatId, navigate]);
+
+  // 2. Load messages when selected conversation changes
+  useEffect(() => {
+    if (!selected) return;
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/messages/${selected.id}`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to fetch messages");
+        const data = await res.json();
+        setMessages(data);
+      } catch (err) {
+        console.error("Error fetching messages:", err);
+      }
+    };
+    fetchMessages();
+  }, [selected]);
+
+  // 3. Send message
+  const handleSend = async () => {
+    if (!newMessage.trim() || !selected) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/messages/${selected.id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ text: newMessage }),
+      });
+      if (!res.ok) throw new Error("Failed to send message");
+      const msg = await res.json();
+      setMessages((prev) => [...prev, msg]);
+      setNewMessage("");
+    } catch (err) {
+      console.error("Error sending message:", err);
+    }
+  };
 
   return (
     <div className="messages-container">
-      {/* Left side - conversation list */}
+      {/* Sidebar */}
       <div className="conversations-list">
         <h3>Chats</h3>
-        {dummyConversations.map((conv) => (
+        {conversations.length === 0 && <p>No conversations</p>}
+        {conversations.map((conv) => (
           <div
             key={conv.id}
-            className={`conversation-item ${selected.id === conv.id ? "active" : ""}`}
-            onClick={() => setSelected(conv)}
+            className={`conversation-item ${selected?.id === conv.id ? "active" : ""}`}
+            onClick={() => navigate(`/dashboard/messages/${conv.id}`)}
           >
-            <h4>{conv.sellerName}</h4>
-            <p>{conv.lastMessage}</p>
-            <span>{conv.date}</span>
+            <h4>{conv.shop_name}</h4>
+            <p>{conv.last_message || "No messages yet"}</p>
           </div>
         ))}
       </div>
 
-      {/* Right side - messages */}
+      {/* Chat Window */}
       <div className="chat-window">
-        <div className="chat-header">
-          <h4>{selected.sellerName}</h4>
-          <span>{selected.date}</span>
-        </div>
-        <div className="chat-body">
-          {selected.messages.map((msg, index) => (
-            <div key={index} className={`chat-message ${msg.from}`}>
-              <p>{msg.text}</p>
-              <span>{msg.time}</span>
+        {selected ? (
+          <>
+            <div className="chat-header">
+              <h4>{selected.shop_name}</h4>
+              {selected.product_name && (
+                <div className="chat-product">
+                  <img
+                    src={`http://localhost:5000/uploads/${selected.product_image}`}
+                    alt={selected.product_name}
+                  />
+                  <span>{selected.product_name}</span>
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-        <div className="chat-input">
-          <input type="text" placeholder="Type a message..." />
-          <button>Send</button>
-        </div>
+            <div className="chat-body">
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`chat-message ${
+                    msg.sender_id === currentUser?.id ? "me" : "other"
+                  }`}
+                >
+                  <p>{msg.message_text}</p>
+                  <span>{new Date(msg.created_at).toLocaleTimeString()}</span>
+                </div>
+              ))}
+            </div>
+            <div className="chat-input">
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type a message..."
+              />
+              <button onClick={handleSend}>Send</button>
+            </div>
+          </>
+        ) : (
+          <div className="no-chat">Select a conversation</div>
+        )}
       </div>
     </div>
   );

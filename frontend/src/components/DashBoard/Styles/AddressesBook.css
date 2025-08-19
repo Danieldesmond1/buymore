@@ -10,30 +10,33 @@
   font-weight: 600;
   margin-bottom: 1.5rem;
   text-align: center;
+  color: var(--text-color);
 }
 
 .address-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
   padding: 2rem;
   position: relative;
+  border: 1px solid var(--border-color);
 }
 
 .address-info p {
   margin-bottom: 10px;
   font-size: 1rem;
-  color: #333;
+  color: var(--text);
 }
 
 .address-info strong {
   font-weight: 600;
+  color: var(--text-color);
 }
 
 .address-info .edit-btn {
   margin-top: 1rem;
   padding: 10px 16px;
-  background-color: #111;
+  background-color: var(--primary-btn);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -42,7 +45,7 @@
 }
 
 .address-info .edit-btn:hover {
-  background-color: #333;
+  opacity: 0.85;
 }
 
 .address-form label {
@@ -50,23 +53,25 @@
   margin-bottom: 6px;
   font-size: 0.9rem;
   font-weight: 500;
-  color: #555;
+  color: var(--text-color);
 }
 
 .address-form input,
 .address-form textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   margin-bottom: 1.2rem;
   font-size: 1rem;
   transition: border 0.2s ease;
+  background: var(--bg-color);
+  color: var(--text-color);
 }
 
 .address-form input:focus,
 .address-form textarea:focus {
-  border-color: #555;
+  border-color: var(--primary-color);
   outline: none;
 }
 
@@ -86,22 +91,22 @@
 }
 
 .save-btn {
-  background-color: #111;
+  background-color: var(--primary-btn);
   color: #fff;
 }
 
 .save-btn:hover {
-  background-color: #333;
+  opacity: 0.85;
 }
 
 .cancel-btn {
   background-color: transparent;
-  color: #111;
-  border: 1px solid #aaa;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 
 .cancel-btn:hover {
-  background-color: #f2f2f2;
+  background-color: rgba(0,0,0,0.05);
 }
 
 .success-toast {
@@ -129,6 +134,6 @@
 .loading {
   text-align: center;
   font-size: 1rem;
-  color: #555;
+  color: var(--text-color);
   margin-top: 2rem;
 }

@@ -1,10 +1,69 @@
-/* Toggle switch */
+.security-section {
+  max-width: 700px;
+  margin: 2rem auto;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  font-family: "Inter", sans-serif;
+  color: var(--text);
+  border: 1px solid var(--border-color);
+}
+
+.security-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.password-form,
+.twofa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.password-form input,
+.twofa-form input {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  background: var(--bg-color);
+  color: var(--text);
+  transition: border 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.password-form input:focus,
+.twofa-form input:focus {
+  border-color: var(--primary-color);
+}
+
+button {
+  background-color: var(--primary-btn);
+  color: #fff;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  filter: brightness(0.9);
+}
+
+/* Toggle Switch */
 .switch {
   position: relative;
   display: inline-block;
-  width: 52px;
-  height: 28px;
-  margin-left: 10px;
+  width: 58px;
+  height: 32px;
+  margin-left: 12px;
 }
 
 .switch input {
@@ -17,7 +76,7 @@
   position: absolute;
   cursor: pointer;
   inset: 0;
-  background-color: #ccc;
+  background-color: var(--border-color);
   transition: 0.4s;
   border-radius: 34px;
 }
@@ -25,34 +84,31 @@
 .slider:before {
   position: absolute;
   content: "";
-  height: 22px;
-  width: 22px;
+  height: 26px;
+  width: 26px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
+  background-color: var(--bg-color);
   transition: 0.4s;
   border-radius: 50%;
 }
 
 input:checked + .slider {
-  background-color: #0a66c2;
+  background-color: var(--primary-color);
 }
 
 input:checked + .slider:before {
-  transform: translateX(24px);
+  transform: translateX(26px);
 }
 
 .toggle-label {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 2rem;
+  margin: 2rem 0 1rem;
 }
 
-.twofa-form input {
-  margin-top: 1rem;
-}
-
+/* Collapsible 2FA form */
 .twofa-form-container {
   max-height: 0;
   overflow: hidden;
@@ -62,18 +118,55 @@ input:checked + .slider:before {
 }
 
 .twofa-form-container.open {
-  max-height: 500px; /* enough to show both forms */
+  max-height: 500px;
   opacity: 1;
   transform: translateY(0);
 }
 
+/* Status Alerts */
 .animated-alert {
   margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background: #0a66c2;
-  color: white;
-  border-radius: 5px;
-  animation: fadeInOut 3s ease-in-out forwards;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadeInOut 4s ease-in-out forwards;
+  border: 1px solid;
+}
+
+.animated-alert.success {
+  background: #e6f7e9;
+  color: #1d7a35;
+  border-color: #b7e1bf;
+}
+
+.animated-alert.error {
+  background: #fdecea;
+  color: #d93025;
+  border-color: #f5c6cb;
+}
+
+.animated-alert.warning {
+  background: #fff8e6;
+  color: #8a6d3b;
+  border-color: #ffeeba;
+}
+
+[data-theme="dark"] .animated-alert.success {
+  background: rgba(29, 122, 53, 0.15);
+  color: #81c995;
+  border-color: rgba(183, 225, 191, 0.3);
+}
+
+[data-theme="dark"] .animated-alert.error {
+  background: rgba(217, 48, 37, 0.15);
+  color: #f28b82;
+  border-color: rgba(245, 198, 203, 0.3);
+}
+
+[data-theme="dark"] .animated-alert.warning {
+  background: rgba(138, 109, 59, 0.15);
+  color: #ffd966;
+  border-color: rgba(255, 238, 186, 0.3);
 }
 
 @keyframes fadeInOut {

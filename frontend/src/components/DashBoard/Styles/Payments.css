@@ -1,24 +1,25 @@
 /* Payments.css */
-
 .payments-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 40px 20px;
-  background-color: #f9f9f9;
+  background-color: var(--bg-primary);
   min-height: 100vh;
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .payments-header h2 {
   font-size: 26px;
   font-weight: bold;
   margin-bottom: 5px;
-  color: #222;
+  color: var(--text-heading);
   text-align: center;
 }
 
 .subtext {
   text-align: center;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 30px;
   font-size: 14px;
 }
@@ -27,23 +28,24 @@
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 12px var(--shadow-color);
+  background: var(--bg-secondary);
 }
 
 .payments-row {
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 1fr;
-  background: #fff;
+  background: var(--bg-secondary);
   padding: 18px 25px;
   font-size: 14px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
   align-items: center;
 }
 
 .payments-row.header {
-  background-color: #f3f4f6;
+  background-color: var(--table-header-bg);
   font-weight: 600;
-  color: #333;
+  color: var(--text-heading);
 }
 
 .status {
