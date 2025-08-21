@@ -8,6 +8,9 @@ import SignupPage from "./pages/Signup.jsx";
 import LoginPage from "./pages/Login.jsx";
 import StoreDirectoryPage from "./pages/BrowseStores.jsx";
 import Storeshop from "./pages/StoreShop.jsx";
+import TopSellers from "./pages/TopSellers.jsx";
+import SellerStore from "./components/TopSellers/SellerStore.jsx";
+import SellerProducts from "./components/TopSellers/SellerProducts.jsx";
 
 import BuyerDashboard from "./pages/BuyerDashboard.jsx";
 import DashboardHome from "./components/DashBoard/DashboardHome.jsx";
@@ -35,6 +38,11 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/stores" element={<StoreDirectoryPage />} />
       <Route path="/shop/:shopId" element={<Storeshop />} />
+      <Route path="/top-sellers" element={<TopSellers />} />
+      <Route path="/sellers/:sellerId" element={<SellerStore  />} />
+      <Route path="/sellers/:sellerId/products" element={<SellerProducts />} />
+
+      {/* Protected Routes for Buyer Dashboard */}  
 
       <Route path="/dashboard" element={
         <ProtectedRoute>

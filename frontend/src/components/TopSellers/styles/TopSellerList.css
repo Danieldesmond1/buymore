@@ -1,0 +1,74 @@
+/* Container */
+.top-seller-list-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px 30px;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Controls Section */
+.controls-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.control-input,
+.control-select {
+  flex: 1 1 250px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.control-input:focus,
+.control-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.25); /* Matches --primary-color glow */
+  outline: none;
+}
+
+/* Clear All Button */
+.clear-btn {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  background: var(--primary-btn);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.clear-btn:hover {
+  background: #e02700; /* Slightly darker shade of var(--primary-btn) */
+  transform: translateY(-2px);
+}
+
+.clear-btn:active {
+  transform: translateY(0);
+}
+
+/* Sellers Grid */
+.top-seller-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 16px;
+  color: var(--dropdown-text);
+  padding: 30px 0;
+}

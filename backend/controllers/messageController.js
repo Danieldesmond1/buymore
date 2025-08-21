@@ -3,7 +3,7 @@ import pool from "../utils/dbConnect.js";
 // Start new conversation (buyer <-> shop)
 export const createConversation = async (req, res) => {
   try {
-    const buyerId = req.user.id; // ✅ now matches middleware
+    const buyerId = req.user.userId; // ✅ fixed
     const { shopId, productId } = req.body;
 
     if (!buyerId) return res.status(401).json({ message: "User not logged in" });
@@ -31,7 +31,7 @@ export const createConversation = async (req, res) => {
 
 // Get all conversations for current user
 export const getConversations = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.userId; // ✅ fixed
   try {
     const result = await pool.query(
       `SELECT c.*, 
@@ -82,7 +82,7 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
   const { conversationId } = req.params;
   const { text } = req.body;
-  const senderId = req.user.id;
+  const senderId = req.user.userId; // ✅ fixed
 
   if (!text || text.trim() === "") {
     return res.status(400).json({ message: "Message cannot be empty" });

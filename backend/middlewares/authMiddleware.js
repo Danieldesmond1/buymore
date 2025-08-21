@@ -16,7 +16,7 @@ export const authenticateToken = (req, res, next) => {
     }
 
     // Attach user info to request, using consistent keys
-    req.user = { id: decoded.userId, username: decoded.username, role: decoded.role };
+    req.user = { userId: decoded.userId, username: decoded.username, role: decoded.role };
     next();
   } catch (error) {
     console.error("Invalid token:", error);

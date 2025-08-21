@@ -1,0 +1,154 @@
+.top-seller-card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInUp 0.6s ease forwards;
+  position: relative;
+}
+
+.top-seller-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+}
+
+/* Banner */
+.card-banner {
+  position: relative;
+  height: 150px;
+  width: 100%;
+  background: var(--border-color);
+  overflow: hidden;
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.top-seller-card:hover .banner-img {
+  transform: scale(1.05);
+}
+
+/* Overlay */
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.banner-overlay .overlay-text {
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.top-seller-card:hover .banner-overlay {
+  opacity: 1;
+}
+
+/* Logo */
+.card-logo {
+  position: absolute;
+  bottom: -30px;
+  left: 20px;
+}
+
+.card-logo img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 4px solid var(--card-bg);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  background: var(--card-bg);
+}
+
+/* Badge */
+.seller-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--primary-btn);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+}
+
+/* Content */
+.card-content {
+  padding: 40px 20px 20px;
+}
+
+.seller-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.seller-location {
+  font-size: 0.9rem;
+  color: var(--dropdown-text);
+  margin-bottom: 10px;
+}
+
+.seller-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: #f4b400;
+}
+
+.star-icon {
+  margin-right: 6px;
+}
+
+.sales {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+/* Button */
+.visit-btn {
+  width: 100%;
+  background: var(--primary-btn);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.visit-btn:hover {
+  background: #e62900;
+  transform: scale(1.03);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
