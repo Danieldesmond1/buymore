@@ -23,6 +23,12 @@ import Disputes from "./components/DashBoard/Disputes.jsx";
 import Payments from "./components/DashBoard/Payments.jsx";
 import Security from "./components/DashBoard/Security.jsx";
 
+import SellerDashboard from "./pages/SellersDashboard.jsx";
+import SellerOrders from "./components/SellersDashboard/SellerOrders.jsx";
+import SellerDashboardProducts from "./components/SellersDashboard/SellerProducts.jsx";
+import SellerProfile from "./components/SellersDashboard/SellerProfile.jsx";
+
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -64,6 +70,18 @@ const AppRoutes = () => {
         <Route path="payments" element={<Payments />} />
         <Route path="security" element={<Security />} />
       </Route>
+
+      {/* Protected Routes for Seller Dashboard */}
+       <Route path="/seller/dashboard" element={
+        <ProtectedRoute>
+          <SellerDashboard />
+        </ProtectedRoute>
+      }>
+        <Route index element={<DashboardHome />} />
+        <Route path="orders" element={<SellerOrders />} />
+        <Route path="products" element={<SellerDashboardProducts />} />
+        <Route path="profile" element={<SellerProfile />} />
+      </Route>   {/* ✅ Close this Route */}
     </Routes>
   );
 };
