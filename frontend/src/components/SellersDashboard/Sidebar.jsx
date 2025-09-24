@@ -15,7 +15,7 @@ export default function Sidebar({ setActiveSection }) {
     { name: "Orders", icon: <GiShoppingCart size={18} />, section: "orders" },
     { name: "Customers", icon: <RiUserStarLine size={18} />, section: "customers" },
     { name: "Payments", icon: <LuBadgeDollarSign size={18} />, section: "payments" },
-    { name: "Store Settings", icon: <IoSettingsOutline size={18} />, section: "settings" },
+    { name: "Store Settings", icon: <IoSettingsOutline size={18} />, section: "storeSettings" },
     { name: "Reviews", icon: <IoStarOutline size={18} />, section: "reviews" },
     { name: "Marketing", icon: <IoMegaphoneOutline size={18} />, section: "marketing" },
     { name: "Help", icon: <IoHelpCircleOutline size={18} />, section: "help" },

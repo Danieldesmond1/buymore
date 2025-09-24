@@ -1,0 +1,105 @@
+/* Marketing.css */
+
+.marketing-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.marketing-title {
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.marketing-subtitle {
+  font-size: 15px;
+  text-align: center;
+  margin-bottom: 25px;
+  color: var(--dropdown-text);
+}
+
+.marketing-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.marketing-section {
+  background-color: var(--bg-color);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.marketing-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: var(--text);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+input,
+textarea,
+select {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: var(--card-bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(244, 162, 97, 0.2);
+}
+
+textarea {
+  resize: none;
+}
+
+.launch-btn {
+  background-color: var(--primary-btn);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.launch-btn:hover {
+  background-color: #e62a00;
+  transform: translateY(-2px);
+}
+
+.launch-btn:active {
+  transform: translateY(0);
+}

@@ -6,6 +6,10 @@ import ProductsTable from "../components/SellersDashboard/ProductsTable";
 import OrdersTable from "../components/SellersDashboard/OrdersTable";
 import MessagesPanel from "../components/SellersDashboard/MessagesPanel";
 import Payments from "../components/SellersDashboard/Payments";
+import StoreSettings from "../components/SellersDashboard/StoreSettings";
+import Reviews from "../components/SellersDashboard/Reviews";
+import Marketing from "../components/SellersDashboard/Marketing";
+import Help from "../components/SellersDashboard/Help";
 import "./styles/SellersDashboard.css";
 
 export default function SellersDashboard() {
@@ -23,6 +27,14 @@ export default function SellersDashboard() {
         return <MessagesPanel />;
       case "payments":
         return <Payments />;
+      case "storeSettings":
+        return <StoreSettings />;
+      case "reviews":
+        return <Reviews />;
+      case "marketing":
+        return <Marketing />;
+      case "help":
+        return <Help />;
       default:
         return <div className="p-6">Coming soon...</div>;
     }
