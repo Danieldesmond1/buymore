@@ -1,46 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import TopSellerCard from "./TopSellerCard";
 import "./styles/TopSellerList.css";
 
-const dummySellers = [
-  {
-    id: 1,
-    name: "Tech World",
-    logo: "https://via.placeholder.com/80x80.png?text=TW",
-    banner: "https://via.placeholder.com/600x200.png?text=Tech+World",
-    rating: 4.8,
-    sales: 12500,
-    location: "Lagos, Nigeria",
-    badge: "Best Seller",
-  },
-  {
-    id: 2,
-    name: "Fashion Hub",
-    logo: "https://via.placeholder.com/80x80.png?text=FH",
-    banner: "https://via.placeholder.com/600x200.png?text=Fashion+Hub",
-    rating: 4.6,
-    sales: 9800,
-    location: "Abuja, Nigeria",
-    badge: "Trusted",
-  },
-  {
-    id: 3,
-    name: "Gadget Pro",
-    logo: "https://via.placeholder.com/80x80.png?text=GP",
-    banner: "https://via.placeholder.com/600x200.png?text=Gadget+Pro",
-    rating: 4.9,
-    sales: 15700,
-    location: "Port Harcourt, Nigeria",
-    badge: "Top Rated",
-  },
-];
-
 const TopSellerList = () => {
+  const [sellers, setSellers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("none");
 
-  // Reset all filters
+  // Fetch sellers from backend
+  useEffect(() => {
+    const fetchShops = async () => {
+      try {
+        setLoading(true);
+        const { data } = await axios.get("http://localhost:5000/api/shops");
+        // We get { shops: [...] } from backend, so we take data.shops
+        setSellers(data.shops || []);
+      } catch (error) {
+        console.error("Error fetching shops:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShops();
+  }, []);
+
+  // Reset filters
   const clearAll = () => {
     setSearch("");
     setFilter("all");
@@ -48,8 +36,11 @@ const TopSellerList = () => {
   };
 
   // Filtering
-  let filteredSellers = dummySellers.filter((seller) => {
-    const matchesSearch = seller.name.toLowerCase().includes(search.toLowerCase());
+  let filteredSellers = sellers.filter((seller) => {
+    const matchesSearch = seller.shop_name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
     const matchesFilter =
       filter === "all" ||
       (filter === "top-rated" && seller.rating >= 4.8) ||
@@ -60,13 +51,13 @@ const TopSellerList = () => {
 
   // Sorting
   if (sort === "sales-high") {
-    filteredSellers = [...filteredSellers].sort((a, b) => b.sales - a.sales);
+    filteredSellers = [...filteredSellers].sort((a, b) => (b.sales || 0) - (a.sales || 0));
   } else if (sort === "sales-low") {
-    filteredSellers = [...filteredSellers].sort((a, b) => a.sales - b.sales);
+    filteredSellers = [...filteredSellers].sort((a, b) => (a.sales || 0) - (b.sales || 0));
   } else if (sort === "rating-high") {
-    filteredSellers = [...filteredSellers].sort((a, b) => b.rating - a.rating);
+    filteredSellers = [...filteredSellers].sort((a, b) => (b.rating || 0) - (a.rating || 0));
   } else if (sort === "rating-low") {
-    filteredSellers = [...filteredSellers].sort((a, b) => a.rating - b.rating);
+    filteredSellers = [...filteredSellers].sort((a, b) => (a.rating || 0) - (b.rating || 0));
   }
 
   return (
@@ -113,15 +104,31 @@ const TopSellerList = () => {
       </div>
 
       {/* Sellers Grid */}
-      <div className="top-seller-list">
-        {filteredSellers.length > 0 ? (
-          filteredSellers.map((seller) => (
-            <TopSellerCard key={seller.id} seller={seller} />
-          ))
-        ) : (
-          <p className="no-results">No sellers match your search 🔍</p>
-        )}
-      </div>
+      {loading ? (
+        <p className="loading-text">Loading sellers...</p>
+      ) : (
+        <div className="top-seller-list">
+          {filteredSellers.length > 0 ? (
+            filteredSellers.map((seller) => (
+              <TopSellerCard
+                key={seller.shop_id}
+                seller={{
+                  id: seller.shop_id,
+                  name: seller.shop_name,
+                  logo: seller.logo_image || "https://via.placeholder.com/80x80.png?text=No+Logo",
+                  banner: seller.banner_image || "https://via.placeholder.com/600x200.png?text=No+Banner",
+                  rating: seller.rating || 0, // Placeholder until shop ratings are implemented
+                  sales: seller.sales || 0,   // Placeholder until sales tracking works
+                  location: seller.location,
+                  badge: seller.store_type, // Use store_type as a badge for now
+                }}
+              />
+            ))
+          ) : (
+            <p className="no-results">No sellers match your search 🔍</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,51 +1,98 @@
-import { useParams } from "react-router-dom";
 import "./styles/SellerProducts.css";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
+import Toast from "../Toast/Toast";
 
-const SellerProducts = () => {
-  const { sellerId } = useParams();
+const API_BASE_URL = "http://localhost:5000";
 
-  // Mock seller data (later from backend)
-  const seller = {
-    id: sellerId,
-    name: "Daniel’s Tech Hub",
-    location: "Lagos, Nigeria",
-    about: "We provide premium gadgets, accessories, and tech solutions.",
-    products: [
-      { id: 1, name: "iPhone 15 Pro", price: "$1200", img: "/mock/iphone.jpg" },
-      { id: 2, name: "MacBook Air M2", price: "$1500", img: "/mock/macbook.jpg" },
-      { id: 3, name: "AirPods Pro 2", price: "$250", img: "/mock/airpods.jpg" },
-      { id: 4, name: "Samsung Galaxy Watch", price: "$400", img: "/mock/watch.jpg" },
-    ],
+const SellerProducts = ({ products }) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [toast, setToast] = useState(null);
+
+  if (!products || products.length === 0) {
+    return <p className="no-products">No products available in this store.</p>;
+  }
+
+  const handleViewProduct = (product) => {
+    if (!user) {
+      setToast({
+        message: "Please log in to view product details.",
+        type: "info",
+        actions: [
+          {
+            label: "Log In",
+            onClick: () => {
+              setToast(null);
+              navigate("/login");
+            },
+          },
+          {
+            label: "Keep Browsing",
+            onClick: () => setToast(null),
+          },
+        ],
+      });
+      return;
+    }
+    navigate(`/products/${product.id}`);
   };
 
   return (
     <div className="seller-products-container">
-      {/* Header */}
-      <div className="seller-header">
-        <div>
-          <h2>{seller.name}</h2>
-          <p>{seller.location}</p>
-        </div>
-        <button className="message-btn">💬 Message Seller</button>
-      </div>
-
-      {/* About Store */}
-      <div className="about-store">
-        <h3>About Store</h3>
-        <p>{seller.about}</p>
-      </div>
-
-      {/* Products */}
+      {/* Products Grid */}
       <div className="products-grid">
-        {seller.products.map((product) => (
-          <div key={product.id} className="product-card">
-            <img src={product.img} alt={product.name} />
-            <h4>{product.name}</h4>
-            <p className="price">{product.price}</p>
-            <button className="buy-btn">View Product</button>
-          </div>
-        ))}
+        {products.map((product) => {
+          const imageUrl = product.image_url?.startsWith("http")
+            ? product.image_url
+            : `${API_BASE_URL}/uploads/${product.image_url}`;
+
+          return (
+            <div
+              key={product.id}
+              className="product-card"
+              onClick={() => handleViewProduct(product)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
+              }}
+            >
+              <img src={imageUrl} alt={product.name} />
+              <h4>{product.name}</h4>
+              <p className="price">
+                {product.discount_price && product.discount_price !== "0"
+                  ? `₦${Number(product.discount_price).toLocaleString()}`
+                  : `₦${Number(product.price).toLocaleString()}`}
+              </p>
+              {product.discount_price && product.discount_price !== "0" && (
+                <p className="old-price">
+                  ₦{Number(product.price).toLocaleString()}
+                </p>
+              )}
+              <button
+                className="buy-btn"
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent triggering card click
+                  handleViewProduct(product);
+                }}
+              >
+                View Product
+              </button>
+            </div>
+          );
+        })}
       </div>
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          actions={toast.actions}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 };

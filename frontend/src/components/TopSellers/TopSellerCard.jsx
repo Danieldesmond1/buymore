@@ -7,7 +7,12 @@ const TopSellerCard = ({ seller }) => {
     <div className="top-seller-card">
       {/* Banner */}
       <Link to={`/sellers/${seller.id}`} className="card-banner">
-        <img src={seller.banner} alt={seller.name} className="banner-img" />
+        {/* ✅ Banner comes directly from DB */}
+        <img 
+          src={`http://localhost:5000/uploads/${seller.banner}`} 
+          alt={seller.name} 
+          className="banner-img" 
+        />
 
         {/* Overlay on hover */}
         <div className="banner-overlay">
@@ -16,7 +21,10 @@ const TopSellerCard = ({ seller }) => {
 
         {/* Logo */}
         <div className="card-logo">
-          <img src={seller.logo} alt={seller.name} />
+          <img 
+            src={`http://localhost:5000/uploads/${seller.logo}`} 
+            alt={seller.name} 
+          />
         </div>
 
         {/* Badge */}

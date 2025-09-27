@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
+import pool from "../utils/dbConnect.js"; // ✅ Import DB to fetch shop
 
 // Middleware for authenticated users
-export const authenticateToken = (req, res, next) => {
-  const token = req.cookies?.token; // ✅ read token from cookies
+export const authenticateToken = async (req, res, next) => {
+  const token = req.cookies?.token;
 
   if (!token) {
     return res.status(401).json({ message: "Access denied. No token provided." });
@@ -15,8 +16,25 @@ export const authenticateToken = (req, res, next) => {
       return res.status(403).json({ message: "User ID is missing from token" });
     }
 
-    // Attach user info to request, using consistent keys
-    req.user = { userId: decoded.userId, username: decoded.username, role: decoded.role };
+    // Attach base user info
+    req.user = {
+      userId: decoded.userId,
+      username: decoded.username,
+      role: decoded.role,
+      shop: null, // ✅ Initialize
+    };
+
+    // ✅ If user is a seller, fetch their shop_id from DB
+    if (decoded.role === "seller") {
+      const result = await pool.query(
+        "SELECT id FROM sellers_shop WHERE user_id = $1 LIMIT 1",
+        [decoded.userId]
+      );
+      if (result.rows.length > 0) {
+        req.user.shop = { id: result.rows[0].id };
+      }
+    }
+
     next();
   } catch (error) {
     console.error("Invalid token:", error);

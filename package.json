@@ -22,5 +22,8 @@
   "homepage": "https://github.com/Danieldesmond1/buymore#readme",
   "devDependencies": {
     "concurrently": "^9.1.2"
+  },
+  "dependencies": {
+    "recharts": "^3.2.1"
   }
 }

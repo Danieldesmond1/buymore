@@ -59,25 +59,28 @@ export const getAllProducts = async (req, res) => {
     let query = "SELECT * FROM products WHERE 1=1";
     let values = [];
 
+    // 🎯 Filter by Seller (if logged in and is seller)
+    if (req.user?.role === "seller" && req.user?.shop?.id) {
+      query += ` AND shop_id = $${values.length + 1}`;
+      values.push(req.user.shop.id); // ✅ USE shop.id instead of userId
+    }
+
     // 🔍 Search by Name or Description
     if (search) {
       query += ` AND (name ILIKE $${values.length + 1} OR description ILIKE $${values.length + 1})`;
       values.push(`%${search}%`);
     }
 
-    // 🎯 Filter by Category
     if (category) {
       query += ` AND category = $${values.length + 1}`;
       values.push(category);
     }
 
-    // 🏷️ Filter by Brand
     if (brand) {
       query += ` AND brand = $${values.length + 1}`;
       values.push(brand);
     }
 
-    // 💰 Filter by Price Range
     if (min_price) {
       query += ` AND price >= $${values.length + 1}`;
       values.push(min_price);
@@ -87,22 +90,20 @@ export const getAllProducts = async (req, res) => {
       values.push(max_price);
     }
 
-    // 🔀 Sorting (Default: Newest First)
-    const allowedSortFields = ["price", "name", "stock", "created_at"];
-    if (sort && allowedSortFields.includes(sort)) {
-      order = order === "asc" ? "ASC" : "DESC";
-      query += ` ORDER BY ${sort} ${order}`;
-    } else {
-      query += " ORDER BY created_at DESC";
-    }
+    query += " ORDER BY created_at DESC";
 
-    // 📄 Pagination (Default: 10 products per page)
     limit = limit ? parseInt(limit) : 10;
     page = page ? parseInt(page) : 1;
     const offset = (page - 1) * limit;
 
-    query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
-    values.push(limit, offset);
+    values.push(limit);
+    query += ` LIMIT $${values.length}`;
+
+    values.push(offset);
+    query += ` OFFSET $${values.length}`;
+
+    console.log("Final query:", query);
+    console.log("Values:", values);
 
     const result = await pool.query(query, values);
     res.status(200).json({ products: result.rows, page, limit });
@@ -111,7 +112,6 @@ export const getAllProducts = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 // ✅ Get a Single Product by ID
 export const getProductById = async (req, res) => {

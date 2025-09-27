@@ -18,7 +18,7 @@ import {
   toggleWishlist,
   getWishlist
 } from "../controllers/productController.js";
-import { authenticateAdmin } from "../middlewares/authMiddleware.js";
+import { authenticateAdmin, authenticateToken } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -47,14 +47,13 @@ router.get("/category/:category", getProductsByCategory); // Get products by cat
 
 // Public Routes
 router.get("/", getAllProducts); // Get all products
+router.get("/my-products", authenticateToken, getAllProducts); // Get products for the authenticated seller
 router.get("/:id", getProductById); // Get a single product by ID
 
 // Admin-Only Routes
 router.post("/", authenticateAdmin, addProduct); // Add a product
 router.put("/:id", authenticateAdmin, updateProduct); // Update a product
 router.delete("/:id", authenticateAdmin, deleteProduct); // Delete a product
-
-
 
 
 export default router;

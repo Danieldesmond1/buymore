@@ -9,35 +9,34 @@ export const AuthProvider = ({ children }) => {
   });
 
   useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/users/me", {
-        credentials: "include",
-      });
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/users/me", {
+          credentials: "include",
+        });
 
-      if (res.ok) {
-        const user = await res.json();
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user));
-      } else {
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+          localStorage.setItem("user", JSON.stringify(data));
+        } else {
+          setUser(null);
+          localStorage.removeItem("user");
+        }
+      } catch (err) {
+        console.error("Error fetching current user:", err);
         setUser(null);
         localStorage.removeItem("user");
       }
-    } catch (err) {
-      console.error("Error fetching current user:", err);
-      setUser(null);
-      localStorage.removeItem("user");
-    }
-  };
+    };
 
-  if (!user) fetchUser();
-}, [user]); // <- add `user` dependency
+    if (!user) fetchUser();
+  }, []); // ✅ run only once on mount
 
   const login = (userData) => {
-  setUser(userData);
-  localStorage.setItem("user", JSON.stringify(userData)); // 🟢 Add this
-};
-
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+  };
 
   const logout = async () => {
     try {
@@ -49,7 +48,6 @@ export const AuthProvider = ({ children }) => {
       console.error("Logout error:", err);
     }
 
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
   };

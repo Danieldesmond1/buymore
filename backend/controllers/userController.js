@@ -160,13 +160,12 @@ export const updateBuyerProfile = async (req, res) => {
 
 
 // User Sign-in
+// User Sign-in
 export const signinUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const normalizedEmail = email.toLowerCase();
-
-    // Find the user by email
     const findUserQuery = "SELECT * FROM users WHERE email = $1";
     const { rows: user } = await pool.query(findUserQuery, [normalizedEmail]);
 
@@ -174,13 +173,19 @@ export const signinUser = async (req, res) => {
       return res.status(404).json({ message: "Invalid email or password" });
     }
 
-    // Compare the password
     const isPasswordValid = await bcrypt.compare(password, user[0].password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Generate JWT token
+    // 🔑 If seller, get their shop details
+    let shop = null;
+    if (user[0].role === "seller") {
+      const shopQuery = "SELECT id, shop_name, shop_handle FROM sellers_shop WHERE user_id = $1 LIMIT 1";
+      const { rows: shopRows } = await pool.query(shopQuery, [user[0].id]);
+      if (shopRows.length > 0) shop = shopRows[0];
+    }
+
     const token = jwt.sign(
       {
         userId: user[0].id,
@@ -192,12 +197,11 @@ export const signinUser = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    // Set the token in HttpOnly cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in ms
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return res.status(200).json({
@@ -209,9 +213,9 @@ export const signinUser = async (req, res) => {
         email: user[0].email,
         role: user[0].role,
         location: user[0].location,
+        shop, // ✅ Include shop info for sellers
       },
     });
-
   } catch (error) {
     console.error("Error signing in user:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -222,6 +226,7 @@ export const signinUser = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const { userId } = req.user;
+
     const query = "SELECT id, username, email, location, role FROM users WHERE id = $1";
     const { rows } = await pool.query(query, [userId]);
 
@@ -229,7 +234,20 @@ export const getMe = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json(rows[0]);
+    const user = rows[0];
+
+    // ✅ Fetch shop info if seller
+    if (user.role === "seller") {
+      const shopQuery = `
+        SELECT id, shop_name, shop_handle, banner_image, logo_image
+        FROM sellers_shop
+        WHERE user_id = $1
+      `;
+      const { rows: shopRows } = await pool.query(shopQuery, [userId]);
+      user.shop = shopRows[0] || null; // attach shop info
+    }
+
+    res.status(200).json(user);
   } catch (err) {
     console.error("Error fetching user:", err);
     res.status(500).json({ message: "Internal server error" });

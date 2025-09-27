@@ -1,43 +1,83 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "./styles/ProductsTable.css";
+import { useAuth } from "../../context/AuthContext";
 
 const ProductsTable = () => {
-  const [products] = useState([
-    {
-      id: 1,
-      image: "https://via.placeholder.com/60",
-      name: "Wireless Headphones",
-      category: "Electronics",
-      stock: 120,
-      price: "$120",
-      status: "Active",
-    },
-    {
-      id: 2,
-      image: "https://via.placeholder.com/60",
-      name: "Leather Handbag",
-      category: "Fashion",
-      stock: 45,
-      price: "$85",
-      status: "Draft",
-    },
-    {
-      id: 3,
-      image: "https://via.placeholder.com/60",
-      name: "Office Chair",
-      category: "Furniture",
-      stock: 0,
-      price: "$199",
-      status: "Out of Stock",
-    },
-  ]);
+  const { user } = useAuth(); // ✅ logged-in user
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+
+  // ✅ Fetch Products
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/products/my-products", {
+        params: { search, category },
+        withCredentials: true,
+      });
+
+      let fetchedProducts = response.data.products || [];
+
+      // ✅ Filter locally to show only THIS seller's products
+      // if (user?.role === "seller" && user?.shop?.id) {
+      //   fetchedProducts = fetchedProducts.filter(
+      //     (p) => p.shop_id === user.shop.id
+      //   );
+      // }
+       
+      setProducts(fetchedProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Fetch Categories
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("/api/products/categories", {
+        withCredentials: true,
+      });
+      setCategories(response.data.categories || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
+  // ✅ Run whenever search, category, OR user.shop.id changes
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+  }, [search, category, user?.shop?.id]);
+
+  // ✅ Delete Product
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    try {
+      await axios.delete(`/api/products/${id}`, { withCredentials: true });
+      setProducts((prev) => prev.filter((p) => p.id !== id));
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
 
   return (
     <div className="products-container">
       <div className="products-header">
         <h2 className="title">Products</h2>
-        <button className="add-btn">+ Add Product</button>
+        <button
+          className="add-btn"
+          onClick={() => alert("Open Add Product Modal")}
+        >
+          + Add Product
+        </button>
       </div>
+
       <p className="subtitle">
         Manage your products — upload, edit, delete, and track inventory.
       </p>
@@ -47,56 +87,78 @@ const ProductsTable = () => {
           type="text"
           placeholder="Search products..."
           className="search-input"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <select className="filter-dropdown">
-          <option>All Categories</option>
-          <option>Electronics</option>
-          <option>Fashion</option>
-          <option>Furniture</option>
+        <select
+          className="filter-dropdown"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">All Categories</option>
+          {categories.map((cat, idx) => (
+            <option key={idx} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
       </div>
 
-      <table className="products-table">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Stock</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((p) => (
-            <tr key={p.id}>
-              <td>
-                <img src={p.image} alt={p.name} className="product-img" />
-              </td>
-              <td>{p.name}</td>
-              <td>{p.category}</td>
-              <td>{p.stock > 0 ? p.stock : "—"}</td>
-              <td>{p.price}</td>
-              <td>
-                <span className={`status ${p.status.toLowerCase()}`}>
-                  {p.status}
-                </span>
-              </td>
-              <td>
-                <button className="action-btn edit">Edit</button>
-                <button className="action-btn delete">Delete</button>
-              </td>
+      {loading ? (
+        <p>Loading products...</p>
+      ) : products.length === 0 ? (
+        <p>No products found.</p>
+      ) : (
+        <table className="products-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Stock</th>
+              <th>Price</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div className="pagination">
-        <button disabled>{"<"}</button>
-        <span>Page 1 of 5</span>
-        <button>{">"}</button>
-      </div>
+          </thead>
+          <tbody>
+            {products.map((p) => (
+              <tr key={p.id}>
+                <td>
+                  <img src={p.image_url} alt={p.name} className="product-img" />
+                </td>
+                <td>{p.name}</td>
+                <td>{p.category}</td>
+                <td>{p.stock > 0 ? p.stock : "—"}</td>
+                <td>${p.price}</td>
+                <td>
+                  <span
+                    className={`status ${
+                      p.stock > 0 ? "active" : "out-of-stock"
+                    }`}
+                  >
+                    {p.stock > 0 ? "Active" : "Out of Stock"}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="action-btn edit"
+                    onClick={() => alert(`Edit product ${p.id}`)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="action-btn delete"
+                    onClick={() => handleDelete(p.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

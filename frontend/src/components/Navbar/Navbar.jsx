@@ -149,15 +149,6 @@ const Navbar = ({ onSearch }) => {
                     <li>
                       <Link to="/seller/dashboard" onClick={closeMenu}>Seller Dashboard</Link>
                     </li>
-                    <li>
-                      <Link to="/seller/products" onClick={closeMenu}>Manage Products</Link>
-                    </li>
-                    <li>
-                      <Link to="/seller/create" onClick={closeMenu}>Add New Product</Link>
-                    </li>
-                    <li>
-                      <Link to="/seller/orders" onClick={closeMenu}>Sales & Orders</Link>
-                    </li>
                   </>
                 )}
 
