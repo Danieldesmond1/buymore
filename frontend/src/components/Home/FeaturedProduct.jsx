@@ -133,41 +133,58 @@ useEffect(() => {
         <p className="no-products">No products available.</p>
       ) : (
         <div className="feature-grid">
-          {products.map((product) => (
-  <article
-    key={product.id}
-    className={`feature-card scroll-reveal ${inView ? "active" : ""}`}
-    onClick={() => handleViewProduct(product)}
-    role="button"
-    tabIndex={0}
-    onKeyDown={(e) => {
-      if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
-    }}
-    aria-label={`View details for ${product.name}`}
-  >
-    <img
-      src={`http://localhost:5000/images/${product.image_url}`}
-      alt={product.name}
-      className="feature-img"
-      loading="lazy"
-    />
-    <h3 className="feature-name">{product.name}</h3>
-    <p className="feature-price">${parseFloat(product.discount_price || product.price).toFixed(2)}</p>
-    <button
-      className="feature-btn"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleAddToCart(product);
-      }}
-      aria-label={`Add ${product.name} to cart`}
-    >
-      Add to Cart
-    </button>
-  </article>
-))}
+  {products.map((product) => {
+    let parsedImages = [];
+    try {
+      parsedImages = JSON.parse(product.image_url);
+    } catch {
+      parsedImages = [];
+    }
 
-        </div>
-      )}
+    const firstImage =
+      parsedImages.length > 0
+        ? (parsedImages[0].startsWith("http")
+            ? parsedImages[0]
+            : `http://localhost:5000${parsedImages[0]}`)
+        : "/fallback.jpg"; // fallback placeholder
+
+    return (
+      <article
+        key={product.id}
+        className={`feature-card scroll-reveal ${inView ? "active" : ""}`}
+        onClick={() => handleViewProduct(product)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
+        }}
+        aria-label={`View details for ${product.name}`}
+      >
+        <img
+          src={firstImage}
+          alt={product.name}
+          className="feature-img"
+          loading="lazy"
+        />
+        <h3 className="feature-name">{product.name}</h3>
+        <p className="feature-price">
+          ${parseFloat(product.discount_price || product.price).toFixed(2)}
+        </p>
+        <button
+          className="feature-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAddToCart(product);
+          }}
+          aria-label={`Add ${product.name} to cart`}
+        >
+          Add to Cart
+        </button>
+      </article>
+    );
+  })}
+</div>
+    )}
 
       {toast && (
         <Toast

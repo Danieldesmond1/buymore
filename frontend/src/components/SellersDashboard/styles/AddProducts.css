@@ -1,0 +1,204 @@
+/* ==========================
+   AddProducts.css
+   Global-standard clean design
+========================== */
+
+.add-product-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.add-product-container .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.add-product-container .header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--primary-btn);
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+.back-btn:hover {
+  color: #d32200;
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group,
+.form-inline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-inline {
+  flex-direction: row;
+  gap: 20px;
+}
+
+.form-inline > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+input,
+textarea,
+select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(244, 162, 97, 0.3);
+  outline: none;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  border: none;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+.cancel-btn:hover {
+  background: var(--border-color);
+}
+
+.save-btn {
+  background: var(--primary-btn);
+  color: #fff;
+  font-weight: 600;
+}
+.save-btn:hover {
+  background: #d32200;
+  transform: scale(1.02);
+}
+.save-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================
+   Image Upload Section
+========================== */
+
+.image-upload-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.image-preview {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.image-upload-box {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--dropdown-text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.image-upload-box:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.image-upload-box input {
+  display: none;
+}

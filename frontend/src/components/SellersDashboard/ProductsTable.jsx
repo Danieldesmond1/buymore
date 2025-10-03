@@ -3,15 +3,18 @@ import axios from "axios";
 import "./styles/ProductsTable.css";
 import { useAuth } from "../../context/AuthContext";
 
-const ProductsTable = () => {
-  const { user } = useAuth(); // ✅ logged-in user
+const BASE_URL = "http://localhost:5000";
+
+const ProductsTable = ({ setActiveSection, setEditingProduct }) => {
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
 
-  // ✅ Fetch Products
+  const [confirmDelete, setConfirmDelete] = useState(null); // store product id for delete confirmation
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -22,13 +25,21 @@ const ProductsTable = () => {
 
       let fetchedProducts = response.data.products || [];
 
-      // ✅ Filter locally to show only THIS seller's products
-      // if (user?.role === "seller" && user?.shop?.id) {
-      //   fetchedProducts = fetchedProducts.filter(
-      //     (p) => p.shop_id === user.shop.id
-      //   );
-      // }
-       
+      fetchedProducts = fetchedProducts.map((p) => {
+        let parsedImages = [];
+        try {
+          parsedImages = JSON.parse(p.image_url);
+        } catch {
+          parsedImages = [];
+        }
+
+        const imageArray = parsedImages.map((img) =>
+          img.startsWith("http") ? img : `${BASE_URL}${img}`
+        );
+
+        return { ...p, imageArray };
+      });
+
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -37,7 +48,6 @@ const ProductsTable = () => {
     }
   };
 
-  // ✅ Fetch Categories
   const fetchCategories = async () => {
     try {
       const response = await axios.get("/api/products/categories", {
@@ -49,21 +59,24 @@ const ProductsTable = () => {
     }
   };
 
-  // ✅ Run whenever search, category, OR user.shop.id changes
   useEffect(() => {
     fetchProducts();
     fetchCategories();
   }, [search, category, user?.shop?.id]);
 
-  // ✅ Delete Product
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
     try {
       await axios.delete(`/api/products/${id}`, { withCredentials: true });
       setProducts((prev) => prev.filter((p) => p.id !== id));
+      setConfirmDelete(null); // close modal
     } catch (error) {
       console.error("Error deleting product:", error);
     }
+  };
+
+  const handleEdit = (product) => {
+    setEditingProduct(product); // pass product data to AddProducts.jsx
+    setActiveSection("addProduct");
   };
 
   return (
@@ -72,7 +85,10 @@ const ProductsTable = () => {
         <h2 className="title">Products</h2>
         <button
           className="add-btn"
-          onClick={() => alert("Open Add Product Modal")}
+          onClick={() => {
+            setEditingProduct(null); // clear edit mode
+            setActiveSection("addProduct");
+          }}
         >
           + Add Product
         </button>
@@ -122,42 +138,87 @@ const ProductsTable = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
-              <tr key={p.id}>
-                <td>
-                  <img src={p.image_url} alt={p.name} className="product-img" />
-                </td>
-                <td>{p.name}</td>
-                <td>{p.category}</td>
-                <td>{p.stock > 0 ? p.stock : "—"}</td>
-                <td>${p.price}</td>
-                <td>
-                  <span
-                    className={`status ${
-                      p.stock > 0 ? "active" : "out-of-stock"
-                    }`}
-                  >
-                    {p.stock > 0 ? "Active" : "Out of Stock"}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="action-btn edit"
-                    onClick={() => alert(`Edit product ${p.id}`)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="action-btn delete"
-                    onClick={() => handleDelete(p.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {products.map((p) => {
+              const firstImage = p.imageArray?.[0] || null;
+              return (
+                <tr key={p.id}>
+                  <td>
+                    {firstImage ? (
+                      <img
+                        src={firstImage}
+                        alt={p.name}
+                        className="product-img"
+                      />
+                    ) : (
+                      <div className="product-img placeholder">No Image</div>
+                    )}
+                  </td>
+                  <td>{p.name}</td>
+                  <td>{p.category}</td>
+                  <td>{p.stock > 0 ? p.stock : "—"}</td>
+                  <td>${p.price}</td>
+                  <td>
+                    <span
+                      className={`status ${
+                        p.stock > 0 ? "active" : "out-of-stock"
+                      }`}
+                    >
+                      {p.stock > 0 ? "Active" : "Out of Stock"}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="action-btn edit"
+                      onClick={() => handleEdit(p)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="action-btn delete"
+                      onClick={() => setConfirmDelete(p.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+      )}
+
+      {/* ✅ Delete confirmation modal */}
+      {confirmDelete && (
+        <div
+          className="modal-overlay"
+          onClick={(e) => {
+            if (e.target.classList.contains("modal-overlay")) {
+              setConfirmDelete(null); // close when clicking outside
+            }
+          }}
+        >
+          <div className="modal">
+            <h3>Confirm Delete</h3>
+            <p>
+              Are you sure you want to delete this product? <br />
+              <strong>This action cannot be undone.</strong>
+            </p>
+            <div className="modal-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setConfirmDelete(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="delete-btn"
+                onClick={() => handleDelete(confirmDelete)}
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

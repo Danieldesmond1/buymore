@@ -132,7 +132,22 @@ const BestSellers = () => {
         <p>No products available.</p>
       ) : (
         <div className="product-list">
-          {products.map((product, index) => (
+          {products.map((product, index) => {
+          let parsedImages = [];
+          try {
+            parsedImages = JSON.parse(product.image_url);
+          } catch {
+            parsedImages = [];
+          }
+
+          const firstImage =
+            parsedImages.length > 0
+              ? (parsedImages[0].startsWith("http")
+                  ? parsedImages[0]
+                  : `http://localhost:5000${parsedImages[0]}`)
+              : "/fallback.jpg"; // fallback placeholder
+
+          return (
             <div
               key={product.id}
               className={`product-card ${inView ? "show-bestseller" : ""}`}
@@ -146,8 +161,9 @@ const BestSellers = () => {
               aria-label={`View details for ${product.name}`}
             >
               <img
-                src={`http://localhost:5000/images/${product.image_url}`}
+                src={firstImage}
                 alt={product.name}
+                className="bestseller-img"
                 loading="lazy"
               />
               <h3>{product.name}</h3>
@@ -162,7 +178,8 @@ const BestSellers = () => {
                 Add to Cart
               </button>
             </div>
-          ))}
+          );
+        })}
         </div>
       )}
 

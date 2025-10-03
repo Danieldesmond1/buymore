@@ -19,6 +19,7 @@ import {
   getWishlist
 } from "../controllers/productController.js";
 import { authenticateAdmin, authenticateToken } from "../middlewares/authMiddleware.js";
+import { multerUpload } from "../middlewares/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -51,9 +52,20 @@ router.get("/my-products", authenticateToken, getAllProducts); // Get products f
 router.get("/:id", getProductById); // Get a single product by ID
 
 // Admin-Only Routes
-router.post("/", authenticateAdmin, addProduct); // Add a product
-router.put("/:id", authenticateAdmin, updateProduct); // Update a product
-router.delete("/:id", authenticateAdmin, deleteProduct); // Delete a product
+router.post(
+  "/", 
+  authenticateToken, 
+  multerUpload.array("images", 4), // Accept up to 4 images
+  addProduct
+); // Add a product
 
+router.put(
+  "/:id",
+  authenticateToken,  // ✅ Allow sellers & admins
+  multerUpload.array("images", 4),
+  updateProduct
+);
+
+router.delete("/:id", authenticateToken, deleteProduct); // Delete a product
 
 export default router;

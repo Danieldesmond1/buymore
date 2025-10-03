@@ -2,24 +2,51 @@ import pool from "../utils/dbConnect.js";
 
 // ✅ Add a Product (Admin Only)
 export const addProduct = async (req, res) => {
-  const { name, description, price, discount_price, stock, category, brand, image_url } = req.body;
-
-  if (!name || !description || !price || !stock || !category || !brand || !image_url) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
   try {
+    const { name, description, price, discount_price, stock, category, brand } = req.body;
+
+    if (!req.user || (req.user.role !== "seller" && req.user.role !== "admin")) {
+      return res.status(403).json({ message: "Only sellers or admins can add products" });
+    }
+
+    if (req.user.role === "seller" && !req.user.shop?.id) {
+      return res.status(400).json({ message: "You must create a shop before adding products" });
+    }
+
+    if (!name || !description || !price || !stock || !category || !brand) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const shop_id = req.user.role === "seller" ? req.user.shop.id : null;
+
+    // ✅ Handle multiple images from multer
+    const imageUrls = req.files?.map((file) => `/uploads/${file.filename}`) || [];
+
     const result = await pool.query(
-      `INSERT INTO products (name, description, price, discount_price, stock, category, brand, image_url) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+      `INSERT INTO products 
+        (name, description, price, discount_price, stock, category, brand, image_url, shop_id, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW())
        RETURNING *`,
-      [name, description, price, discount_price || null, stock, category, brand, image_url]
+      [
+        name,
+        description,
+        price,
+        discount_price || null,
+        stock,
+        category,
+        brand,
+        JSON.stringify(imageUrls), // store as JSON array in DB
+        shop_id,
+      ]
     );
 
-    res.status(201).json({ message: "Product added successfully", product: result.rows[0] });
+    return res.status(201).json({
+      message: "Product added successfully",
+      product: result.rows[0],
+    });
   } catch (error) {
-    console.error("Error adding product:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("❌ Error adding product:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -132,11 +159,62 @@ export const getProductById = async (req, res) => {
 };
 
 // ✅ Update a Product (Admin Only)
+// export const updateProduct = async (req, res) => {
+//   const { id } = req.params;
+//   const { name, description, price, discount_price, stock, category, brand, image_url } = req.body;
+
+//   try {
+//     const result = await pool.query(
+//       `UPDATE products 
+//        SET 
+//          name = COALESCE($1, name),
+//          description = COALESCE($2, description),
+//          price = COALESCE($3, price),
+//          discount_price = COALESCE($4, discount_price),
+//          stock = COALESCE($5, stock),
+//          category = COALESCE($6, category),
+//          brand = COALESCE($7, brand),
+//          image_url = COALESCE($8, image_url)
+//        WHERE id = $9
+//        RETURNING *`,
+//       [name, description, price, discount_price, stock, category, brand, image_url, id]
+//     );
+
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ message: "Product not found" });
+//     }
+
+//     res.status(200).json({ message: "Product updated successfully", product: result.rows[0] });
+//   } catch (error) {
+//     console.error("Error updating product:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const { name, description, price, discount_price, stock, category, brand, image_url } = req.body;
+  const { name, description, price, discount_price, stock, category, brand } = req.body;
 
   try {
+    // ✅ Check if product exists
+    const existing = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
+    if (existing.rows.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const product = existing.rows[0];
+
+    // ✅ Sellers can only edit their own product
+    if (req.user.role === "seller" && product.shop_id !== req.user.shop?.id) {
+      return res.status(403).json({ message: "You can only update your own products" });
+    }
+
+    // ✅ Handle images
+    let imageUrls = product.image_url;
+    if (req.files?.length > 0) {
+      imageUrls = JSON.stringify(req.files.map((file) => `/uploads/${file.filename}`));
+    }
+
     const result = await pool.query(
       `UPDATE products 
        SET 
@@ -150,12 +228,8 @@ export const updateProduct = async (req, res) => {
          image_url = COALESCE($8, image_url)
        WHERE id = $9
        RETURNING *`,
-      [name, description, price, discount_price, stock, category, brand, image_url, id]
+      [name, description, price, discount_price, stock, category, brand, imageUrls, id]
     );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ message: "Product not found" });
-    }
 
     res.status(200).json({ message: "Product updated successfully", product: result.rows[0] });
   } catch (error) {
@@ -164,16 +238,27 @@ export const updateProduct = async (req, res) => {
   }
 };
 
+
 // ✅ Delete a Product (Admin Only)
 export const deleteProduct = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await pool.query("DELETE FROM products WHERE id = $1 RETURNING *", [id]);
-
-    if (result.rows.length === 0) {
+    // Check if product exists
+    const existing = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
+    if (existing.rows.length === 0) {
       return res.status(404).json({ message: "Product not found" });
     }
+
+    const product = existing.rows[0];
+
+    // ✅ Sellers can only delete their own product
+    if (req.user.role === "seller" && product.shop_id !== req.user.shop?.id) {
+      return res.status(403).json({ message: "You can only delete your own products" });
+    }
+
+    // Delete product
+    await pool.query("DELETE FROM products WHERE id = $1", [id]);
 
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
