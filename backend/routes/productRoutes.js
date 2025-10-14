@@ -5,6 +5,7 @@ import {
   getProductById, 
   updateProduct, 
   deleteProduct,
+  getRelatedProducts,
   getAllCategories,
   getProductsByCategory,
   searchProducts,
@@ -47,6 +48,7 @@ router.get("/category/:category", getProductsByCategory); // Get products by cat
 
 
 // Public Routes
+router.get("/:id/related", getRelatedProducts);
 router.get("/", getAllProducts); // Get all products
 router.get("/my-products", authenticateToken, getAllProducts); // Get products for the authenticated seller
 router.get("/:id", getProductById); // Get a single product by ID

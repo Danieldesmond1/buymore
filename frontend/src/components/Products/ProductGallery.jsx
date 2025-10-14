@@ -1,27 +1,55 @@
 import "./Styles/ProductGallery.css";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-// import front from "../../assets/iphone14promaxfront.jpg";
-// import back from "../../assets/iphone14promax.jpg";
-// import side from "../../assets/iphone14promaxside.jpg";
-// import box from "../../assets/iphone14promaxpack.jpg";
-
-const ProductGallery = ({ images = [] }) => {
-  // const images = [front, back, side, box];
-  const [selectedImage, setSelectedImage] = useState(images[0] || "");
+const ProductGallery = ({ product }) => {
+  const [parsedImages, setParsedImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState("");
   const [fade, setFade] = useState(false);
   const [zoom, setZoom] = useState(1);
   const zoomAreaRef = useRef(null);
 
+  useEffect(() => {
+    if (!product) return;
+
+    let parsed = [];
+
+    // ✅ Parse image_url safely (from backend)
+    try {
+      if (typeof product.image_url === "string") {
+        parsed = JSON.parse(product.image_url);
+      } else if (Array.isArray(product.image_url)) {
+        parsed = product.image_url;
+      }
+    } catch {
+      parsed = [];
+    }
+
+    // ✅ Prefix local paths with backend base URL
+    const formatted = parsed.map((img) =>
+      img.startsWith("http") ? img : `http://localhost:5000${img}`
+    );
+
+    setParsedImages(formatted);
+
+    // ✅ Default selected image
+    if (formatted.length > 0) {
+      setSelectedImage(formatted[0]);
+    } else {
+      setSelectedImage("/fallback.jpg");
+    }
+  }, [product]);
+
+  // ✅ Handle thumbnail click
   const handleThumbnailClick = (img) => {
     setFade(true);
     setTimeout(() => {
       setSelectedImage(img);
       setFade(false);
-      setZoom(1); // Reset zoom on image change
+      setZoom(1);
     }, 150);
   };
 
+  // ✅ Handle zoom scroll
   const handleWheelZoom = (e) => {
     if (zoomAreaRef.current && zoomAreaRef.current.contains(e.target)) {
       e.preventDefault();
@@ -33,32 +61,43 @@ const ProductGallery = ({ images = [] }) => {
   useEffect(() => {
     window.addEventListener("wheel", handleWheelZoom, { passive: false });
     return () => window.removeEventListener("wheel", handleWheelZoom);
-  });
+  }, []);
 
   return (
     <div className="product-gallery-wrapper">
       <div className="product-gallery-container">
+        {/* ✅ Thumbnails */}
         <div className="gallery-thumbnails">
-          {images.map((img, i) => (
-            <img
-              key={i}
-              src={img}
-              alt={`Thumbnail ${i}`}
-              className={`thumbnail ${selectedImage === img ? "active" : ""}`}
-              onClick={() => handleThumbnailClick(img)}
-            />
-          ))}
+          {parsedImages.length > 0 ? (
+            parsedImages.map((img, i) => (
+              <img
+                key={i}
+                src={img}
+                alt={`Thumbnail ${i}`}
+                className={`thumbnail ${selectedImage === img ? "active" : ""}`}
+                onClick={() => handleThumbnailClick(img)}
+              />
+            ))
+          ) : (
+            <div className="no-thumbnails">No images available</div>
+          )}
         </div>
 
-        <div className="main-image-area">
-          <div className={`main-image-wrapper ${fade ? "fade-out" : "fade-in"}`} style={{ transform: `scale(${zoom})` }}>
-            <img src={selectedImage} alt="Product" className="main-image" />
+        {/* ✅ Main Image */}
+        <div className="main-image-area" ref={zoomAreaRef}>
+          <div
+            className={`main-image-wrapper ${fade ? "fade-out" : "fade-in"}`}
+            style={{ transform: `scale(${zoom})` }}
+          >
+            <img
+              src={selectedImage}
+              alt={product?.name || "Product"}
+              className="main-image"
+            />
           </div>
         </div>
 
-        <div className="zoom-side" ref={zoomAreaRef}>
-          <div className="zoom-hint">🔍 Zoom for closer look<br />(scroll while hovering)</div>
-        </div>
+        <div className="zoom-hint">🔍 Scroll to zoom for closer look</div>
       </div>
     </div>
   );

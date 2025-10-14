@@ -198,69 +198,84 @@ const ProductGrid = ({
         </div>
       ) : (
         <div className="pg-grid">
-          {filteredProducts.slice(0, visibleCount).map((product, index) => (
-            <motion.article
-              key={product.id}
-              onClick={() => handleViewProduct(product)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
-              }}
-              aria-label={`View details for ${product.name}`}
-              className="pg-card"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
-            >
-              <img
-                src={`http://localhost:5000/images/${product.image_url}`}
-                alt={`Product image of ${product.name}`}
-                loading="lazy"
-                className="pg-img"
-              />
-              <h3 className="pg-name">{product.name}</h3>
-              <p className="pg-brand">{product.brand}</p>
-              <p className="pg-category">{capitalize(product.category)}</p>
-              <p className="pg-description">{product.description}</p>
-              <p className="pg-price">
-                {product.discount_price ? (
-                  <>
-                    <span className="pg-discount-price">
-                      ${parseFloat(product.discount_price).toFixed(2)}
-                    </span>{" "}
-                    <span className="pg-original-price">
-                      ${parseFloat(product.price).toFixed(2)}
-                    </span>
-                  </>
-                ) : (
-                  <>${parseFloat(product.price).toFixed(2)}</>
-                )}
-              </p>
-              <p className="pg-stock">
-                {product.stock > 0
-                  ? `In stock: ${product.stock}`
-                  : "Out of stock"}
-              </p>
-              <div className="pg-rating" aria-label={`Rated ${product.rating} stars`}>
-                {"⭐".repeat(Math.floor(product.rating) || 0)}{" "}
-                <span className="pg-rating-score">
-                  {typeof product.rating === "number"
-                    ? product.rating.toFixed(1)
-                    : "N/A"}
-                </span>
-              </div>
+          {filteredProducts.slice(0, visibleCount).map((product, index) => {
+            // Parse the image_url field like in FeaturedProducts
+            let parsedImages = [];
+            try {
+              parsedImages = JSON.parse(product.image_url);
+            } catch {
+              parsedImages = [];
+            }
 
-              <button
-                className="pg-btn"
-                aria-label={`Add ${product.name} to cart`}
-                disabled={product.stock === 0}
-                onClick={(e) => handleAddToCart(e, product)}
+            const firstImage =
+              parsedImages.length > 0
+                ? (parsedImages[0].startsWith("http")
+                    ? parsedImages[0]
+                    : `http://localhost:5000${parsedImages[0]}`)
+                : "/fallback.jpg"; // fallback placeholder if no image found
+
+            return (
+              <motion.article
+                key={product.id}
+                onClick={() => handleViewProduct(product)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
+                }}
+                aria-label={`View details for ${product.name}`}
+                className="pg-card"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
               >
-                Add to Cart
-              </button>
-            </motion.article>
-          ))}
+                <img
+                  src={firstImage}
+                  alt={product.name}
+                  className="pg-img"
+                  loading="lazy"
+                />
+                <h3 className="pg-name">{product.name}</h3>
+                <p className="pg-brand">{product.brand}</p>
+                <p className="pg-category">{capitalize(product.category)}</p>
+                <p className="pg-description">{product.description}</p>
+                <p className="pg-price">
+                  {product.discount_price ? (
+                    <>
+                      <span className="pg-discount-price">
+                        ${parseFloat(product.discount_price).toFixed(2)}
+                      </span>{" "}
+                      <span className="pg-original-price">
+                        ${parseFloat(product.price).toFixed(2)}
+                      </span>
+                    </>
+                  ) : (
+                    <>${parseFloat(product.price).toFixed(2)}</>
+                  )}
+                </p>
+                <p className="pg-stock">
+                  {product.stock > 0 ? `In stock: ${product.stock}` : "Out of stock"}
+                </p>
+                <div className="pg-rating" aria-label={`Rated ${product.rating} stars`}>
+                  {"⭐".repeat(Math.floor(product.rating) || 0)}{" "}
+                  <span className="pg-rating-score">
+                    {typeof product.rating === "number"
+                      ? product.rating.toFixed(1)
+                      : "N/A"}
+                  </span>
+                </div>
+
+                <button
+                  className="pg-btn"
+                  aria-label={`Add ${product.name} to cart`}
+                  disabled={product.stock === 0}
+                  onClick={(e) => handleAddToCart(e, product)}
+                >
+                  Add to Cart
+                </button>
+              </motion.article>
+            );
+          })}
         </div>
       )}
 

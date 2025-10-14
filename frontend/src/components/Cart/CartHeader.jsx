@@ -3,14 +3,15 @@ import './Styles/CartHeader.css';
 
 const formatter = new Intl.NumberFormat('en-NG', {
   style: 'currency',
-  currency: 'NGN',
+  currency: 'USD',
+  currencyDisplay: 'narrowSymbol',
   minimumFractionDigits: 0,
 });
 
 const CartHeader = ({ cartItems = [] }) => {
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const tax = subtotal * 0.07;
-  const shippingFee = subtotal > 50000 ? 0 : 2000;
+  const tax = subtotal * 0.03;
+  const shippingFee = subtotal > 50000 ? 0 : 500;
   const discount = 0;
   const totalAmount = subtotal + tax + shippingFee - discount;
 

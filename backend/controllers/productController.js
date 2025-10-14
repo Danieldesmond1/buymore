@@ -267,6 +267,41 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
+// ✅ Get Related Products
+export const getRelatedProducts = async (req, res) => {
+  const { id } = req.params; // current product ID
+
+  try {
+    // First, get the product details to know its category and brand
+    const productResult = await pool.query(
+      "SELECT category, brand FROM products WHERE id = $1",
+      [id]
+    );
+
+    if (productResult.rows.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const { category, brand } = productResult.rows[0];
+
+    // Now fetch related products (same category, optionally same brand)
+    const relatedResult = await pool.query(
+      `SELECT * FROM products 
+       WHERE category = $1 AND id != $2
+       ORDER BY created_at DESC
+       LIMIT 6`,
+      [category, id]
+    );
+
+    return res.status(200).json({
+      related_products: relatedResult.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching related products:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // ✅ Search Products by Name
 export const searchProducts = async (req, res) => {
   const { name } = req.query;

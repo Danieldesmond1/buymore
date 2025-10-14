@@ -3,15 +3,16 @@ import './Styles/CartSummary.css';
 
 const formatter = new Intl.NumberFormat('en-NG', {
   style: 'currency',
-  currency: 'NGN',
+  currency: 'USD',
+  currencyDisplay: 'narrowSymbol',
   minimumFractionDigits: 0,
 });
 
 const CartSummary = ({ cartItems = [] }) => {
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const taxRate = 0.07;
+  const taxRate = 0.001; // 0.1% tax rate
   const tax = subtotal * taxRate;
-  const shippingFee = subtotal > 50000 ? 0 : 2000;
+  const shippingFee = subtotal > 50000 ? 0 : 40; // Flat $20 shipping fee for orders under $50000
   const discount = 0;
   const total = subtotal + tax + shippingFee - discount;
 
@@ -29,7 +30,7 @@ const CartSummary = ({ cartItems = [] }) => {
 
         <div className="cart-summary__row">
           <span>
-            <FaPercent className="icon" /> Tax (7%)
+            <FaPercent className="icon" /> Tax (0.1%)
           </span>
           <span>{formatter.format(tax)}</span>
         </div>
