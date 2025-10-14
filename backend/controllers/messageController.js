@@ -59,6 +59,36 @@ export const getConversations = async (req, res) => {
   }
 };
 
+// Get all conversations for a seller
+export const getSellerConversations = async (req, res) => {
+  const sellerId = req.user.userId; // logged-in seller
+  try {
+    const result = await pool.query(
+      `SELECT c.*, 
+              s.shop_name AS shop_name,
+              p.name AS product_name,
+              p.image_url AS product_image,
+              (
+                SELECT m.message_text
+                FROM messages m
+                WHERE m.conversation_id = c.id
+                ORDER BY m.created_at DESC
+                LIMIT 1
+              ) AS last_message
+       FROM conversations c
+       JOIN sellers_shop s ON c.shop_id = s.id
+       JOIN products p ON c.product_id = p.id
+       WHERE s.user_id=$1
+       ORDER BY c.created_at DESC`,
+      [sellerId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching seller conversations:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // Get messages inside a conversation
 export const getMessages = async (req, res) => {
   const { conversationId } = req.params;

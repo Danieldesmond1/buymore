@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Styles/Messages.css";
 
@@ -10,8 +10,9 @@ const Messages = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const { chatId } = useParams();
   const navigate = useNavigate();
+  const messagesEndRef = useRef(null);
 
-  // 0. Load logged in user
+  // Load logged-in user
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -29,7 +30,7 @@ const Messages = () => {
     fetchUser();
   }, []);
 
-  // 1. Load conversations
+  // Load conversations
   useEffect(() => {
     const fetchConversations = async () => {
       try {
@@ -55,7 +56,7 @@ const Messages = () => {
     fetchConversations();
   }, [chatId, navigate]);
 
-  // 2. Load messages when selected conversation changes
+  // Load messages when selected conversation changes
   useEffect(() => {
     if (!selected) return;
     const fetchMessages = async () => {
@@ -73,7 +74,7 @@ const Messages = () => {
     fetchMessages();
   }, [selected]);
 
-  // 3. Send message
+  // Send message
   const handleSend = async () => {
     if (!newMessage.trim() || !selected) return;
 
@@ -93,6 +94,26 @@ const Messages = () => {
     }
   };
 
+  // Auto-scroll to latest message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Helper to get product image URL
+  const getProductImage = (productImage) => {
+    let parsedImages = [];
+    try {
+      parsedImages = JSON.parse(productImage || "[]");
+    } catch {
+      parsedImages = [];
+    }
+    return parsedImages.length > 0
+      ? parsedImages[0].startsWith("http")
+        ? parsedImages[0]
+        : `http://localhost:5000${parsedImages[0]}`
+      : "/fallback.jpg"; // fallback
+  };
+
   return (
     <div className="messages-container">
       {/* Sidebar */}
@@ -105,7 +126,7 @@ const Messages = () => {
             className={`conversation-item ${selected?.id === conv.id ? "active" : ""}`}
             onClick={() => navigate(`/dashboard/messages/${conv.id}`)}
           >
-            <h4>{conv.shop_name}</h4>
+            <h4>{conv.shop_name} - {conv.product_name}</h4>
             <p>{conv.last_message || "No messages yet"}</p>
           </div>
         ))}
@@ -115,37 +136,55 @@ const Messages = () => {
       <div className="chat-window">
         {selected ? (
           <>
+            {/* Chat Header */}
             <div className="chat-header">
               <h4>{selected.shop_name}</h4>
               {selected.product_name && (
-                <div className="chat-product">
+                <div className="chat-product-header">
                   <img
-                    src={`http://localhost:5000/uploads/${selected.product_image}`}
+                    src={getProductImage(selected.product_image)}
                     alt={selected.product_name}
                   />
-                  <span>{selected.product_name}</span>
+                  <div className="chat-product-info">
+                    <h4>{selected.product_name}</h4>
+                    <span>From: {selected.shop_name}</span>
+                  </div>
                 </div>
               )}
             </div>
+
+            {/* Chat Body */}
             <div className="chat-body">
-              {messages.map((msg) => (
+              {messages.map((msg, idx) => (
                 <div
                   key={msg.id}
                   className={`chat-message ${
-                    msg.sender_id === currentUser?.id ? "me" : "other"
+                    msg.sender_id === currentUser?.id ? "buyer" : "seller"
                   }`}
                 >
+                  {/* Optional: show product thumbnail on first message */}
+                  {idx === 0 && selected.product_name && (
+                    <img
+                      src={getProductImage(selected.product_image)}
+                      alt={selected.product_name}
+                      className="chat-message-product"
+                    />
+                  )}
                   <p>{msg.message_text}</p>
                   <span>{new Date(msg.created_at).toLocaleTimeString()}</span>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
+
+            {/* Chat Input */}
             <div className="chat-input">
               <input
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
               />
               <button onClick={handleSend}>Send</button>
             </div>

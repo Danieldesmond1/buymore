@@ -64,22 +64,43 @@
   background: var(--bg-color);
 }
 
-.chat-header {
+.chat-product-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 10px;
   margin-bottom: 10px;
+  gap: 10px;
 }
 
-.chat-header h4 {
+.chat-product-header img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.chat-product-info h4 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: var(--text-color);
 }
 
-.chat-header span {
-  font-size: 0.8rem;
+.chat-message-product {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.chat-product-info span {
+  font-size: 0.85rem;
   color: var(--muted-text);
 }
+
 
 /* Chat Body */
 .chat-body {

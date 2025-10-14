@@ -102,6 +102,47 @@ export const getOrderDetails = async (req, res) => {
   }
 };
 
+// Get orders for a seller
+export const getSellerOrders = async (req, res) => {
+  try {
+    const { seller_id } = req.params;
+
+    if (!seller_id) {
+      return res.status(400).json({ message: "Seller ID is required" });
+    }
+
+    // Get orders where seller's products were purchased
+    const sellerOrders = await pool.query(
+      `
+      SELECT 
+        o.id AS order_id,
+        o.user_id AS buyer_id,
+        u.username AS buyer_name,
+        o.total_price,
+        o.status,
+        o.created_at
+      FROM orders o
+      JOIN order_items oi ON oi.order_id = o.id
+      JOIN products p ON p.id = oi.product_id
+      JOIN users u ON u.id = o.user_id
+      WHERE p.user_id = $1
+      GROUP BY o.id, u.username
+      ORDER BY o.created_at DESC
+      `,
+      [seller_id]
+    );
+
+    if (sellerOrders.rows.length === 0) {
+      return res.status(200).json({ orders: [] });
+    }
+
+    res.status(200).json({ orders: sellerOrders.rows });
+  } catch (error) {
+    console.error("Error fetching seller orders:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // 4. Update Order Status (Admin only)
 export const updateOrderStatus = async (req, res) => {
   try {
