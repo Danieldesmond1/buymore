@@ -71,7 +71,7 @@ const RelatedProducts = ({ category, currentProductId }) => {
                 loading="lazy"
               />
               <h3 className="product-title">{item.name}</h3>
-              <p className="product-price">₦{item.price?.toLocaleString()}</p>
+              <p className="product-price">${item.price?.toLocaleString()}</p>
             </div>
           ))
         ) : (

@@ -239,20 +239,16 @@ const ProductGrid = ({
                 <p className="pg-brand">{product.brand}</p>
                 <p className="pg-category">{capitalize(product.category)}</p>
                 <p className="pg-description">{product.description}</p>
-                <p className="pg-price">
-                  {product.discount_price ? (
-                    <>
-                      <span className="pg-discount-price">
-                        ${parseFloat(product.discount_price).toFixed(2)}
-                      </span>{" "}
-                      <span className="pg-original-price">
-                        ${parseFloat(product.price).toFixed(2)}
-                      </span>
-                    </>
-                  ) : (
-                    <>${parseFloat(product.price).toFixed(2)}</>
+                <div className="pg-price">
+                  <span className="pg-current-price">
+                    ${parseFloat(product.price).toFixed(2)}
+                  </span>
+                  {product.discount_price && (
+                    <span className="pg-old-price">
+                      ${parseFloat(product.discount_price).toFixed(2)}
+                    </span>
                   )}
-                </p>
+                </div>
                 <p className="pg-stock">
                   {product.stock > 0 ? `In stock: ${product.stock}` : "Out of stock"}
                 </p>

@@ -94,12 +94,12 @@ const ProductDetailsInfo = ({ product }) => {
             <span className="detail-value">
               {discount_price ? (
                 <>
-                  <span className="discount-price">
-                    ${Number(discount_price).toFixed(2)}
-                  </span>{" "}
                   <span className="original-price">
                     ${Number(price).toFixed(2)}
                   </span>
+                  <span className="discount-price">
+                    ${Number(discount_price).toFixed(2)}
+                  </span>{" "}
                 </>
               ) : (
                 <>${Number(price).toFixed(2)}</>

@@ -12,9 +12,10 @@ const ProductHeader = ({ product }) => {
   }
 
   const title = product.name;
-  const price = product.discount_price ?? product.price ?? 0;
-  const oldPrice = product.price ?? 0;
-  const savings = oldPrice - price;
+  const price = product.price ?? 0; 
+  const discount = product.discount_price ?? 0; 
+  const savings = discount > 0 ? discount : 0;
+  const discountPercent = price > 0 ? Math.round((savings / price) * 100) : 0;
   const badges = product.tags || ["In Stock"];
 
   // ✅ Parse image_url safely
@@ -111,12 +112,17 @@ const ProductHeader = ({ product }) => {
         <h1 className="product-title">{title}</h1>
 
         <div className="product-pricing">
-          <div className="product-price">${price.toLocaleString()}</div>
-          {oldPrice !== price && (
-            <>
-              <div className="old-price">${oldPrice.toLocaleString()}</div>
-              <div className="you-save">You save ${savings.toLocaleString()}</div>
-            </>
+          <div className="price-stack">
+            <div className="product-price">${price.toLocaleString()}</div>
+            {discount > 0 && (
+              <div className="old-price">${discount.toLocaleString()}</div>
+            )}
+          </div>
+
+          {discount > 0 && (
+            <div className="you-save">
+              You save ${savings.toLocaleString()} ({discountPercent}% off)
+            </div>
           )}
         </div>
 

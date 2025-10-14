@@ -168,8 +168,22 @@ useEffect(() => {
         />
         <h3 className="feature-name">{product.name}</h3>
         <p className="feature-price">
-          ${parseFloat(product.discount_price || product.price).toFixed(2)}
+          {product.discount_price && product.discount_price !== "0" ? (
+            <>
+              <span className="current-price">
+                ${parseFloat(product.price).toFixed(2)}
+              </span>
+              <span className="old-price">
+                ${parseFloat(product.discount_price).toFixed(2)}
+              </span>
+            </>
+          ) : (
+            <span className="current-price">
+              ${parseFloat(product.price).toFixed(2)}
+            </span>
+          )}
         </p>
+
         <button
           className="feature-btn"
           onClick={(e) => {

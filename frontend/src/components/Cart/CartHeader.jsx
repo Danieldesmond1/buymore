@@ -10,8 +10,8 @@ const formatter = new Intl.NumberFormat('en-NG', {
 
 const CartHeader = ({ cartItems = [] }) => {
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const tax = subtotal * 0.03;
-  const shippingFee = subtotal > 50000 ? 0 : 500;
+  const tax = subtotal * 0.001; // 0.1% tax rate
+  const shippingFee = subtotal > 50000 ? 0 : 40; // Flat $20 shipping fee for orders under $50000
   const discount = 0;
   const totalAmount = subtotal + tax + shippingFee - discount;
 

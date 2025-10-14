@@ -167,7 +167,19 @@ const BestSellers = () => {
                 loading="lazy"
               />
               <h3>{product.name}</h3>
-              <p>${parseFloat(product.discount_price || product.price).toFixed(2)}</p>
+
+              {/* ✅ Updated price layout */}
+              <div className="feature-price">
+                <span className="current-price">
+                  ${parseFloat(product.price).toFixed(2)}
+                </span>
+                {product.discount_price && (
+                  <span className="old-price">
+                    ${parseFloat(product.discount_price).toFixed(2)}
+                  </span>
+                )}
+              </div>
+
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -178,6 +190,7 @@ const BestSellers = () => {
                 Add to Cart
               </button>
             </div>
+
           );
         })}
         </div>
