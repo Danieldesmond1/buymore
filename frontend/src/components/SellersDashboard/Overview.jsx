@@ -33,9 +33,10 @@ export default function Overview() {
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/orders/user/${user.id}`, {
+        const res = await fetch(`${API_BASE_URL}/api/orders/seller/${user.shop?.id}`, {
           credentials: "include",
         });
+
         if (!res.ok) throw new Error("Failed to fetch orders");
         const data = await res.json();
 
@@ -124,9 +125,9 @@ export default function Overview() {
 
       {/* Stats Cards */}
       <div className="stats-grid">
-        <StatsCard title="Today’s Sales" value={`₦${todaySales.toLocaleString()}`} trend="+8%" type="sales" />
+        <StatsCard title="Today’s Sales" value={`$${todaySales.toLocaleString()}`} trend="+8%" type="sales" />
         <StatsCard title="Orders (Today)" value={todayOrders} trend="+12%" type="orders" />
-        <StatsCard title="Revenue (This Month)" value={`₦${monthlyRevenue.toLocaleString()}`} trend="+5%" type="revenue" />
+        <StatsCard title="Revenue (This Month)" value={`$${monthlyRevenue.toLocaleString()}`} trend="+5%" type="revenue" />
         <StatsCard title="Pending Orders" value={pendingOrders} trend="-2%" type="pending" />
       </div>
 
@@ -186,12 +187,26 @@ export default function Overview() {
             </tr>
           </thead>
           <tbody>
-            {orders.slice(0, 5).map((order) => (
-              <tr key={order.id}>
-                <td>#{order.id}</td>
-                <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                <td><span className={`status ${order.status}`}>{order.status}</span></td>
-                <td>₦{Number(order.total_price).toLocaleString()}</td>
+            {orders.slice(0, 5).map((order, index) => (
+              // ✅ use order.order_id (or fallback to order.id or index) as key
+              <tr key={order.order_id || order.id || index}>
+                <td>
+                  {/* ✅ Clear, formatted Order ID */}
+                  #{order.order_id || order.id || `ORD${index + 1}`}
+                </td>
+                <td>
+                  {order.created_at
+                    ? new Date(order.created_at).toLocaleDateString()
+                    : "-"}
+                </td>
+                <td>
+                  <span className={`status ${order.status?.toLowerCase()}`}>
+                    {order.status || "Unknown"}
+                  </span>
+                </td>
+                <td>
+                  ${Number(order.total_price || 0).toLocaleString()}
+                </td>
               </tr>
             ))}
           </tbody>

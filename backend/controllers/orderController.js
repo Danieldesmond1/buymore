@@ -1,6 +1,6 @@
 import pool from "../utils/dbConnect.js";
 
-// 1. Place an Order
+// 1️⃣ Place an Order (create orders + order_items)
 export const placeOrder = async (req, res) => {
   try {
     const { user_id } = req.body;
@@ -9,9 +9,9 @@ export const placeOrder = async (req, res) => {
       return res.status(400).json({ message: "User ID is required" });
     }
 
-    // Fetch cart items
+    // ✅ Get cart items (now using p.shop_id as seller_id)
     const cartItems = await pool.query(
-      `SELECT c.product_id, c.quantity, p.price 
+      `SELECT c.product_id, c.quantity, p.price, p.shop_id AS seller_id
        FROM cart c 
        JOIN products p ON c.product_id = p.id 
        WHERE c.user_id = $1`,
@@ -22,33 +22,45 @@ export const placeOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
-    // Calculate total price
+    // ✅ Calculate total price
     const totalPrice = cartItems.rows.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     );
 
-    // Insert into orders table
+    // ✅ Seller/shop ID from first product in cart
+    const sellerId = cartItems.rows[0].seller_id || null;
+
+    // ✅ Insert into orders table
     const orderResult = await pool.query(
-      "INSERT INTO orders (user_id, total_price) VALUES ($1, $2) RETURNING id",
-      [user_id, totalPrice]
+      `INSERT INTO orders (user_id, total_price, status, created_at, updated_at, seller_id)
+       VALUES ($1, $2, 'pending', NOW(), NOW(), $3)
+       RETURNING id`,
+      [user_id, totalPrice, sellerId]
     );
+
     const orderId = orderResult.rows[0].id;
 
-    // Insert order items
+    // ✅ Insert order items
     for (const item of cartItems.rows) {
       await pool.query(
-        "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
+        `INSERT INTO order_items (order_id, product_id, quantity, price)
+         VALUES ($1, $2, $3, $4)`,
         [orderId, item.product_id, item.quantity, item.price]
       );
     }
 
-    // Clear user's cart
+    // ✅ Clear user's cart
     await pool.query("DELETE FROM cart WHERE user_id = $1", [user_id]);
 
-    res.status(201).json({ message: "Order placed successfully", orderId });
+    // ✅ Response
+    res.status(201).json({
+      message: "Order placed successfully",
+      order_id: orderId,
+      total_price: totalPrice,
+    });
   } catch (error) {
-    console.error("Error placing order:", error);
+    console.error("❌ Error placing order:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -102,7 +114,7 @@ export const getOrderDetails = async (req, res) => {
   }
 };
 
-// Get orders for a seller
+// ✅ Get orders for a seller (using shop_id)
 export const getSellerOrders = async (req, res) => {
   try {
     const { seller_id } = req.params;
@@ -111,7 +123,7 @@ export const getSellerOrders = async (req, res) => {
       return res.status(400).json({ message: "Seller ID is required" });
     }
 
-    // Get orders where seller's products were purchased
+    // Get orders where this seller's (shop's) products were purchased
     const sellerOrders = await pool.query(
       `
       SELECT 
@@ -125,20 +137,16 @@ export const getSellerOrders = async (req, res) => {
       JOIN order_items oi ON oi.order_id = o.id
       JOIN products p ON p.id = oi.product_id
       JOIN users u ON u.id = o.user_id
-      WHERE p.user_id = $1
-      GROUP BY o.id, u.username
+      WHERE p.shop_id = $1
+      GROUP BY o.id, u.username, o.total_price, o.status, o.created_at, o.user_id
       ORDER BY o.created_at DESC
       `,
       [seller_id]
     );
 
-    if (sellerOrders.rows.length === 0) {
-      return res.status(200).json({ orders: [] });
-    }
-
     res.status(200).json({ orders: sellerOrders.rows });
   } catch (error) {
-    console.error("Error fetching seller orders:", error);
+    console.error("❌ Error fetching seller orders:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

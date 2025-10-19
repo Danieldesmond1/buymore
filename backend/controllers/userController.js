@@ -244,7 +244,12 @@ export const getMe = async (req, res) => {
         WHERE user_id = $1
       `;
       const { rows: shopRows } = await pool.query(shopQuery, [userId]);
-      user.shop = shopRows[0] || null; // attach shop info
+      const shop = shopRows[0] || null;
+      user.shop = shop;
+      user.shop_id = shop ? shop.id : null; // ✅ Add this line
+    } else {
+      user.shop = null;
+      user.shop_id = null;
     }
 
     res.status(200).json(user);

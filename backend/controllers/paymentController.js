@@ -1,41 +1,66 @@
 import axios from "axios";
 import pool from "../utils/dbConnect.js";
 import dotenv from "dotenv";
-
 dotenv.config();
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY;
+const EXCHANGE_API_KEY = process.env.EXCHANGE_API_KEY; // ExchangeRate-API key
 
-// 🟢 Initialize Payment
+// ✅ Convert USD → NGN
+export const convertUSDToNGN = async (usdAmount) => {
+  try {
+    const response = await axios.get(
+      `https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest/USD`
+    );
+    const rate = response.data.conversion_rates.NGN;
+    const ngnAmount = usdAmount * rate;
+    return Math.round(ngnAmount);
+  } catch (error) {
+    console.error("❌ Currency conversion failed:", error.message);
+    throw new Error("Failed to convert currency");
+  }
+};
+
+// ✅ Standalone API endpoint for frontend conversion test
+export const convertCurrencyController = async (req, res) => {
+  try {
+    const usd = Number(req.params.usd);
+    if (isNaN(usd)) return res.status(400).json({ message: "Invalid USD amount" });
+
+    const ngn = await convertUSDToNGN(usd);
+    res.json({ usd, ngn });
+  } catch (err) {
+    console.error("❌ Conversion route error:", err.message);
+    res.status(500).json({ message: "Conversion error", error: err.message });
+  }
+};
+
+// 🟢 Initialize Payment (Buyer → Paystack)
 export const initializePayment = async (req, res) => {
   try {
-    const { user_id } = req.body; // Only receive user_id, no amount from user!
+    const { user_id, email, order_id } = req.body;
 
-    if (!user_id) {
-      return res.status(400).json({ message: "User ID is required" });
+    if (!user_id || !email || !order_id) {
+      return res.status(400).json({ message: "user_id, email, and order_id are required" });
     }
 
-    // 🔹 Step 1: Calculate total cart amount for the user
-    const cartQuery = `
-      SELECT SUM(products.price * cart.quantity) AS total_amount
-      FROM cart
-      JOIN products ON cart.product_id = products.id
-      WHERE cart.user_id = $1;
-    `;
-    const cartResult = await pool.query(cartQuery, [user_id]);
+    // Get total order amount (in USD)
+    const result = await pool.query(
+      `SELECT total_price FROM orders WHERE id = $1 AND user_id = $2`,
+      [order_id, user_id]
+    );
 
-    const totalAmount = cartResult.rows[0]?.total_amount || 0;
+    const totalAmountUSD = result.rows[0]?.total_price;
+    if (!totalAmountUSD) return res.status(404).json({ message: "Order not found" });
 
-    if (totalAmount <= 0) {
-      return res.status(400).json({ message: "Cart is empty or total is invalid" });
-    }
+    // ✅ Convert USD → NGN
+    const totalAmountNGN = await convertUSDToNGN(totalAmountUSD);
 
-    // 🔹 Step 2: Initialize Paystack payment with calculated total
     const paymentData = {
-      email: req.body.email, // User's email
-      amount: totalAmount * 100, // Convert to kobo
+      email,
+      amount: totalAmountNGN * 100, // Paystack expects kobo
       currency: "NGN",
-      callback_url: "http://localhost:5000/api/payment/verify",
+      callback_url: "http://localhost:5173/payment-success",
     };
 
     const response = await axios.post("https://api.paystack.co/transaction/initialize", paymentData, {
@@ -45,52 +70,75 @@ export const initializePayment = async (req, res) => {
       },
     });
 
-    res.status(200).json(response.data);
+    res.json({
+      ...response.data,
+      rate_used: totalAmountNGN / totalAmountUSD,
+      totalAmountNGN,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Payment initialization failed", error: error.response?.data || error });
+    console.error("❌ Payment initialization error:", error);
+    res.status(500).json({ message: "Error initializing payment" });
   }
 };
 
-// 🟢 Verify Payment & Save to DB
+// 🔥 VERIFY PAYSTACK PAYMENT
 export const verifyPayment = async (req, res) => {
+  const { reference, order_id } = req.query;
+
+  if (!reference) {
+    return res.status(400).json({ message: "Missing payment reference" });
+  }
+
   try {
-    const { reference, user_id, order_id } = req.body; // Receive user_id and order_id
-
-    if (!reference || !user_id || !order_id) {
-      return res.status(400).json({ message: "Reference, user_id, and order_id are required" });
-    }
-
-    // Verify the payment with Paystack
-    const response = await axios.get(`https://api.paystack.co/transaction/verify/${reference}`, {
-      headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` },
+    const verifyUrl = `https://api.paystack.co/transaction/verify/${reference}`;
+    const { data } = await axios.get(verifyUrl, {
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+      },
     });
 
-    const paymentData = response.data.data;
+    const paymentData = data.data;
 
     if (paymentData.status === "success") {
-      const amount = paymentData.amount / 100; // Convert from kobo to naira
-      const payment_method = paymentData.channel;
-      const status = paymentData.status;
-      const transaction_id = paymentData.id;
+      const {
+        amount,
+        channel,
+        id: transactionId,
+        fees,
+        customer: { email },
+      } = paymentData;
 
-      // Insert payment into database
-      const query = `
-        INSERT INTO payments (user_id, order_id, amount, payment_method, status, transaction_id, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW()) RETURNING *;
+      // 🟢 Save to DB
+      const insertQuery = `
+        INSERT INTO payments (user_id, order_id, amount, fee, payment_method, status, transaction_id, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
+        RETURNING *;
       `;
-      const values = [user_id, order_id, amount, payment_method, status, transaction_id];
 
-      const result = await pool.query(query, values);
-      const savedPayment = result.rows[0];
+      const values = [
+        1, // temporary user_id (replace with real auth later)
+        order_id,
+        amount / 100, // convert from kobo to Naira
+        fees || 0,
+        channel || "Paystack",
+        "success",
+        transactionId.toString(),
+      ];
 
-      // Optional: Update order status to "paid"
-      await pool.query(`UPDATE orders SET status = 'paid' WHERE id = $1`, [order_id]);
+      const result = await pool.query(insertQuery, values);
 
-      return res.status(200).json({ message: "Payment verified and saved", payment: savedPayment });
+      return res.json({
+        message: "Payment verified and saved successfully",
+        payment: result.rows[0],
+      });
     } else {
-      return res.status(400).json({ message: "Payment verification failed", error: paymentData });
+      return res.status(400).json({ message: "Payment verification failed" });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Payment verification error", error: error.response?.data || error });
+  } catch (err) {
+    console.error("Paystack verify error:", err.message);
+    return res.status(500).json({
+      message: "Error verifying payment",
+      error: err.message,
+    });
   }
 };

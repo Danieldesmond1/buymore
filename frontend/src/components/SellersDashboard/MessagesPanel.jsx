@@ -12,10 +12,10 @@ const MessagesPanel = () => {
 
   const messagesEndRef = useRef(null);
 
-  // Get logged-in seller ID
+  // Logged-in seller
   const sellerId = JSON.parse(localStorage.getItem("user"))?.id;
 
-  // Fetch conversations for seller
+  // Fetch all conversations for seller
   const fetchConversations = async () => {
     try {
       const res = await axios.get("/api/messages/seller", { withCredentials: true });
@@ -26,7 +26,7 @@ const MessagesPanel = () => {
     }
   };
 
-  // Fetch messages in selected conversation
+  // Fetch messages for selected conversation
   const fetchMessages = async (conversationId) => {
     try {
       const res = await axios.get(`/api/messages/${conversationId}`, { withCredentials: true });
@@ -45,14 +45,14 @@ const MessagesPanel = () => {
         { text: newMessage },
         { withCredentials: true }
       );
-      setMessages([...messages, res.data]);
+      setMessages((prev) => [...prev, res.data]);
       setNewMessage("");
     } catch (err) {
       console.error("Error sending message:", err);
     }
   };
 
-  // Auto-scroll to latest message
+  // Scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -65,7 +65,7 @@ const MessagesPanel = () => {
     if (selectedConversation) fetchMessages(selectedConversation.id);
   }, [selectedConversation]);
 
-  // Helper to get product image URL
+  // Helper to parse product image
   const getProductImage = (productImage) => {
     let parsedImages = [];
     try {
@@ -77,7 +77,7 @@ const MessagesPanel = () => {
       ? parsedImages[0].startsWith("http")
         ? parsedImages[0]
         : `http://localhost:5000${parsedImages[0]}`
-      : "/fallback.jpg"; // fallback
+      : "/fallback.jpg";
   };
 
   const filteredConversations = conversations.filter((conv) => {
@@ -112,6 +112,7 @@ const MessagesPanel = () => {
             <option value="resolved">Resolved</option>
           </select>
         </div>
+
         <ul>
           {filteredConversations.length === 0 && (
             <li style={{ textAlign: "center" }}>No conversations yet.</li>
@@ -164,7 +165,7 @@ const MessagesPanel = () => {
                     msg.sender_id === sellerId ? "sent" : "received"
                   }`}
                 >
-                  {/* Show product thumbnail on the first message only */}
+                  {/* Show product thumbnail only on first message */}
                   {idx === 0 && (
                     <img
                       src={getProductImage(selectedConversation.product_image)}
@@ -172,7 +173,13 @@ const MessagesPanel = () => {
                       className="chat-message-product"
                     />
                   )}
-                  {msg.message_text}
+                  <p>{msg.message_text}</p>
+                  <span className="chat-time">
+                    {new Date(msg.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
               ))}
               <div ref={messagesEndRef} />
