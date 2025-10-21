@@ -1,31 +1,97 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { BsBank } from "react-icons/bs";
 import "./styles/StoreSettings.css";
 
 const StoreSettings = () => {
+  const sellerId = localStorage.getItem("sellerId"); // 👈 assume sellerId stored at login
+
+  const [banks, setBanks] = useState([]);
+  const [verifying, setVerifying] = useState(false);
+  const [verifiedAccount, setVerifiedAccount] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [form, setForm] = useState({
-    storeName: "My Awesome Store",
-    storeBio: "We sell high-quality products at affordable prices.",
-    contactEmail: "store@email.com",
-    contactPhone: "+234 800 000 0000",
+    storeName: "",
+    storeBio: "",
+    contactEmail: "",
+    contactPhone: "",
     businessType: "Individual",
     taxId: "",
-    address: "Owerri, Imo State, Nigeria",
-    bankName: "GTBank",
-    accountNumber: "1234567890",
-    accountHolder: "John Doe",
-    shippingRegions: "Nationwide",
-    handlingTime: "1-3 days",
-    freeShippingThreshold: "50000",
+    address: "",
+    bankName: "",
+    bankCode: "",
+    accountNumber: "",
+    accountHolder: "",
+    shippingRegions: "",
+    handlingTime: "",
+    freeShippingThreshold: "",
   });
 
+  // ✅ Fetch list of banks on mount
+  useEffect(() => {
+    const fetchBanks = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:5000/api/payment/banks");
+        setBanks(data);
+      } catch (err) {
+        console.error("Error fetching banks:", err);
+      }
+    };
+    fetchBanks();
+  }, []);
+
+  // ✅ Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  // ✅ Handle bank selection
+  const handleBankChange = (e) => {
+    const bankCode = e.target.value;
+    const bankName = banks.find((b) => b.code === bankCode)?.name || "";
+    setForm({ ...form, bankCode, bankName });
+    setVerifiedAccount("");
+  };
+
+  // ✅ Verify account number
+  const verifyAccount = async () => {
+    if (!form.accountNumber || !form.bankCode) return alert("Enter account number and select bank.");
+
+    setVerifying(true);
+    try {
+      const { data } = await axios.post("http://localhost:5000/api/payment/verify-bank", {
+        account_number: form.accountNumber,
+        bank_code: form.bankCode,
+      });
+      setVerifiedAccount(data.account_name);
+      setForm({ ...form, accountHolder: data.account_name });
+    } catch (err) {
+      console.error("Verification failed:", err);
+      alert("❌ Account verification failed. Please check details.");
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  // ✅ Save store settings
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Store settings saved (UI only for now).");
+    setLoading(true);
+
+    try {
+      await axios.post("http://localhost:5000/api/shops/update-settings", {
+        seller_id: sellerId,
+        ...form,
+      });
+      alert("✅ Store settings saved successfully!");
+    } catch (err) {
+      console.error("Save error:", err);
+      alert("❌ Failed to save settings.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -122,36 +188,51 @@ const StoreSettings = () => {
         {/* Payment Settings */}
         <div className="settings-section">
           <h3>Payout Settings</h3>
+
           <div className="form-group">
             <label>Bank Name</label>
-            <select
-              name="bankName"
-              value={form.bankName}
-              onChange={handleChange}
-            >
-              <option>GTBank</option>
-              <option>Access Bank</option>
-              <option>Zenith Bank</option>
-              <option>UBA</option>
-              <option>First Bank</option>
+            <select name="bankCode" value={form.bankCode} onChange={handleBankChange}>
+              <option value="">Select Bank</option>
+              {banks.map((bank) => (
+                <option key={bank.code} value={bank.code}>
+                  {bank.name}
+                </option>
+              ))}
             </select>
           </div>
+
           <div className="form-group">
             <label>Account Number</label>
-            <input
-              type="text"
-              name="accountNumber"
-              value={form.accountNumber}
-              onChange={handleChange}
-            />
+            <div style={{ display: "flex", gap: "8px" }}>
+              <input
+                type="text"
+                name="accountNumber"
+                value={form.accountNumber}
+                onChange={handleChange}
+                maxLength="10"
+              />
+              <button
+                type="button"
+                className="verify-btn"
+                onClick={verifyAccount}
+                disabled={verifying}
+              >
+                {verifying ? "Verifying..." : "Verify"}
+              </button>
+            </div>
           </div>
+
+          {verifiedAccount && (
+            <p className="verified-account"><BsBank /> {verifiedAccount}</p>
+          )}
+
           <div className="form-group">
             <label>Account Holder Name</label>
             <input
               type="text"
               name="accountHolder"
               value={form.accountHolder}
-              onChange={handleChange}
+              readOnly
             />
           </div>
         </div>
@@ -188,8 +269,8 @@ const StoreSettings = () => {
           </div>
         </div>
 
-        <button type="submit" className="save-btn">
-          Save Changes
+        <button type="submit" className="save-btn" disabled={loading}>
+          {loading ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </div>

@@ -28,6 +28,7 @@ import SellerOrders from "./components/SellersDashboard/SellerOrders.jsx";
 import SellerDashboardProducts from "./components/SellersDashboard/SellerProducts.jsx";
 import SellerProfile from "./components/SellersDashboard/SellerProfile.jsx";
 import AddProducts from "./components/SellersDashboard/AddProducts.jsx";
+import StoreSettings from "./components/SellersDashboard/StoreSettings.jsx";
 
 const AppRoutes = () => {
   return (
@@ -82,6 +83,7 @@ const AppRoutes = () => {
         <Route path="products" element={<SellerDashboardProducts />} />
         <Route path="profile" element={<SellerProfile />} />
         <Route path="products/new" element={<AddProducts />} />
+        <Route path="store-settings" element={<StoreSettings />} />
       </Route>   {/* ✅ Close this Route */}
     </Routes>
   );

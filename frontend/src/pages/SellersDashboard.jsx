@@ -33,7 +33,7 @@ export default function SellersDashboard() {
       case "customers":
         return <MessagesPanel />;
       case "payments":
-        return <Payments />;
+        return <Payments setActiveSection={setActiveSection} />;
       case "storeSettings":
         return <StoreSettings />;
       case "reviews":

@@ -142,3 +142,99 @@ export const verifyPayment = async (req, res) => {
     });
   }
 };
+
+// ✅ Get Supported Bank List
+export const getBankList = async (req, res) => {
+  try {
+    const { data } = await axios.get("https://api.paystack.co/bank", {
+      headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` },
+    });
+    res.json(data.data);
+  } catch (error) {
+    console.error("❌ Error fetching banks:", error.message);
+    res.status(500).json({ message: "Failed to fetch bank list" });
+  }
+};
+
+// ✅ 2. Verify bank account number
+export const verifyBankAccount = async (req, res) => {
+  const { account_number, bank_code } = req.body;
+  if (!account_number || !bank_code)
+    return res.status(400).json({ message: "account_number and bank_code are required" });
+
+  try {
+    const { data } = await axios.get(
+      `https://api.paystack.co/bank/resolve?account_number=${account_number}&bank_code=${bank_code}`,
+      { headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` } }
+    );
+    res.json(data.data);
+  } catch (error) {
+    console.error("❌ Bank verification error:", error.response?.data || error.message);
+    res.status(500).json({ message: "Failed to verify account", error: error.message });
+  }
+};
+
+// ✅ 3. Withdraw seller balance to bank
+export const withdrawToBank = async (req, res) => {
+  const { seller_id, account_number, bank_code, amount } = req.body;
+
+  if (!seller_id || !account_number || !bank_code || !amount) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    // Optional: Check if seller has enough balance
+    const balanceRes = await pool.query(
+      "SELECT balance FROM seller_balances WHERE seller_id = $1",
+      [seller_id]
+    );
+    const currentBalance = balanceRes.rows[0]?.balance || 0;
+    if (currentBalance < amount)
+      return res.status(400).json({ message: "Insufficient balance" });
+
+    // Create transfer recipient
+    const recipientRes = await axios.post(
+      "https://api.paystack.co/transferrecipient",
+      {
+        type: "nuban",
+        name: "Seller Payout",
+        account_number,
+        bank_code,
+        currency: "NGN",
+      },
+      {
+        headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` },
+      }
+    );
+
+    const recipientCode = recipientRes.data.data.recipient_code;
+
+    // Initialize transfer
+    const transferRes = await axios.post(
+      "https://api.paystack.co/transfer",
+      {
+        source: "balance",
+        amount: amount * 100,
+        recipient: recipientCode,
+        reason: "Seller payout from Crypstil",
+      },
+      {
+        headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` },
+      }
+    );
+
+    // Update balance
+    await pool.query(
+      "UPDATE seller_balances SET balance = balance - $1 WHERE seller_id = $2",
+      [amount, seller_id]
+    );
+
+    res.json({
+      message: "Withdrawal successful",
+      transfer: transferRes.data.data,
+    });
+  } catch (error) {
+    console.error("❌ Withdrawal error:", error.response?.data || error.message);
+    res.status(500).json({ message: "Withdrawal failed", error: error.message });
+  }
+};

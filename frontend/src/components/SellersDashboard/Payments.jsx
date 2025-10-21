@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "./styles/Payments.css";
 
 const API_BASE_URL = "http://localhost:5000";
 
-export default function Payments() {
+export default function Payments({ setActiveSection }) {
   const { user } = useAuth();
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -143,23 +145,29 @@ export default function Payments() {
       </div>
 
       {/* ⚙️ Payout Settings */}
-      <div className="payout-settings">
-        <h3 className="section-title">Payout Settings</h3>
-
-        <div className="payout-method">
+       <div className="payout-method">
           <p>
             <strong>Bank Account:</strong> GTBank •••• 4321
           </p>
-          <button className="edit-btn">Edit</button>
+          <button
+            className="edit-btn"
+            onClick={() => setActiveSection("storeSettings")}
+          >
+            Edit
+          </button>
         </div>
 
         <div className="payout-method">
           <p>
             <strong>Crypto Wallet:</strong> 0x8f...a92E
           </p>
-          <button className="edit-btn">Edit</button>
+          <button
+            className="edit-btn"
+            onClick={() => setActiveSection("storeSettings")}
+          >
+            Edit
+          </button>
         </div>
       </div>
-    </div>
   );
 }
