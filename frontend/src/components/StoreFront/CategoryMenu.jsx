@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Styles/StoreFront.css";
 
 // Helper to capitalize each word (Title Case)
@@ -8,6 +9,8 @@ const capitalize = (str) =>
     .join(" ");
 
 const CategoryMenu = ({ onSelectCategory }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const categories = [
     "show all",
     "phones",
@@ -21,23 +24,40 @@ const CategoryMenu = ({ onSelectCategory }) => {
   ];
 
   return (
-    <div className="category-menu">
-      {categories.map((cat, idx) => (
-        <button
-          key={idx}
-          className="category-btn"
-          onClick={() => {
-            if (cat === "show all") {
-              onSelectCategory(""); // reset filter
-            } else {
-              onSelectCategory(capitalize(cat));
-            }
-          }}
-        >
-          {capitalize(cat)}
-        </button>
-      ))}
-    </div>
+    <>
+      {/* Mobile toggle button */}
+      <button
+        className="category-toggle-btn"
+        onClick={() => setIsOpen(true)}
+      >
+        Show Categories ☰
+      </button>
+
+      {/* Overlay */}
+      <div
+        className={`category-overlay ${isOpen ? "show" : ""}`}
+        onClick={() => setIsOpen(false)}
+      ></div>
+
+      <div className={`category-menu ${isOpen ? "open" : ""}`}>
+        {categories.map((cat, idx) => (
+          <button
+            key={idx}
+            className="category-btn"
+            onClick={() => {
+              setIsOpen(false); // close menu after selection
+              if (cat === "show all") {
+                onSelectCategory(""); // reset filter
+              } else {
+                onSelectCategory(capitalize(cat));
+              }
+            }}
+          >
+            {capitalize(cat)}
+          </button>
+        ))}
+      </div>
+    </>
   );
 };
 

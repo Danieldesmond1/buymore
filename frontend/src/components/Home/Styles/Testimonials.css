@@ -182,19 +182,28 @@
   color: var(--text);
 }
 
-/* Responsive */
+/* Mobile horizontal scroll for testimonials */
 @media (max-width: 768px) {
-  .testimonials h2 {
-    font-size: 2rem;
+  .testimonial-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch; /* smooth scroll for iOS */
+  }
+
+  .testimonial-slider {
+    flex-wrap: nowrap; /* keep all cards in a row */
+    gap: 1rem;
   }
 
   .testimonial-group {
-    flex-direction: column;
-    align-items: center;
+    flex: 0 0 auto; /* prevent group from stretching */
+    display: flex;
+    gap: 1rem;
   }
 
   .testimonial-card {
-    width: 80%;
-    margin-bottom: 20px;
+    flex: 0 0 80%; /* each card takes 80% of mobile width */
+    margin-bottom: 0; /* remove bottom margin for scrolling */
   }
 }

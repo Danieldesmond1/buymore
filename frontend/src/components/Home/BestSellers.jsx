@@ -124,7 +124,11 @@ const BestSellers = () => {
 
   return (
     <section ref={ref} className={`best-sellers ${inView ? "active" : ""}`}>
-      <h2 className={`fade-in-bestseller ${inView ? "active" : ""}`}>🔥 Best Sellers</h2>
+      <div className="bestseller-title">
+        <h2 className={inView ? "active" : ""}>🔥 Best Sellers</h2>
+        <span className="bestseller-line"></span>
+        <p>Most loved items by our customers — shop the hottest deals now.</p>
+      </div>
 
       {loading ? (
         <p>Loading products...</p>

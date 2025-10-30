@@ -73,15 +73,20 @@
   color: #888;
 }
 
-/* Mobile Responsive */
+/* Mobile horizontal scroll for footer columns */
 @media (max-width: 768px) {
   .footer-top {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row; /* keep columns side by side */
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch; /* smooth scroll for iOS */
   }
 
   .footer-column {
-    margin: 20px 0;
-    text-align: center;
+    flex: 0 0 80%; /* each column takes 80% of viewport width */
+    margin: 0; /* remove default margins for scrolling */
+    text-align: left; /* optional: keep layout readable */
   }
 }

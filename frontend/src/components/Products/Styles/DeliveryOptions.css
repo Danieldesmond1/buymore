@@ -1,30 +1,43 @@
 .delivery-options {
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
-  padding: 20px;
-  border-radius: 12px;
+  padding: 24px;
+  border-radius: 16px;
   color: var(--text);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   transition: background 0.3s, transform 0.3s;
+  max-width: 650px;
+  margin: 0 auto;
 }
 
 .delivery-options:hover {
   transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .delivery-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   color: var(--text-color);
+  text-align: center;
 }
 
 .option {
   display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
   align-items: flex-start;
+  padding: 12px;
+  border-radius: 10px;
+  background-color: var(--bg-alt);
+  border: 1px solid var(--border-color);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.option:hover {
+  background-color: var(--hover-bg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .option h4 {
@@ -38,6 +51,7 @@
   margin: 4px 0;
   font-size: 14px;
   color: var(--text);
+  line-height: 1.5;
 }
 
 .option .sub-info {
@@ -51,7 +65,8 @@
 
 .icon {
   color: var(--primary-color);
-  font-size: 22px;
+  font-size: 24px;
+  flex-shrink: 0;
   margin-top: 4px;
 }
 
@@ -61,41 +76,70 @@
 }
 
 .address-btn {
-  margin-top: 14px;
-  padding: 8px 12px;
+  margin-top: 18px;
+  padding: 10px 14px;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
+  width: 100%;
 }
 
 .address-btn:hover {
   background-color: var(--primary-dark);
+  transform: translateY(-1px);
 }
 
 .faq-toggle {
-  margin-top: 20px;
+  margin-top: 22px;
   font-size: 14px;
   color: var(--primary-color);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   font-weight: 500;
+  text-align: center;
+  width: 100%;
 }
 
 .faq-section {
-  margin-top: 12px;
-  padding: 12px;
+  margin-top: 14px;
+  padding: 14px;
   background-color: var(--bg-alt);
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   color: var(--text);
   border: 1px solid var(--border-color);
+  line-height: 1.6;
+}
+
+/* 📱 Responsive layout */
+@media (max-width: 600px) {
+  .option {
+    flex-direction: column;
+    text-align: left;
+  }
+
+  .icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .delivery-title {
+    font-size: 20px;
+  }
+
+  .address-btn {
+    font-size: 14px;
+    padding: 9px 12px;
+  }
 }

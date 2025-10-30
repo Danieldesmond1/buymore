@@ -4,38 +4,38 @@
   color: var(--text-color);
   max-width: 1200px;
   margin: auto;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
-/* Full-width wrapper for banner */
-/* Banner wrapper inside content width */
+/* Banner section */
 .storeshop-banner-wrapper {
   max-width: 1200px;
   margin: 0 auto 2rem auto;
   padding: 1rem;
-  background: var(--card-bg); /* or use a custom light background */
+  background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05); /* optional */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Sleek banner image */
 .storeshop-banner {
   width: 100%;
-  height: 310px; /* less height, not too big */
+  height: 310px;
   object-fit: cover;
   border-radius: 12px;
   display: block;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12); /* softer shadow */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
-
+/* Header section */
 .storeshop-header {
   display: flex;
-  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06); */
   gap: 2rem;
   align-items: center;
   flex-wrap: wrap;
   margin-bottom: 1.5rem;
+  background: var(--card-bg);
+  padding: 1rem;
+  border-radius: 10px;
 }
 
 .storeshop-logo {
@@ -45,6 +45,11 @@
   object-fit: cover;
   border: 2px solid var(--primary-color);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.storeshop-details {
+  flex: 1;
+  min-width: 220px;
 }
 
 .storeshop-details h1 {
@@ -59,6 +64,7 @@
   color: var(--text);
 }
 
+/* Description */
 .storeshop-description {
   margin: 1.5rem 0 2rem;
   font-size: 1rem;
@@ -66,12 +72,14 @@
   color: var(--text);
 }
 
+/* Product grid */
 .storeshop-product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.8rem;
 }
 
+/* Product cards */
 .storeshop-product-card {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -79,7 +87,7 @@
   padding: 1rem;
   text-align: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
@@ -90,21 +98,106 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
 }
 
-.storeshop-product-card img {
+.storeshop-product-image img {
   width: 100%;
-  height: 150px;
+  height: 180px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 0.8rem;
 }
 
-.storeshop-product-card p {
-  margin: 0.2rem 0;
-  font-size: 0.9rem;
-  color: var(--text-color);
+.product-name {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.storeshop-product-card p:nth-of-type(2) {
-  font-weight: bold;
+.product-price {
   color: var(--primary-btn);
+  font-weight: bold;
+}
+
+/* ✅ Responsive Design Breakpoints */
+@media (max-width: 1024px) {
+  .storeshop-banner {
+    height: 260px;
+  }
+
+  .storeshop-details h1 {
+    font-size: 1.6rem;
+  }
+
+  .storeshop-product-grid {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .storeshop-page {
+    padding: 1.5rem;
+  }
+
+  .storeshop-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .storeshop-logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .storeshop-banner {
+    height: 220px;
+  }
+
+  .storeshop-details h1 {
+    font-size: 1.4rem;
+  }
+
+  .storeshop-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .storeshop-page {
+    padding: 1rem;
+  }
+
+  .storeshop-banner-wrapper {
+    padding: 0.5rem;
+    border-radius: 8px;
+  }
+
+  .storeshop-banner {
+    height: 180px;
+  }
+
+  .storeshop-details h1 {
+    font-size: 1.2rem;
+  }
+
+  .storeshop-details p {
+    font-size: 0.85rem;
+  }
+
+  .storeshop-product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .storeshop-product-image img {
+    height: 140px;
+  }
+
+  .product-name {
+    font-size: 0.9rem;
+  }
+
+  .product-price {
+    font-size: 0.9rem;
+  }
 }

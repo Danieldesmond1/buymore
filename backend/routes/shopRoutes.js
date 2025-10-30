@@ -114,4 +114,51 @@ router.get("/:shopId", async (req, res) => {
   }
 });
 
+// POST /api/shops/payout - Save or update seller payout info
+router.post("/payout", async (req, res) => {
+  try {
+    const { seller_id, bank_name, account_number, account_holder } = req.body;
+
+    if (!seller_id || !bank_name || !account_number || !account_holder) {
+      return res.status(400).json({ message: "All payout fields are required" });
+    }
+
+    // Check if the seller exists
+    const { rows: sellerExists } = await pool.query(
+      "SELECT id FROM sellers_shop WHERE user_id = $1",
+      [seller_id]
+    );
+
+    if (sellerExists.length === 0) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    // Update the payout info for the seller
+    const updateQuery = `
+      UPDATE sellers_shop
+      SET 
+        bank_name = $1,
+        account_number = $2,
+        account_holder = $3
+      WHERE user_id = $4
+      RETURNING *;
+    `;
+
+    const { rows: updatedSeller } = await pool.query(updateQuery, [
+      bank_name,
+      account_number,
+      account_holder,
+      seller_id,
+    ]);
+
+    res.status(200).json({
+      message: "Payout info saved successfully",
+      data: updatedSeller[0],
+    });
+  } catch (error) {
+    console.error("Error saving payout info:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 export default router;

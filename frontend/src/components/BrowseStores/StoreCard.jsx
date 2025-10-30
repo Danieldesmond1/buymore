@@ -43,14 +43,14 @@ const StoreCard = ({ shop }) => {
       {description && <p className="store-description">{description}</p>}
 
       {/* Top Products */}
-      {topProducts.length > 0 && (
+      {/* {topProducts.length > 0 && (
         <div className="store-top-products">
           <h4>Top Products</h4>
           <div className="product-thumbnails">
             {topProducts.slice(0, 3).map((product) => (
               <img
                 key={product.id}
-                src={`http://localhost:5000/images/${product.image_url}`}
+                src={`http://localhost:5000/uploads/${product.image_url}`}
                 alt={product.name}
                 className="product-thumb"
                 title={product.name}
@@ -58,7 +58,7 @@ const StoreCard = ({ shop }) => {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Footer */}
       <div className="store-footer">

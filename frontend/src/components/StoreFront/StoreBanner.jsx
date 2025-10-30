@@ -52,13 +52,13 @@ const StoreBanner = ({ onSearch }) => {
 
   return (
     <section
-      className="store-banner"
+      className="storefront-banner"
       style={{
         backgroundImage: `url(${currentBanner})`,
       }}
     >
-      <div className="overlay">
-        <div className="store-banner-content">
+      <div className="storefront-overlay">
+        <div className="storefront-banner-content">
           <div className="promo-badge">🔥 Flash Sale</div>
           <h1>Unbeatable Deals Everyday</h1>
           <p>Shop top-rated products at the best prices. Limited-time offers!</p>

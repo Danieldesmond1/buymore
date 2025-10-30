@@ -1,19 +1,21 @@
 .store-directory {
   padding: 2rem;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 
+/* ---------------- FILTER SECTION ---------------- */
 .store-filters {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
   justify-content: space-between;
 }
 
-.store-filters select,
-.store-filters input[type="text"] {
+.store-filters input[type="text"],
+.store-filters select {
   padding: 0.75rem 1rem;
   font-size: 1rem;
   border: 1px solid var(--border-color);
@@ -21,17 +23,102 @@
   background-color: var(--card-bg);
   color: var(--text);
   min-width: 180px;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
 }
 
-.store-filters select:focus,
-.store-filters input[type="text"]:focus {
+.store-filters input[type="text"]:focus,
+.store-filters select:focus {
   border-color: var(--primary-color);
   outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 75, 43, 0.15);
 }
 
+/* Search field expansion on hover/focus (desktop only) */
+@media (min-width: 769px) {
+  .store-filters input[type="text"]:focus {
+    min-width: 280px;
+  }
+}
+
+/* ---------------- GRID SECTION ---------------- */
 .store-grid {
   display: grid;
+  gap: 1.8rem;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* ---------------- RESPONSIVENESS ---------------- */
+
+/* Large desktops (1440px and above) */
+@media (min-width: 1440px) {
+  .store-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Medium screens (992px - 1439px) */
+@media (max-width: 1439px) and (min-width: 992px) {
+  .store-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .store-directory {
+    padding: 1.8rem;
+  }
+}
+
+/* Tablets (768px - 991px) */
+@media (max-width: 991px) {
+  .store-filters {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  .store-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
+  }
+
+  .store-directory {
+    padding: 1.5rem;
+  }
+}
+
+/* Small devices (mobile) */
+@media (max-width: 600px) {
+  .store-directory {
+    padding: 1.2rem;
+  }
+
+  .store-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .store-filters input[type="text"],
+  .store-filters select {
+    width: 50%;
+    min-width: unset;
+  }
+
+  .store-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+}
+
+/* Extra small (below 400px) */
+@media (max-width: 400px) {
+  .store-directory {
+    padding: 1rem;
+  }
+
+  .store-filters input,
+  .store-filters select {
+    font-size: 0.9rem;
+    padding: 0.65rem 0.8rem;
+  }
 }

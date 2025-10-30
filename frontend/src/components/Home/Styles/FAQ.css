@@ -94,3 +94,21 @@
   opacity: 1;
   transform: translateX(0);
 }
+
+/* Mobile horizontal scroll for FAQ items */
+@media (max-width: 768px) {
+  .faq-list {
+    flex-direction: row; /* keep items side by side */
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    -webkit-overflow-scrolling: touch; /* smooth scroll for iOS */
+  }
+
+  .faq-item {
+    flex: 0 0 80%; /* each FAQ takes 80% of the viewport width */
+    margin-bottom: 0; /* remove bottom margin for scrolling */
+    justify-content: flex-start; /* optional: keep question-answer layout same */
+  }
+}

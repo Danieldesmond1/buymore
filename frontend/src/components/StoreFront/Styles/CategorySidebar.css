@@ -66,3 +66,79 @@
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 5px;
 }
+
+/* Toggle button for mobile */
+.sidebar-toggle-btn {
+  display: none;
+  margin-bottom: 10px;
+  padding: 10px 16px;
+  background: var(--primary-btn, #ff2e00);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  width: 100%;
+}
+
+/* Close button inside sidebar */
+.close-sidebar-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+/* Overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 900;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+  display: block;
+  opacity: 1;
+}
+
+@media (max-width: 810px) {
+  .category-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 260px;
+    height: 100vh;
+    padding: 20px;
+    background: var(--card-bg);
+    overflow-y: auto;
+    transition: left 0.3s ease;
+    z-index: 1000;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.2);
+  }
+
+  .category-sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-toggle-btn {
+    display: block;
+  }
+
+  .close-sidebar-btn {
+    display: block;
+  }
+
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}
