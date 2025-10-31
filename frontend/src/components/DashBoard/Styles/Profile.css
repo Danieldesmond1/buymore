@@ -2,11 +2,15 @@
 .profile-container {
   padding: 30px;
   max-width: 700px;
-  margin: auto;
+  margin: 40px auto;
   background: var(--bg-color);
   border-radius: 12px;
   box-shadow: 0 0 15px rgba(0,0,0,0.05);
   color: var(--text-color);
+  min-height: 80vh; /* ✅ fill most vertical screen */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* ✅ center nicely */
 }
 
 .profile-container h2 {
@@ -37,7 +41,8 @@
 .profile-fields {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  padding-bottom: 20px;
 }
 
 .profile-fields label {
@@ -76,4 +81,41 @@
 
 .profile-fields button:hover {
   background: var(--button-hover);
+}
+
+/* 📱 Phone screens */
+@media (max-width: 650px) {
+  .profile-container {
+    margin: 20px;
+    padding: 20px;
+    min-height: calc(100vh - 70px); /* ✅ fix empty space issue */
+  }
+
+  .profile-image-section img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-fields input,
+  .profile-fields textarea {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .profile-image-section input[type="file"] {
+    /* font-size: 0.9rem; */
+    width: 100%;
+  }
+
+  .profile-fields button {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+}
+
+/* 📟 Tablets */
+@media (max-width: 900px) {
+  .profile-container {
+    max-width: 90%;
+  }
 }

@@ -9,7 +9,6 @@ const DashboardHome = () => {
   const [ordersCount, setOrdersCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
 
-
   useEffect(() => {
     const fetchUser = async () => {
       try {

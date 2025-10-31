@@ -11,10 +11,11 @@
   color: var(--text-color);
 }
 
+/* ORDER CARD */
 .order-card {
   background-color: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   padding: 16px;
   display: flex;
   align-items: center;
@@ -22,17 +23,20 @@
   margin-bottom: 16px;
   border: 1px solid var(--border-color);
   transition: all 0.25s ease;
+  gap: 15px;
 }
 
 .order-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   transform: translateY(-2px);
 }
 
+/* LEFT SIDE */
 .order-left {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: 1;
 }
 
 .order-img {
@@ -54,18 +58,16 @@
   color: var(--text);
 }
 
-.order-info p.shop {
-  color: var(--dropdown-text);
-  font-size: 13px;
-}
-
+.order-info p.shop,
 .order-info p.date {
   color: var(--dropdown-text);
   font-size: 13px;
 }
 
+/* RIGHT SIDE */
 .order-right {
   text-align: right;
+  min-width: 120px;
 }
 
 .order-right p {
@@ -84,6 +86,7 @@
   font-weight: 600;
 }
 
+/* BUTTON */
 .view-btn {
   margin-top: 6px;
   padding: 6px 12px;
@@ -94,9 +97,51 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.25s ease, transform 0.2s ease;
+  width: 100px;
 }
 
 .view-btn:hover {
   background: #e02500;
   transform: scale(1.05);
+}
+
+/* 📱 Mobile Responsive */
+@media (max-width: 768px) {
+  .order-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px;
+  }
+
+  .order-left {
+    width: 100%;
+  }
+
+  .order-right {
+    width: 100%;
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  .view-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+/* 📱 Small phones */
+@media (max-width: 480px) {
+  .orders-title {
+    font-size: 20px;
+  }
+
+  .order-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .order-info p,
+  .order-right p {
+    font-size: 13px;
+  }
 }

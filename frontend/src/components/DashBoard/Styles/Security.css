@@ -175,3 +175,96 @@ input:checked + .slider:before {
   90% { opacity: 1; }
   100% { opacity: 0; transform: translateY(-5px); }
 }
+
+
+/* Responsive Design */
+/* 📱 Responsive Security Settings */
+
+/* Tablet Adjustments */
+@media (max-width: 992px) {
+  .security-section {
+    padding: 1.8rem;
+    margin: 1.5rem auto;
+  }
+
+  .security-section h2 {
+    font-size: 1.6rem;
+  }
+
+  button {
+    font-size: 0.95rem;
+  }
+}
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+  .security-section {
+    max-width: 95%;
+    padding: 1.5rem;
+    border-radius: 10px;
+  }
+
+  .security-section h2 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .password-form input,
+  .twofa-form input {
+    padding: 0.75rem;
+    font-size: 0.95rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.85rem;
+  }
+
+  .toggle-label {
+    flex-direction: row;
+    font-size: 0.95rem;
+    gap: 10px;
+  }
+
+  .switch {
+    width: 50px;
+    height: 28px;
+  }
+
+  .slider:before {
+    height: 22px;
+    width: 22px;
+    bottom: 3px;
+    left: 3px;
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(22px);
+  }
+}
+
+/* Extra Small Phones */
+@media (max-width: 480px) {
+  .security-section {
+    padding: 1.2rem;
+  }
+
+  .security-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .password-form input,
+  .twofa-form input {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .toggle-label {
+    font-size: 0.9rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+}

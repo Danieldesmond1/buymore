@@ -87,3 +87,91 @@
 .receipt-btn:hover {
   background-color: #1d4ed8;
 }
+
+/* 📱 Responsive Styles */
+
+/* Tablet */
+@media (max-width: 992px) {
+  .payments-container {
+    padding: 30px 16px;
+  }
+
+  .payments-row {
+    padding: 15px 18px;
+    font-size: 13px;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr 1fr;
+  }
+
+  .receipt-btn {
+    padding: 7px 12px;
+    font-size: 12.5px;
+  }
+}
+
+/* Mobile — collapse into card style */
+@media (max-width: 768px) {
+  .payments-table {
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .payments-row.header {
+    display: none;
+  }
+
+  .payments-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+
+  .payments-row > div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 13px;
+  }
+
+  .payments-row > div strong {
+    font-weight: 600;
+    color: var(--text-heading);
+  }
+
+  .receipt-btn {
+    width: 100%;
+    margin-top: 10px;
+    text-align: center;
+    padding: 8px 0;
+  }
+}
+
+/* Smaller phones */
+@media (max-width: 480px) {
+  .payments-container {
+    padding: 25px 12px;
+  }
+
+  .payments-row {
+    padding: 12px;
+    gap: 5px;
+  }
+
+  .receipt-btn {
+    padding: 8px 0;
+    font-size: 12px;
+  }
+
+  .payments-header h2 {
+    font-size: 20px;
+  }
+
+  .subtext {
+    font-size: 13px;
+  }
+}

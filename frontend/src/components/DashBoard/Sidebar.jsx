@@ -1,5 +1,6 @@
 // Sidebar.jsx
 import { NavLink } from "react-router-dom";
+import { FaTimes } from "react-icons/fa";
 import {
   FaHome, FaBoxOpen, FaHeart, FaEnvelope, FaUser, FaMapMarkerAlt,
   FaMoneyCheckAlt, FaShieldAlt, FaGavel
@@ -7,7 +8,7 @@ import {
 
 import "./Styles/Sidebar.css";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, closeSidebar }) => {
   const menu = [
     { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
     { name: "Orders", icon: <FaBoxOpen />, path: "/dashboard/orders" },
@@ -21,7 +22,10 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="buyer-sidebar">
+    <aside className={`buyer-sidebar ${isOpen ? "open" : ""}`}>
+      {/* ✅ Close button for mobile */}
+      <FaTimes className="sidebar-close-icon" onClick={closeSidebar} />
+
       <h2 className="sidebar-title">My Dashboard</h2>
       <nav>
         {menu.map((item) => (

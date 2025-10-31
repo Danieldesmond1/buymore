@@ -1,0 +1,11 @@
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* MOBILE MODE */
+@media (max-width: 820px) {
+  .dashboard-wrapper {
+    flex-direction: column;
+  }
+}

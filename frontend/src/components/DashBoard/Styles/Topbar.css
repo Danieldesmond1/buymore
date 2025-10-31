@@ -15,6 +15,7 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: var(--primary-color);
+  white-space: nowrap;
 }
 
 .topbar-right {
@@ -39,4 +40,59 @@
   cursor: pointer;
   font-size: 0.9rem;
   transition: background 0.3s;
+}
+
+
+/* ✅ Tablets (≤ 768px) */
+@media (max-width: 768px) {
+  .buyer-topbar {
+    padding: 1rem 1.2rem;
+  }
+
+  .topbar-left h2 {
+    font-size: 1rem;
+  }
+
+  .topbar-right {
+    gap: 0.9rem;
+  }
+
+  .Topbar-logout-btn {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* ✅ Small Mobile (≤ 480px) */
+@media (max-width: 480px) {
+  .buyer-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 0.8rem 1rem;
+  }
+
+  .topbar-left h2 {
+    font-size: 0.9rem;
+  }
+
+  .topbar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .Topbar-logout-btn {
+    display: none; /* hide logout to save space */
+  }
+}
+
+/* ✅ Extra Small Screens (≤ 360px) */
+@media (max-width: 360px) {
+  .topbar-left h2 {
+    font-size: 0.8rem;
+  }
+
+  .topbar-icon {
+    font-size: 1.15rem;
+  }
 }

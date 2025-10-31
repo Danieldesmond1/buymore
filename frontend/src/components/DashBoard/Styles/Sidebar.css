@@ -1,3 +1,4 @@
+/* SIDEBAR BASE */
 .buyer-sidebar {
   width: 250px;
   background: var(--card-bg);
@@ -6,9 +7,11 @@
   position: sticky;
   top: 0;
   height: 100vh;
-  transition: background 0.3s, border-color 0.3s;
+  transition: transform 0.3s ease, background 0.3s, border-color 0.3s;
+  z-index: 99;
 }
 
+/* Title */
 .sidebar-title {
   font-size: 1.2rem;
   font-weight: 600;
@@ -17,6 +20,7 @@
   color: var(--primary-color);
 }
 
+/* Links */
 .sidebar-link {
   display: flex;
   align-items: center;
@@ -40,4 +44,79 @@
 .sidebar-link.active {
   background: var(--primary-color);
   color: #fff;
+}
+
+.sidebar-close-icon {
+  display: none;
+}
+
+/* ---------------------- */
+/* ✅ RESPONSIVE MODE     */
+/* ---------------------- */
+
+/* Hide sidebar on tablets & phones */
+@media (max-width: 820px) {
+  .buyer-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    padding-top: 4rem;
+  }
+
+  /* When open class is added, show it */
+  .buyer-sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Smooth mobile slide shadow */
+@media (max-width: 820px) {
+  .buyer-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    padding-top: 4rem;
+    z-index: 200;
+  }
+
+  .buyer-sidebar.open {
+    transform: translateX(0);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar-close-icon {
+    display: block;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    color: var(--primary-color);
+  }
+}
+
+
+@media (max-width: 768px) {
+  .buyer-sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    height: 100vh;
+    z-index: 200;
+    transition: left .3s ease;
+  }
+
+  .buyer-sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-close-icon {
+    display: block;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    color: var(--primary-color);
+  }
 }

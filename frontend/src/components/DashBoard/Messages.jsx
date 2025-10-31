@@ -11,6 +11,8 @@ const Messages = () => {
   const { chatId } = useParams();
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
+  const isMobile = window.innerWidth < 650;
+
 
   // Load logged-in user
   useEffect(() => {
@@ -115,7 +117,7 @@ const Messages = () => {
   };
 
   return (
-    <div className="messages-container">
+    <div className={`messages-container ${isMobile && selected ? "chat-active" : ""}`}>
       {/* Sidebar */}
       <div className="conversations-list">
         <h3>Chats</h3>
@@ -137,7 +139,7 @@ const Messages = () => {
         {selected ? (
           <>
             {/* Chat Header */}
-            <div className="chat-header">
+            <div className="chat-header" onClick={() => isMobile && setSelected(null)}>
               <h4>{selected.shop_name}</h4>
               {selected.product_name && (
                 <div className="chat-product-header">

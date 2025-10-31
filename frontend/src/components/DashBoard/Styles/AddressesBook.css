@@ -1,8 +1,12 @@
 .address-container {
-  max-width: 500px;
-  margin: 0 auto;
+  max-width: 600px;
+  margin: 40px auto;
   padding: 2rem;
   font-family: 'Segoe UI', sans-serif;
+  min-height: 80vh; /* ✅ taller & centered */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .address-container h2 {
@@ -16,10 +20,22 @@
 .address-card {
   background: var(--card-bg);
   border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   padding: 2rem;
   position: relative;
   border: 1px solid var(--border-color);
+}
+
+.address-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .address-info p {
@@ -136,4 +152,55 @@
   font-size: 1rem;
   color: var(--text-color);
   margin-top: 2rem;
+}
+
+/* 📱 Mobile */
+@media (max-width: 650px) {
+  .address-container {
+    margin: 20px;
+    padding: 1.4rem;
+    min-height: calc(100vh - 70px);
+  }
+
+  .address-card {
+    padding: 1.5rem;
+  }
+
+  .address-container h2 {
+    font-size: 1.3rem;
+  }
+
+  .address-info p {
+    font-size: 0.95rem;
+  }
+
+  .address-form input,
+  .address-form textarea {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    width: 100%;               /* ✅ full-width on small screens */
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .success-toast {
+    top: -5px;
+    font-size: 0.85rem;
+    padding: 6px 16px;
+  }
+}
+
+/* 📟 Tablets */
+@media (max-width: 900px) {
+  .address-container {
+    max-width: 90%;
+  }
 }
