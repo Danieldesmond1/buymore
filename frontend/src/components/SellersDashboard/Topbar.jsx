@@ -3,7 +3,7 @@ import { FiSearch, FiBell, FiCalendar, FiPlus, FiHelpCircle, FiMenu } from "reac
 import { CiUser } from "react-icons/ci";
 import "./styles/Topbar.css";
 
-export default function Topbar({ onSearch, onAddProduct }) {
+export default function Topbar({ onSearch, onAddProduct, onMenuClick }) {
   const [query, setQuery] = useState("");
   const [notifCount] = useState(3); // mock badge
   const inputRef = useRef(null);
@@ -35,7 +35,11 @@ export default function Topbar({ onSearch, onAddProduct }) {
     <header className="topbar">
       <div className="topbar-left">
         {/* Mobile menu button placeholder (hook into Sidebar toggle later) */}
-        <button className="tb-btn icon-only hide-desktop" aria-label="Open menu">
+        <button
+          className="tb-btn hide-desktop"
+          aria-label="Open menu"
+          onClick={onMenuClick}
+        >
           <FiMenu />
         </button>
 

@@ -4,6 +4,7 @@ import "./styles/MessagesPanel.css";
 
 const MessagesPanel = () => {
   const [conversations, setConversations] = useState([]);
+  const [isMobileView, setIsMobileView] = useState(false);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -97,7 +98,7 @@ const MessagesPanel = () => {
   return (
     <div className="messages-container">
       {/* Sidebar */}
-      <div className="messages-sidebar">
+      <div className={`messages-sidebar ${isMobileView ? "hide-sidebar" : ""}`}>
         <h3>Conversations</h3>
         <div className="sidebar-controls">
           <input
@@ -123,7 +124,10 @@ const MessagesPanel = () => {
               className={`conversation-item ${
                 selectedConversation?.id === conv.id ? "active" : ""
               }`}
-              onClick={() => setSelectedConversation(conv)}
+              onClick={() => {
+                setSelectedConversation(conv);
+                if (window.innerWidth < 768) setIsMobileView(true);
+              }}
             >
               <div className="conv-header">
                 <div className="conv-name">
@@ -139,22 +143,26 @@ const MessagesPanel = () => {
       </div>
 
       {/* Chat Panel */}
-      <div className="chat-panel">
-        {selectedConversation ? (
-          <>
-            {/* Chat Header */}
-            <div className="chat-header">
-              <div className="chat-product-header">
-                <img
-                  src={getProductImage(selectedConversation.product_image)}
-                  alt={selectedConversation.product_name}
-                />
-                <div className="chat-product-info">
-                  <h4>{selectedConversation.product_name}</h4>
-                  <span>From: {selectedConversation.shop_name}</span>
-                </div>
+      <div className={`chat-panel ${isMobileView ? "show-chat" : ""}`}>
+      {selectedConversation ? (
+        <>
+          <div className="chat-header">
+            {isMobileView && (
+              <button className="back-btn" onClick={() => setIsMobileView(false)}>
+                ←
+              </button>
+            )}
+            <div className="chat-product-header">
+              <img
+                src={getProductImage(selectedConversation.product_image)}
+                alt={selectedConversation.product_name}
+              />
+              <div className="chat-product-info">
+                <h4>{selectedConversation.product_name}</h4>
+                <span>From: {selectedConversation.shop_name}</span>
               </div>
             </div>
+          </div>
 
             {/* Chat Body */}
             <div className="chat-messages">

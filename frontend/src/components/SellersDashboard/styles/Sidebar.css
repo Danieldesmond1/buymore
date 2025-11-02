@@ -61,3 +61,35 @@
 .sidebar-label {
   flex: 1;
 }
+
+/* ✅ Sidebar responsive behavior */
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    height: 100vh;
+    z-index: 200;
+    background: var(--card-bg);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.12);
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+}
+
+/* ✅ Backdrop overlay when sidebar opens on mobile */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  z-index: 150;
+  display: none;
+}
+
+.sidebar-backdrop.show {
+  display: block;
+}

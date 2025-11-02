@@ -110,7 +110,7 @@ const OrdersTable = () => {
                         ? new Date(order.created_at).toLocaleDateString()
                         : "-"}
                     </td>
-                    <td>{typeof order.total_price === "number" ? `₦${order.total_price.toLocaleString()}` : `₦${order.total_price}`}</td>
+                    <td>{typeof order.total_price === "number" ? `$${order.total_price.toLocaleString()}` : `$${order.total_price}`}</td>
                     <td>
                       <span className={`status ${String(order.status || "").toLowerCase()}`}>
                         {order.status}
@@ -126,6 +126,40 @@ const OrdersTable = () => {
             </tbody>
           </table>
         )}
+
+          {/* Mobile Card View */}
+          <div className="orders-card-list">
+            {filteredOrders.length === 0 ? (
+              <p style={{ textAlign: "center" }}>You haven’t received any orders yet.</p>
+            ) : (
+              filteredOrders.map((order) => (
+                <div className="order-card" key={order.order_id}>
+                  <div className="order-card-row">
+                    <strong>Order:</strong> #{order.order_id}
+                  </div>
+                  <div className="order-card-row">
+                    <strong>Customer:</strong> {order.buyer_name}
+                  </div>
+                  <div className="order-card-row">
+                    <strong>Date:</strong> {order.created_at ? new Date(order.created_at).toLocaleDateString() : "-"}
+                  </div>
+                  <div className="order-card-row">
+                    <strong>Total:</strong> ${order.total_price?.toLocaleString?.() || order.total_price}
+                  </div>
+                  <div className="order-card-row">
+                    <strong>Status:</strong>
+                    <span className={`status ${String(order.status || "").toLowerCase()}`}>
+                      {order.status}
+                    </span>
+                  </div>
+                  <div className="order-card-actions">
+                    <button className="btn-view">View</button>
+                    <button className="btn-update">Update</button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
       </div>
     </div>
   );

@@ -114,3 +114,56 @@
   background: #ffe6e6;
   color: #d93025;
 }
+
+/* ====== MOBILE & TABLET OPTIMIZATION ====== */
+
+/* Stats cards stack clean on small screens */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .overview-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+}
+
+/* Charts stack and stay readable */
+@media (max-width: 768px) {
+  .charts-section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .chart-card {
+    padding: 16px;
+  }
+}
+
+/* Make Recent Orders scrollable on very small screens */
+@media (max-width: 600px) {
+  .orders-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+}
+
+/* Tighten space a bit for phones */
+@media (max-width: 480px) {
+  .overview-container {
+    padding: 15px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+}

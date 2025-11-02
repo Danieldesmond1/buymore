@@ -3,10 +3,10 @@ import { FaHome } from "react-icons/fa";
 import { LuPackageOpen, LuBadgeDollarSign } from "react-icons/lu";
 import { GiShoppingCart } from "react-icons/gi";
 import { RiUserStarLine } from "react-icons/ri";
-import { IoSettingsOutline, IoStarOutline, IoMegaphoneOutline, IoHelpCircleOutline } from "react-icons/io5";
+import { IoSettingsOutline, IoStarOutline, IoMegaphoneOutline, IoHelpCircleOutline, IoClose } from "react-icons/io5";
 import "./styles/Sidebar.css";
 
-export default function Sidebar({ setActiveSection }) {
+export default function Sidebar({ setActiveSection, sidebarOpen, setSidebarOpen }) {
   const [active, setActive] = useState("overview");
 
   const navItems = [
@@ -24,10 +24,11 @@ export default function Sidebar({ setActiveSection }) {
   const handleClick = (section) => {
     setActive(section);
     setActiveSection(section);
+    setSidebarOpen(false); // ✅ closes sidebar after selecting menu on mobile
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
       <div className="sidebar-header">Seller Dashboard</div>
       <nav className="sidebar-nav">
         {navItems.map((item) => (

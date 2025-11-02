@@ -202,3 +202,97 @@ textarea {
 .image-upload-box input {
   display: none;
 }
+
+/* ================================
+   ✅ RESPONSIVE DESIGN
+================================ */
+
+/* Tablet adjustments */
+@media (max-width: 900px) {
+  .add-product-container {
+    max-width: 95%;
+    padding: 24px 28px;
+  }
+}
+
+/* Stack inline fields and reduce form spacing */
+@media (max-width: 720px) {
+  .form-inline {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .add-product-container {
+    padding: 22px 20px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Mobile layout */
+@media (max-width: 540px) {
+  .add-product-container {
+    border-radius: 10px;
+    padding: 18px;
+  }
+
+  .add-product-container .header {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+
+  .back-btn {
+    align-self: flex-start;
+    margin-bottom: 6px;
+  }
+
+  .image-upload-container {
+    justify-content: center;
+  }
+
+  .image-preview,
+  .image-upload-box {
+    width: 85px;
+    height: 85px;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 0.9rem;
+    padding: 9px 10px;
+  }
+
+  .product-form {
+    gap: 16px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 400px) {
+  .image-preview,
+  .image-upload-box {
+    width: 72px;
+    height: 72px;
+  }
+
+  .add-product-container {
+    padding: 16px;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    padding: 9px 14px;
+    font-size: 0.85rem;
+  }
+}

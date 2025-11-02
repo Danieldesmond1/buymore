@@ -142,7 +142,7 @@ const ProductsTable = ({ setActiveSection, setEditingProduct }) => {
               const firstImage = p.imageArray?.[0] || null;
               return (
                 <tr key={p.id}>
-                  <td>
+                  <td data-label="Image">
                     {firstImage ? (
                       <img
                         src={firstImage}
@@ -153,11 +153,11 @@ const ProductsTable = ({ setActiveSection, setEditingProduct }) => {
                       <div className="product-img placeholder">No Image</div>
                     )}
                   </td>
-                  <td>{p.name}</td>
-                  <td>{p.category}</td>
-                  <td>{p.stock > 0 ? p.stock : "—"}</td>
-                  <td>${p.price}</td>
-                  <td>
+                  <td data-label="Name">{p.name}</td>
+                  <td data-label="Category">{p.category}</td>
+                  <td data-label="Stock">{p.stock > 0 ? p.stock : "—"}</td>
+                  <td data-label="Price">${p.price}</td>
+                  <td data-label="Status">
                     <span
                       className={`status ${
                         p.stock > 0 ? "active" : "out-of-stock"

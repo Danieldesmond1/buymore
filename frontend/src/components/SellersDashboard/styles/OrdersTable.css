@@ -115,3 +115,68 @@
   background: var(--primary-btn);
   color: #fff;
 }
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .orders-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .orders-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .orders-actions input,
+  .orders-actions select {
+    width: 90%;
+  }
+
+  /* Hide table on mobile */
+  .orders-table {
+    display: none;
+  }
+
+  /* Show responsive card view */
+  .orders-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    letter-spacing: 1px;
+  }
+
+  .order-card {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .order-card-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+  }
+
+  .order-card .btn-view,
+  .order-card .btn-update {
+    width: 48%;
+  }
+
+  .order-card-actions {
+    display: flex;
+    gap: 10px;
+  }
+}
+
+/* Desktop: hide card list */
+@media (min-width: 769px) {
+  .orders-card-list {
+    display: none;
+  }
+}

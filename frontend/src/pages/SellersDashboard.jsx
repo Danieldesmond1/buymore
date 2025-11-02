@@ -1,3 +1,4 @@
+// SellersDashboard.jsx
 import { useState } from "react";
 import Sidebar from "../components/SellersDashboard/Sidebar";
 import Topbar from "../components/SellersDashboard/Topbar";
@@ -15,7 +16,9 @@ import "./styles/SellersDashboard.css";
 
 export default function SellersDashboard() {
   const [activeSection, setActiveSection] = useState("overview");
-  const [editingProduct, setEditingProduct] = useState(null); // ✅ keep this here
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false); // ✅ controls show/hide
 
   const renderSection = () => {
     switch (activeSection) {
@@ -25,7 +28,7 @@ export default function SellersDashboard() {
         return (
           <ProductsTable 
             setActiveSection={setActiveSection} 
-            setEditingProduct={setEditingProduct} // ✅ pass this down
+            setEditingProduct={setEditingProduct}
           />
         );
       case "orders":
@@ -46,8 +49,8 @@ export default function SellersDashboard() {
         return (
           <AddProduct 
             setActiveSection={setActiveSection}
-            editingProduct={editingProduct} // ✅ pass product being edited
-            setEditingProduct={setEditingProduct} // ✅ so AddProduct can reset it
+            editingProduct={editingProduct}
+            setEditingProduct={setEditingProduct}
           />
         );
       default:
@@ -57,9 +60,18 @@ export default function SellersDashboard() {
 
   return (
     <div className="dashboard">
-      <Sidebar setActiveSection={setActiveSection} />
+      <Sidebar 
+        setActiveSection={setActiveSection}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
+
+      {sidebarOpen && (
+        <div className="sidebar-backdrop show" onClick={() => setSidebarOpen(false)} />
+      )}
+
       <div className="dashboard-main">
-        <Topbar />
+        <Topbar onMenuClick={() => setSidebarOpen(true)} /> {/* ✅ Pass toggle */}
         <main className="dashboard-content">{renderSection()}</main>
       </div>
     </div>

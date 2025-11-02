@@ -157,3 +157,19 @@
   .hide-desktop { display: inline-flex; }
   .search-wrap { display: none; } /* keep it clean on very small screens */
 }
+
+@media (max-width: 480px) {
+  .topbar {
+    padding: 10px;
+  }
+
+  .icon-only { display: none; }
+
+  .tb-btn span {
+    display: none; /* hide text, keep icons */
+  }
+
+  .tb-btn.primary span {
+    display: inline; /* keep 'Add' label? optional */
+  }
+}

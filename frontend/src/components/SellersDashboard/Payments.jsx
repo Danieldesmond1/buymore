@@ -116,19 +116,23 @@ export default function Payments({ setActiveSection }) {
             ) : (
               orders.slice(0, 10).map((order, index) => (
                 <tr key={order.id || index}>
-                  <td>
+                  <td data-label="Date">
                     {order.created_at
                       ? new Date(order.created_at).toLocaleDateString()
                       : "-"}
                   </td>
-                  <td>#{order.id || `ORD${index + 1}`}</td>
-                  <td>${Number(order.total_price || 0).toLocaleString()}</td>
-                  <td>
+
+                  <td data-label="Order ID">#{order.id || `ORD${index + 1}`}</td>
+
+                  <td data-label="Amount">${Number(order.total_price || 0).toLocaleString()}</td>
+
+                  <td data-label="Status">
                     <span className={`status ${order.status?.toLowerCase()}`}>
                       {order.status || "Unknown"}
                     </span>
                   </td>
-                  <td>
+
+                  <td data-label="Payout">
                     {order.status === "completed" ? (
                       <span className="payout paid">Paid</span>
                     ) : order.status === "pending" ? (
@@ -141,6 +145,7 @@ export default function Payments({ setActiveSection }) {
               ))
             )}
           </tbody>
+
         </table>
       </div>
 

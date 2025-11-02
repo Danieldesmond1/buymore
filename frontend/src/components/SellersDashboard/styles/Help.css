@@ -53,5 +53,105 @@
 .faq-body p {
   font-size: 14px;
   color: var(--dropdown-text);
-  margin-left: 50%;
+  margin: 0; /* Remove that 50% madness */
+  padding-top: 8px;
+  line-height: 1.5;
+  /* margin-left: 50%; */
+}
+
+/* ✅ Main container responsiveness */
+.help-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ✅ Titles */
+.help-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.help-subtitle {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-bottom: 20px;
+}
+
+/* ✅ Contact Support Section */
+.contact-support {
+  margin-top: 30px;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.contact-btn {
+  padding: 10px 18px;
+  background: var(--primary-btn);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.contact-btn:hover {
+  opacity: 0.9;
+}
+
+/* ✅ Tablet */
+@media (max-width: 768px) {
+  .help-container {
+    padding: 15px;
+  }
+
+  .help-title {
+    font-size: 20px;
+  }
+
+  .faq-header {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .faq-body p {
+    font-size: 13px;
+  }
+
+  .contact-support {
+    padding: 15px;
+  }
+
+  .contact-btn {
+    width: 100%;
+  }
+}
+
+/* ✅ Small Phones */
+@media (max-width: 480px) {
+  .help-title {
+    font-size: 18px;
+  }
+
+  .help-subtitle {
+    font-size: 12px;
+  }
+
+  .faq-header {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .faq-body {
+    padding: 0 12px;
+  }
+
+  .faq-body p {
+    font-size: 13px;
+  }
 }
