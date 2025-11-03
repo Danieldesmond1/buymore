@@ -6,7 +6,7 @@ import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import Toast from "../Toast/Toast";
 
-const FeaturedProducts = () => {
+const FeaturedProducts = ({ onLoaded  }) => {
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -26,23 +26,24 @@ useEffect(() => {
       if (!response.ok) throw new Error("Failed to fetch products");
       const data = await response.json();
 
-      if (isMounted) setProducts(Array.isArray(data.products) ? data.products : []);
+      if (isMounted) {
+        setProducts(Array.isArray(data.products) ? data.products : []);
+      }
     } catch (error) {
       if (isMounted) {
         setToast({ message: error.message || "Error loading products", type: "error" });
       }
     } finally {
-      if (isMounted) setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+        if (onLoaded) onLoaded(); // ✅ loader ends here
+      }
     }
   };
 
   fetchProducts();
-
-  return () => {
-    isMounted = false;
-  };
+  return () => { isMounted = false; };
 }, []);
-
 
   const handleAddToCart = async (product) => {
     if (!user) {
