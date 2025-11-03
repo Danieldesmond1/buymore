@@ -1,28 +1,34 @@
 import "./Styles/Testimonials.css";
 import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import user1 from "../../assets/react.svg";
-import user2 from "../../assets/react.svg";
-import user3 from "../../assets/react.svg";
-import user4 from "../../assets/react.svg";
-import user5 from "../../assets/react.svg";
-import user6 from "../../assets/react.svg";
-import user7 from "../../assets/react.svg";
-import user8 from "../../assets/react.svg";
+import user1 from "../../assets/aiony-haust-unsplash.jpg";
+import user2 from "../../assets/ayo-ogunseinde-unsplash.jpg";
+import user3 from "../../assets/charlesdeluvio-unsplash.jpg";
+import user4 from "../../assets/cord-allman-unsplash.jpg";
+import user5 from "../../assets/ibrahima-toure-unsplash.jpg";
+import user6 from "../../assets/joseph-gonzalez-unsplash.jpg";
+import user7 from "../../assets/kingsley-osei-abrah-unsplash.jpg";
+import user8 from "../../assets/kirill-balobanov-unsplash.jpg";
+import user9 from "../../assets/michael-dam-unsplash.jpg";
+import user10 from "../../assets/romello-morris-unsplash.jpg";
+import user11 from "../../assets/taylor-unsplash.jpg";
+import user12 from "../../assets/the-connected-narrative-unsplash.jpg";
+import user13 from "../../assets/yusuf-shamsudeen-unsplash.jpg";
 
 const allTestimonials = [
-  { name: "Ava Johnson", feedback: "Absolutely amazing service!", image: user1 },
-  { name: "Liam Martinez", feedback: "Great quality, fast shipping!", image: user2 },
-  { name: "Sophia Kim", feedback: "Exceeded my expectations!", image: user3 },
-  { name: "Noah Williams", feedback: "Highly recommend to everyone!", image: user4 },
-  { name: "Olivia Brown", feedback: "Superb experience overall!", image: user5 },
-  { name: "Ethan Lee", feedback: "Fantastic product, worth every penny!", image: user6 },
-  { name: "Isabella White", feedback: "Will definitely buy again!", image: user7 },
-  { name: "Mason Clark", feedback: "This changed my life, honestly!", image: user8 },
-  { name: "Emma Rodriguez", feedback: "Five stars all the way!", image: user3 },
-  { name: "Lucas Anderson", feedback: "Best customer support ever!", image: user1 },
-  { name: "Mia Walker", feedback: "Quick delivery and top quality!", image: user5 },
-  { name: "Elijah Scott", feedback: "Can’t stop recommending this!", image: user2 },
+  { name: "aiony Johnson", feedback: "Absolutely amazing service!", image: user1 },
+  { name: "ayo ogunseinde", feedback: "Great quality, fast shipping!", image: user2 },
+  { name: "charles deluvio", feedback: "Exceeded my expectations!", image: user3 },
+  { name: "Noah allman", feedback: "Highly recommend to everyone!", image: user4 },
+  { name: "ibrahima toure", feedback: "Superb experience overall!", image: user5 },
+  { name: "joseph gonzalez", feedback: "Fantastic product, worth every penny!", image: user6 },
+  { name: "kingsley osei", feedback: "Will definitely buy again!", image: user7 },
+  { name: "kirill balobanov", feedback: "This changed my life, honestly!", image: user8 },
+  { name: "michael Rodriguez", feedback: "Five stars all the way!", image: user9 },
+  { name: "romello morris", feedback: "Best customer support ever!", image: user10 },
+  { name: "taylor Walker", feedback: "Quick delivery and top quality!", image: user11 },
+  { name: "Elijah Scott", feedback: "Can’t stop recommending this!", image: user12 },
+  { name: "yusuf shamsudeen", feedback: "wow I'll recommend y'll use BuyMore!", image: user13 },
 ];
 
 const getRandomTestimonials = () => {

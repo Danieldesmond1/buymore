@@ -1,7 +1,7 @@
 /* 🔥 Special Offers Section */
 .exclusive-offers {
   background: var(--bg-light);
-  padding: 80px 5%;
+  /* padding: 80px 5%; */
   text-align: center;
   overflow: hidden;
 }
@@ -18,7 +18,7 @@
 .exclusive-offers p {
   font-size: 1.2rem;
   color: var(--text-gray);
-  margin-bottom: 40px;
+  /* margin-bottom: 40px; */
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
@@ -29,6 +29,10 @@
 .exclusive-offers p.fade-in-description {
   opacity: 1;
   transform: translateY(0);
+}
+
+.fade-in-description {
+  margin-bottom: 40px;
 }
 
 /* 🔥 Offer Cards */
@@ -43,7 +47,7 @@
 .offer-card {
   background: var(--card-bg);
   width: 320px;
-  padding: 20px;
+  padding: 8px;
   border-radius: 10px;
   text-align: left;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -64,13 +68,13 @@
 .offer-image {
   width: 100%;
   border-radius: 8px;
-  height: 180px;
+  height: 50%;
   object-fit: cover;
 }
 
 /* Offer Info */
 .offer-info {
-  margin-top: 15px;
+  margin-top: 8px;
 }
 
 /* Aligning Offer Titles */
@@ -83,7 +87,7 @@
 .offer-info p {
   font-size: 1rem;
   color: var(--text-gray);
-  min-height: 60px; /* Ensures description alignment */
+  /* min-height: 60px; Ensures description alignment */
 }
 
 /* 🔥 Discount Badge */

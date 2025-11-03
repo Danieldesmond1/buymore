@@ -191,6 +191,11 @@
     -webkit-overflow-scrolling: touch; /* smooth scroll for iOS */
   }
 
+  .testimonials h2 {
+    font-size: 1.8rem;
+    margin-bottom: 3px;
+  }
+
   .testimonial-slider {
     flex-wrap: nowrap; /* keep all cards in a row */
     gap: 1rem;

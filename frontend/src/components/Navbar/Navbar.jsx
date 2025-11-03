@@ -134,9 +134,9 @@ const Navbar = ({ onSearch }) => {
                     {/* <li>
                       <Link to="/wishlist" onClick={closeMenu}>Wishlist</Link>
                     </li> */}
-                    <li>
+                    {/* <li>
                       <Link to="/saved-items" onClick={closeMenu}>Saved Items</Link>
-                    </li>
+                    </li> */}
                     {/* <li>
                       <Link to="/orders" onClick={closeMenu}>Order History</Link>
                     </li> */}

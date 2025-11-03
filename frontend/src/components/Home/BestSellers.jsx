@@ -154,7 +154,7 @@ const BestSellers = () => {
           return (
             <div
               key={product.id}
-              className={`product-card ${inView ? "show-bestseller" : ""}`}
+              className={`s-product-card ${inView ? "show-bestseller" : ""}`}
               style={{ animationDelay: `${index * 0.1}s`, cursor: "pointer" }}
               onClick={() => handleViewProduct(product)}
               role="button"

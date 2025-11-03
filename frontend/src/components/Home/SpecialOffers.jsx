@@ -8,7 +8,7 @@ const specialOffers = [
     title: "50% OFF on All Sneakers",
     description: "Get the latest sneakers at half price for the next 12 hours!",
     discount: "50% OFF",
-    image: "/assets/sneakers.jpg",
+    image: "/sneakers2-unsplash.jpg",
     timeLimited: true,
   },
   {
@@ -16,7 +16,7 @@ const specialOffers = [
     title: "Buy 1 Get 1 Free – Watches",
     description: "For a limited time, buy one premium watch and get another FREE.",
     discount: "BOGO Deal",
-    image: "/assets/watch.jpg",
+    image: "/watches-unsplash.jpg",
     timeLimited: false,
   },
   {
@@ -24,7 +24,7 @@ const specialOffers = [
     title: "Exclusive 30% Discount on Laptops",
     description: "Upgrade your tech game with this special laptop discount.",
     discount: "30% OFF",
-    image: "/assets/laptop.jpg",
+    image: "/laptop-unsplash.jpg",
     timeLimited: true,
   },
 ];
