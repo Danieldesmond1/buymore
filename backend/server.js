@@ -22,7 +22,11 @@ import messageRoutes from "./routes/messageRoutes.js";
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+// app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
 
 // Serve uploads folder statically so images can be accessed publicly
 app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
