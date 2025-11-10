@@ -3,13 +3,4 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://buymore-702l.onrender.com', // your live backend URL
-        changeOrigin: true,
-        secure: true,
-      },
-    },
-  },
 })
