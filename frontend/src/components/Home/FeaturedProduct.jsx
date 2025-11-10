@@ -6,7 +6,9 @@ import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import Toast from "../Toast/Toast";
 
-const FeaturedProducts = ({ onLoaded  }) => {
+const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ your live backend base URL
+
+const FeaturedProducts = ({ onLoaded }) => {
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -16,34 +18,37 @@ const FeaturedProducts = ({ onLoaded  }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch products from backend on mount
-useEffect(() => {
-  let isMounted = true;
+  // ✅ Fetch products from live backend
+  useEffect(() => {
+    let isMounted = true;
 
-  const fetchProducts = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/products");
-      if (!response.ok) throw new Error("Failed to fetch products");
-      const data = await response.json();
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/api/products`);
+        if (!response.ok) throw new Error("Failed to fetch products");
+        const data = await response.json();
 
-      if (isMounted) {
-        setProducts(Array.isArray(data.products) ? data.products : []);
+        if (isMounted) {
+          setProducts(Array.isArray(data.products) ? data.products : []);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setToast({
+            message: error.message || "Error loading products",
+            type: "error",
+          });
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+          if (onLoaded) onLoaded();
+        }
       }
-    } catch (error) {
-      if (isMounted) {
-        setToast({ message: error.message || "Error loading products", type: "error" });
-      }
-    } finally {
-      if (isMounted) {
-        setLoading(false);
-        if (onLoaded) onLoaded(); // ✅ loader ends here
-      }
-    }
-  };
+    };
 
-  fetchProducts();
-  return () => { isMounted = false; };
-}, []);
+    fetchProducts();
+    return () => { isMounted = false; };
+  }, []);
 
   const handleAddToCart = async (product) => {
     if (!user) {
@@ -68,7 +73,7 @@ useEffect(() => {
     }
 
     try {
-      const response = await fetch("/api/cart/add", {
+      const response = await fetch(`${API_BASE}/api/cart/add`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -127,79 +132,78 @@ useEffect(() => {
 
       {loading ? (
         <div className="loading-placeholder">
-          {/* Replace this with a spinner or skeleton UI if you want */}
           <p>Loading products...</p>
         </div>
       ) : products.length === 0 ? (
         <p className="no-products">No products available.</p>
       ) : (
         <div className="feature-grid">
-  {products.map((product) => {
-    let parsedImages = [];
-    try {
-      parsedImages = JSON.parse(product.image_url);
-    } catch {
-      parsedImages = [];
-    }
+          {products.map((product) => {
+            let parsedImages = [];
+            try {
+              parsedImages = JSON.parse(product.image_url);
+            } catch {
+              parsedImages = [];
+            }
 
-    const firstImage =
-      parsedImages.length > 0
-        ? (parsedImages[0].startsWith("http")
-            ? parsedImages[0]
-            : `http://localhost:5000${parsedImages[0]}`)
-        : "/fallback.jpg"; // fallback placeholder
+            const firstImage =
+              parsedImages.length > 0
+                ? (parsedImages[0].startsWith("http")
+                    ? parsedImages[0]
+                    : `${API_BASE}${parsedImages[0]}`)
+                : "/fallback.jpg";
 
-    return (
-      <article
-        key={product.id}
-        className={`feature-card scroll-reveal ${inView ? "active" : ""}`}
-        onClick={() => handleViewProduct(product)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
-        }}
-        aria-label={`View details for ${product.name}`}
-      >
-        <img
-          src={firstImage}
-          alt={product.name}
-          className="feature-img"
-          loading="lazy"
-        />
-        <h3 className="feature-name">{product.name}</h3>
-        <p className="feature-price">
-          {product.discount_price && product.discount_price !== "0" ? (
-            <>
-              <span className="current-price">
-                ${parseFloat(product.price).toFixed(2)}
-              </span>
-              <span className="old-price">
-                ${parseFloat(product.discount_price).toFixed(2)}
-              </span>
-            </>
-          ) : (
-            <span className="current-price">
-              ${parseFloat(product.price).toFixed(2)}
-            </span>
-          )}
-        </p>
+            return (
+              <article
+                key={product.id}
+                className={`feature-card scroll-reveal ${inView ? "active" : ""}`}
+                onClick={() => handleViewProduct(product)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleViewProduct(product);
+                }}
+                aria-label={`View details for ${product.name}`}
+              >
+                <img
+                  src={firstImage}
+                  alt={product.name}
+                  className="feature-img"
+                  loading="lazy"
+                />
+                <h3 className="feature-name">{product.name}</h3>
+                <p className="feature-price">
+                  {product.discount_price && product.discount_price !== "0" ? (
+                    <>
+                      <span className="current-price">
+                        ${parseFloat(product.price).toFixed(2)}
+                      </span>
+                      <span className="old-price">
+                        ${parseFloat(product.discount_price).toFixed(2)}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="current-price">
+                      ${parseFloat(product.price).toFixed(2)}
+                    </span>
+                  )}
+                </p>
 
-        <button
-          className="feature-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAddToCart(product);
-          }}
-          aria-label={`Add ${product.name} to cart`}
-        >
-          Add to Cart
-        </button>
-      </article>
-    );
-  })}
-</div>
-    )}
+                <button
+                  className="feature-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(product);
+                  }}
+                  aria-label={`Add ${product.name} to cart`}
+                >
+                  Add to Cart
+                </button>
+              </article>
+            );
+          })}
+        </div>
+      )}
 
       {toast && (
         <Toast
