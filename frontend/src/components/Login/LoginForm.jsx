@@ -5,6 +5,8 @@ import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import "./Styles/LoginForm.css";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL; // your live backend URL
+
 const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -45,7 +47,7 @@ const LoginForm = () => {
       setMessage("");
 
       try {
-        const res = await axios.post("/api/users/signin", formData);
+        const res = await axios.post(`${API_BASE}/api/users/signin`, formData);
 
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
