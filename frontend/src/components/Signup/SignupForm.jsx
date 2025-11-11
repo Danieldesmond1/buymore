@@ -13,6 +13,10 @@ import {
 import LocationPicker from "./LocationPicker/LocationPicker";
 import "./Styles/SignupForm.css";
 
+ // ✅ use your environment variable for backend
+  const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const SignupForm = ({ selectedRole = "buyer", onSignupSuccess }) => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -75,7 +79,7 @@ const SignupForm = ({ selectedRole = "buyer", onSignupSuccess }) => {
   if (!form.shop_handle.trim()) return;
 
   try {
-    const res = await axios.get(`/api/users/check-handle?handle=${form.shop_handle}`);
+    const res = await axios.get(`${API_BASE}/api/users/check-handle?handle=${form.shop_handle}`);
     setShopHandleStatus({ available: true, message: "Shop handle is available ✅" });
   } catch (err) {
     setShopHandleStatus({
@@ -145,7 +149,7 @@ const handleSubmit = async (e) => {
     }
 
     // ✅ Send signup request and let backend set the cookie
-    const res = await axios.post("/api/users/signup", formData, {
+    const res = await axios.post(`${API_BASE}/api/users/signup`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
       withCredentials: true, // ⬅️ required to accept HTTP-only cookies
     });

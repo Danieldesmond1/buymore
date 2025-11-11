@@ -8,10 +8,14 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  // ✅ use your environment variable for backend
+  const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
+        const res = await fetch(`${API_BASE}/api/users/me`, {
           credentials: "include",
         });
 
@@ -31,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     if (!user) fetchUser();
-  }, []); // ✅ run only once on mount
+  }, []); // ✅ only run once on mount
 
   const login = (userData) => {
     setUser(userData);
@@ -40,7 +44,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:5000/api/users/logout", {
+      await fetch(`${API_BASE}/api/users/logout`, {
         method: "POST",
         credentials: "include",
       });

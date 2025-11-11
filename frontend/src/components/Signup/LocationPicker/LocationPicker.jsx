@@ -3,6 +3,9 @@ import { LuMapPinHouse, LuFlag, LuLandmark  } from "react-icons/lu";
 import axios from "axios";
 import "../Styles/LocationPicker.css";
 
+const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const LocationPicker = ({ onChange }) => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -47,7 +50,7 @@ const LocationPicker = ({ onChange }) => {
 
     setLoading(true);
     axios
-      .get(`/api/locations/states/${selectedCountryCode}`)
+      .get(`${API_BASE}/api/locations/states/${selectedCountryCode}`)
       .then((res) => {
         setStates(res.data);
         setSelectedStateCode("");
@@ -70,7 +73,7 @@ const LocationPicker = ({ onChange }) => {
 
     setLoading(true);
     axios
-      .get(`/api/locations/cities/${selectedStateCode}`)
+      .get(`${API_BASE}/api/locations/cities/${selectedStateCode}`)
       .then((res) => {
         setCities(res.data);
         setSelectedCity("");

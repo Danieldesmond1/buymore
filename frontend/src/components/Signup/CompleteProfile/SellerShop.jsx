@@ -1,6 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 
+const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const SellerShop = ({ userData }) => {
   const [formData, setFormData] = useState({
     shop_name: "",
@@ -65,7 +68,7 @@ const SellerShop = ({ userData }) => {
       }
       submitData.append("userId", userData.userId || userData.id);
 
-      const res = await axios.post("/api/users/sellerShop", submitData, {
+      const res = await axios.post(`${API_BASE}/api/users/sellerShop`, submitData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

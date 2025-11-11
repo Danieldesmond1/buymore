@@ -1,6 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 
+  const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const BuyerProfile = ({ userData }) => {
   const [bio, setBio] = useState("");
   const [profileImage, setProfileImage] = useState(null); // file object
@@ -38,7 +41,7 @@ const BuyerProfile = ({ userData }) => {
       formData.append("profile_image", profileImage);
       formData.append("userId", userData.userId || userData.id); // adjust depending on backend response
 
-      const res = await axios.post("/api/users/buyerProfile", formData, {
+      const res = await axios.post(`${API_BASE}/api/users/buyerProfile`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
