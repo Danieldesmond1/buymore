@@ -2,6 +2,9 @@ import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Styles/CartItem.css";
 
+const API_BASE =
+    import.meta.env.VITE_API_BASE_URL;
+
 const CartItem = ({ item, onRemove, onQuantityChange }) => {
   const navigate = useNavigate();
   const { cart_id, product_id, name, image_url, price, quantity } = item;
@@ -19,11 +22,11 @@ const CartItem = ({ item, onRemove, onQuantityChange }) => {
     parsedImages.length > 0
       ? (parsedImages[0].startsWith("http")
           ? parsedImages[0]
-          : `http://localhost:5000${parsedImages[0]}`)
+          : `${API_BASE}${parsedImages[0]}`)
       : image_url?.startsWith("http")
       ? image_url
       : image_url
-      ? `http://localhost:5000${image_url}`
+      ? `${API_BASE}${image_url}`
       : "/fallback.jpg"; // fallback placeholder
 
   // 🧭 Navigate to product details when image is clicked

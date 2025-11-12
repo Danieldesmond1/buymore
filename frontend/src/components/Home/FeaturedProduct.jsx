@@ -6,7 +6,7 @@ import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import Toast from "../Toast/Toast";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL; // ✅ your live backend base URL
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const FeaturedProducts = ({ onLoaded }) => {
   const { ref, inView } = useInView({ triggerOnce: false, threshold: 0.2 });
@@ -18,7 +18,7 @@ const FeaturedProducts = ({ onLoaded }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch products from live backend
+  // Fetch products
   useEffect(() => {
     let isMounted = true;
 
@@ -33,10 +33,7 @@ const FeaturedProducts = ({ onLoaded }) => {
         }
       } catch (error) {
         if (isMounted) {
-          setToast({
-            message: error.message || "Error loading products",
-            type: "error",
-          });
+          setToast({ message: error.message || "Error loading products", type: "error" });
         }
       } finally {
         if (isMounted) {
@@ -50,7 +47,8 @@ const FeaturedProducts = ({ onLoaded }) => {
     return () => { isMounted = false; };
   }, []);
 
-  const handleAddToCart = async (product) => {
+  // Handle Add to Cart
+  const handleAddToCart = (product) => {
     if (!user) {
       setToast({
         message: "Please log in to add items to your cart.",
@@ -58,63 +56,37 @@ const FeaturedProducts = ({ onLoaded }) => {
         actions: [
           {
             label: "Log In",
-            onClick: () => {
-              setToast(null);
-              navigate("/login");
-            },
+            onClick: () => { setToast(null); navigate("/login"); },
           },
-          {
-            label: "Keep Browsing",
-            onClick: () => setToast(null),
-          },
+          { label: "Keep Browsing", onClick: () => setToast(null) },
         ],
       });
       return;
     }
 
-    try {
-      const response = await fetch(`${API_BASE}/api/cart/add`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: user.id,
-          product_id: product.id,
-          quantity: 1,
-        }),
-      });
+    const productForCart = {
+      id: product.id || product.product_id,
+      name: product.name,
+      image_url: product.image_url,
+      price: product.price,
+      quantity: 1,
+    };
 
-      const data = await response.json();
-
-      if (response.ok) {
-        addToCart({ ...product, quantity: 1 });
-        setToast({ message: `${product.name} added to cart ✅`, type: "success" });
-        setTimeout(() => setToast(null), 3000);
-      } else {
-        setToast({ message: data.message || "Failed to add product to cart", type: "error" });
-      }
-    } catch (error) {
-      setToast({ message: "Error connecting to server", type: "error" });
-      console.error("Add to cart error:", error);
-    }
+    addToCart(user.id, productForCart, (msg, type) => {
+      setToast({ message: msg, type });
+      setTimeout(() => setToast(null), 3000);
+    });
   };
 
+  // Handle View Product
   const handleViewProduct = (product) => {
     if (!user) {
       setToast({
         message: "Please log in to view product details.",
         type: "info",
         actions: [
-          {
-            label: "Log In",
-            onClick: () => {
-              setToast(null);
-              navigate("/login");
-            },
-          },
-          {
-            label: "Keep Browsing",
-            onClick: () => setToast(null),
-          },
+          { label: "Log In", onClick: () => { setToast(null); navigate("/login"); } },
+          { label: "Keep Browsing", onClick: () => setToast(null) },
         ],
       });
       return;
@@ -148,9 +120,7 @@ const FeaturedProducts = ({ onLoaded }) => {
 
             const firstImage =
               parsedImages.length > 0
-                ? (parsedImages[0].startsWith("http")
-                    ? parsedImages[0]
-                    : `${API_BASE}${parsedImages[0]}`)
+                ? (parsedImages[0].startsWith("http") ? parsedImages[0] : `${API_BASE}${parsedImages[0]}`)
                 : "/fallback.jpg";
 
             return (
@@ -165,27 +135,16 @@ const FeaturedProducts = ({ onLoaded }) => {
                 }}
                 aria-label={`View details for ${product.name}`}
               >
-                <img
-                  src={firstImage}
-                  alt={product.name}
-                  className="feature-img"
-                  loading="lazy"
-                />
+                <img src={firstImage} alt={product.name} className="feature-img" loading="lazy" />
                 <h3 className="feature-name">{product.name}</h3>
                 <p className="feature-price">
                   {product.discount_price && product.discount_price !== "0" ? (
                     <>
-                      <span className="current-price">
-                        ${parseFloat(product.price).toFixed(2)}
-                      </span>
-                      <span className="old-price">
-                        ${parseFloat(product.discount_price).toFixed(2)}
-                      </span>
+                      <span className="current-price">${parseFloat(product.discount_price).toFixed(2)}</span>
+                      <span className="old-price">${parseFloat(product.price).toFixed(2)}</span>
                     </>
                   ) : (
-                    <span className="current-price">
-                      ${parseFloat(product.price).toFixed(2)}
-                    </span>
+                    <span className="current-price">${parseFloat(product.price).toFixed(2)}</span>
                   )}
                 </p>
 

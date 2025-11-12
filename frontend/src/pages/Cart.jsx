@@ -6,6 +6,8 @@ import EmptyCart from '../components/Cart/EmptyCart';
 import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 const Cart = () => {
   const { user } = useAuth();
   const [cartItems, setCartItems] = useState([]);
@@ -13,9 +15,14 @@ const Cart = () => {
   useEffect(() => {
     if (!user) return;
     const fetchCart = async () => {
-      const res = await fetch(`/api/cart/${user.id}`);
-      const data = await res.json();
-      if (res.ok) setCartItems(data.cart);
+      try {
+        const res = await fetch(`${API_BASE}/api/cart/${user.id}`);
+        if (!res.ok) throw new Error(`Failed to fetch cart: ${res.status}`);
+        const data = await res.json();
+        setCartItems(data.cart);
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+      }
     };
     fetchCart();
   }, [user]);

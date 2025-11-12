@@ -9,22 +9,20 @@ export const CartProvider = ({ children }) => {
 
   // ✅ Use environment variable for backend URL
   const API_BASE =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    import.meta.env.VITE_API_BASE_URL;
 
   const fetchCart = async (userId) => {
-    if (!userId) return;
-    try {
-      const response = await fetch(`${API_BASE}/api/cart/${userId}`);
-      const data = await response.json();
-      if (response.ok) {
-        setCartItems(data.cart || []);
-      } else {
-        console.error("Error fetching cart:", data.message);
-      }
-    } catch (err) {
-      console.error("Failed to fetch cart:", err);
-    }
-  };
+  if (!userId) return;
+  try {
+    const response = await fetch(`${API_BASE}/api/cart/${userId}`);
+    const text = await response.text();
+    console.log("Cart fetch response:", text); // 🔍 see what you actually get
+    const data = JSON.parse(text);
+    setCartItems(data.cart || []);
+  } catch (err) {
+    console.error("Cart fetch error (HTML returned?):", err);
+  }
+};
 
   const addToCart = async (userId, product, showToast = () => {}) => {
     if (!product || !product.id) {
@@ -32,6 +30,10 @@ export const CartProvider = ({ children }) => {
       showToast("Invalid product data", "error");
       return;
     }
+
+    console.log("API_BASE in CartContext =", API_BASE);
+console.log("POSTing to:", `${API_BASE}/api/cart/add`);
+
 
     try {
       const res = await fetch(`${API_BASE}/api/cart/add`, {

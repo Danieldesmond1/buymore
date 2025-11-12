@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import StoreCard from "./StoreCard";
 import "./Styles/StoreDirectory.css";
 
+const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const StoreDirectory = () => {
   const [stores, setStores] = useState([]);
   const [location, setLocation] = useState("");
@@ -10,7 +13,7 @@ const StoreDirectory = () => {
 
   const fetchStores = async () => {
     try {
-      let url = "http://localhost:5000/api/shops";
+      let url = `${API_BASE}/api/shops`;
       const queryParams = [];
 
       if (location) queryParams.push(`location=${encodeURIComponent(location)}`);

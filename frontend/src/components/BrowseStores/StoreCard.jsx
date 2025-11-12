@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import "./Styles/StoreCard.css";
 
+const API_BASE =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 const StoreCard = ({ shop }) => {
   const {
     id,
@@ -19,14 +22,14 @@ const StoreCard = ({ shop }) => {
     <div className="store-card">
       {/* Banner */}
       {banner_url && (
-        <img src={`http://localhost:5000/images/${banner_url}`} alt={`${shop_name} banner`} className="store-banner" />
+        <img src={`${API_BASE}/images/${banner_url}`} alt={`${shop_name} banner`} className="store-banner" />
       )}
 
       {/* Logo and Basic Info */}
       <div className="store-card-header">
         {logo_url && (
           <img
-            src={`http://localhost:5000/images/${logo_url}`}
+            src={`${API_BASE}/images/${logo_url}`}
             alt={`${shop_name} logo`}
             className="store-logo"
           />
@@ -41,24 +44,6 @@ const StoreCard = ({ shop }) => {
 
       {/* Description */}
       {description && <p className="store-description">{description}</p>}
-
-      {/* Top Products */}
-      {/* {topProducts.length > 0 && (
-        <div className="store-top-products">
-          <h4>Top Products</h4>
-          <div className="product-thumbnails">
-            {topProducts.slice(0, 3).map((product) => (
-              <img
-                key={product.id}
-                src={`http://localhost:5000/uploads/${product.image_url}`}
-                alt={product.name}
-                className="product-thumb"
-                title={product.name}
-              />
-            ))}
-          </div>
-        </div>
-      )} */}
 
       {/* Footer */}
       <div className="store-footer">
