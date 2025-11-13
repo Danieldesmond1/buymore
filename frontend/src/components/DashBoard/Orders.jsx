@@ -1,42 +1,30 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext"; // ✅ get user from context
 import "./Styles/Orders.css";
 
 const Orders = () => {
+  const { user } = useAuth(); // ✅ get logged-in user
   const [orders, setOrders] = useState([]);
-  const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/users/me", {
-          withCredentials: true,
-        });
-        setUserId(res.data.id);
-      } catch (err) {
-        console.error("Failed to fetch user:", err);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!userId) return;
+      if (!user?.id) return;
 
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/orders/user/${userId}`
-        );
-        setOrders(res.data.orders);
+        const res = await axios.get(`${API_BASE}/api/orders/user/${user.id}`, {
+          withCredentials: true,
+        });
+        setOrders(Array.isArray(res.data.orders) ? res.data.orders : []);
       } catch (err) {
         console.error("Failed to fetch orders:", err);
       }
     };
 
     fetchOrders();
-  }, [userId]);
+  }, [user?.id, API_BASE]);
 
   return (
     <div className="orders-wrapper">
@@ -49,8 +37,8 @@ const Orders = () => {
           <div key={order.id} className="order-card">
             <div className="order-left">
               <img
-                src="https://via.placeholder.com/60"
-                alt="Product"
+                src={order.product_image || "https://via.placeholder.com/60"}
+                alt={order.product_name || "Product"}
                 className="order-img"
               />
               <div className="order-info">
@@ -63,8 +51,8 @@ const Orders = () => {
             </div>
             <div className="order-right">
               <p>Qty: {order.quantity || 1}</p>
-              <p>${order.total_price}</p>
-              <p className={`order-status ${order.status.toLowerCase()}`}>
+              <p>${Number(order.total_price ?? 0).toFixed(2)}</p>
+              <p className={`order-status ${order.status?.toLowerCase()}`}>
                 {order.status}
               </p>
               <button className="view-btn">View Details</button>

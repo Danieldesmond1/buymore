@@ -1,9 +1,16 @@
 import jwt from "jsonwebtoken";
 import pool from "../utils/dbConnect.js"; // ✅ Import DB to fetch shop
 
-// Middleware for authenticated users
+// ✅ Middleware for authenticated users (handles cookie + header tokens)
 export const authenticateToken = async (req, res, next) => {
-  const token = req.cookies?.token;
+  let token = null;
+
+  // Try cookie first, fallback to header (for frontend JWT)
+  if (req.cookies?.token) {
+    token = req.cookies.token;
+  } else if (req.headers.authorization?.startsWith("Bearer ")) {
+    token = req.headers.authorization.split(" ")[1];
+  }
 
   if (!token) {
     return res.status(401).json({ message: "Access denied. No token provided." });
@@ -42,9 +49,11 @@ export const authenticateToken = async (req, res, next) => {
   }
 };
 
-// Admin auth
+// ✅ Middleware for Admin Authentication
 export const authenticateAdmin = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith("Bearer ") ? authHeader.split(" ")[1] : null;
+
   if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
 
   try {

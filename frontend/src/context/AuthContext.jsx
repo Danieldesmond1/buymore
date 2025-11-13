@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   // ✅ use your environment variable for backend
   const API_BASE =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchUser = async () => {

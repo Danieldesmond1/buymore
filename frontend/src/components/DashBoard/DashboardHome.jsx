@@ -1,67 +1,53 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 import "./Styles/DashboardHome.css";
 
 const DashboardHome = () => {
-  const [username, setUsername] = useState("");
-  const [userId, setUserId] = useState(null);
+  const { user } = useAuth(); // ✅ Get user from context
   const [ordersCount, setOrdersCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/users/me", {
-          withCredentials: true,
-        });
-        setUsername(res.data.username);
-        setUserId(res.data.id); // Get user ID to fetch orders
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-      }
-    };
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-    fetchUser();
-  }, []);
-
+  // Fetch user orders
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!userId) return;
+      if (!user?.id) return;
 
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/orders/user/${userId}`
-        );
-        setOrdersCount(res.data.orders.length);
+        const res = await axios.get(`${API_BASE}/api/orders/user/${user.id}`, {
+          withCredentials: true,
+        });
+        setOrdersCount(Array.isArray(res.data.orders) ? res.data.orders.length : 0);
       } catch (error) {
         console.error("Failed to fetch orders:", error);
       }
     };
-
     fetchOrders();
-  }, [userId]);
+  }, [user?.id, API_BASE]);
 
+  // Fetch user wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
-      if (!userId) return;
+      if (!user?.id) return;
 
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/wishlist/user/${userId}`
-        );
-        setWishlistCount(res.data.wishlist.length);
+        const res = await axios.get(`${API_BASE}/api/wishlist/user/${user.id}`, {
+          withCredentials: true,
+        });
+        setWishlistCount(Array.isArray(res.data.wishlist) ? res.data.wishlist.length : 0);
       } catch (error) {
         console.error("Failed to fetch wishlist:", error);
       }
     };
-
     fetchWishlist();
-  }, [userId]);
+  }, [user?.id, API_BASE]);
 
   return (
     <div className="dashboard-home">
-      <h2>Welcome back, {username ? username : "Buyer"} 👋</h2>
+      <h2>Welcome back, {user?.username || "Buyer"} 👋</h2>
 
       <div className="dashboard-grid">
         <div className="dashboard-card">
@@ -86,7 +72,7 @@ const DashboardHome = () => {
 
         <div className="dashboard-card">
           <h3>Messages</h3>
-          <p>1 new message from a seller.</p>
+          <p>Check your latest messages from sellers.</p>
           <Link to="/dashboard/messages">Go to Inbox</Link>
         </div>
 

@@ -13,34 +13,46 @@ const Messages = () => {
   const messagesEndRef = useRef(null);
   const isMobile = window.innerWidth < 650;
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const token = localStorage.getItem("token");
 
-  // Load logged-in user
+  // ✅ Redirect if not logged in
+  useEffect(() => {
+    if (!token) {
+      console.warn("No token found. Redirecting to login...");
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
+  // ✅ Fetch logged-in user
   useEffect(() => {
     const fetchUser = async () => {
+      if (!token) return;
       try {
-        const res = await fetch("http://localhost:5000/api/users/me", {
-          credentials: "include",
+        const res = await fetch(`${API_BASE}/api/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) {
-          const user = await res.json();
-          setCurrentUser(user);
-        }
+        if (!res.ok) throw new Error("Unauthorized");
+        const data = await res.json();
+        setCurrentUser(data);
       } catch (err) {
         console.error("Error fetching user:", err);
+        if (err.message === "Unauthorized") navigate("/login");
       }
     };
     fetchUser();
-  }, []);
+  }, [API_BASE, token, navigate]);
 
-  // Load conversations
+  // ✅ Fetch conversations
   useEffect(() => {
+    if (!currentUser?.id || !token) return;
+
     const fetchConversations = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/messages/conversations", {
-          credentials: "include",
+        const res = await fetch(`${API_BASE}/api/messages/conversations`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch conversations");
-
         const data = await res.json();
         setConversations(data);
 
@@ -55,16 +67,18 @@ const Messages = () => {
         console.error("Error fetching conversations:", err);
       }
     };
-    fetchConversations();
-  }, [chatId, navigate]);
 
-  // Load messages when selected conversation changes
+    fetchConversations();
+  }, [currentUser?.id, chatId, navigate, API_BASE, token]);
+
+  // ✅ Fetch messages (initial + periodic refresh)
   useEffect(() => {
-    if (!selected) return;
+    if (!selected || !token) return;
+
     const fetchMessages = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/messages/${selected.id}`, {
-          credentials: "include",
+        const res = await fetch(`${API_BASE}/api/messages/${selected.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch messages");
         const data = await res.json();
@@ -73,18 +87,27 @@ const Messages = () => {
         console.error("Error fetching messages:", err);
       }
     };
+
+    // Fetch immediately
     fetchMessages();
-  }, [selected]);
 
-  // Send message
+    // Auto-refresh every 7 seconds
+    const interval = setInterval(fetchMessages, 7000);
+
+    // Cleanup on unmount / change
+    return () => clearInterval(interval);
+  }, [selected, API_BASE, token]);
+
+  // ✅ Send message
   const handleSend = async () => {
-    if (!newMessage.trim() || !selected) return;
-
+    if (!newMessage.trim() || !selected || !token) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/messages/${selected.id}`, {
+      const res = await fetch(`${API_BASE}/api/messages/${selected.id}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ text: newMessage }),
       });
       if (!res.ok) throw new Error("Failed to send message");
@@ -96,12 +119,12 @@ const Messages = () => {
     }
   };
 
-  // Auto-scroll to latest message
+  // ✅ Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Helper to get product image URL
+  // ✅ Helper to get product image
   const getProductImage = (productImage) => {
     let parsedImages = [];
     try {
@@ -112,13 +135,12 @@ const Messages = () => {
     return parsedImages.length > 0
       ? parsedImages[0].startsWith("http")
         ? parsedImages[0]
-        : `http://localhost:5000${parsedImages[0]}`
-      : "/fallback.jpg"; // fallback
+        : `${API_BASE}${parsedImages[0]}`
+      : "/fallback.jpg";
   };
 
   return (
     <div className={`messages-container ${isMobile && selected ? "chat-active" : ""}`}>
-      {/* Sidebar */}
       <div className="conversations-list">
         <h3>Chats</h3>
         {conversations.length === 0 && <p>No conversations</p>}
@@ -134,11 +156,9 @@ const Messages = () => {
         ))}
       </div>
 
-      {/* Chat Window */}
       <div className="chat-window">
         {selected ? (
           <>
-            {/* Chat Header */}
             <div className="chat-header" onClick={() => isMobile && setSelected(null)}>
               <h4>{selected.shop_name}</h4>
               {selected.product_name && (
@@ -155,16 +175,12 @@ const Messages = () => {
               )}
             </div>
 
-            {/* Chat Body */}
             <div className="chat-body">
               {messages.map((msg, idx) => (
                 <div
                   key={msg.id}
-                  className={`chat-message ${
-                    msg.sender_id === currentUser?.id ? "buyer" : "seller"
-                  }`}
+                  className={`chat-message ${msg.sender_id === currentUser?.id ? "buyer" : "seller"}`}
                 >
-                  {/* Optional: show product thumbnail on first message */}
                   {idx === 0 && selected.product_name && (
                     <img
                       src={getProductImage(selected.product_image)}
@@ -179,7 +195,6 @@ const Messages = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Chat Input */}
             <div className="chat-input">
               <input
                 type="text"

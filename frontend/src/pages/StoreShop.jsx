@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./styles/StoreShop.css";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const Storeshop = () => {
   const { shopId } = useParams();
@@ -12,7 +12,7 @@ const Storeshop = () => {
   useEffect(() => {
     const fetchStoreData = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/shops/${shopId}`);
+        const res = await fetch(`${API_BASE}/api/shops/${shopId}`);
         const data = await res.json();
         setShop(data.shop);
         setProducts(data.products || []);
@@ -34,13 +34,13 @@ const Storeshop = () => {
       if (first) {
         imagePath = first.startsWith("http")
           ? first
-          : `${API_BASE_URL}${first}`;
+          : `${API_BASE}${first}`;
       }
     } catch {
       if (product.image_url) {
         imagePath = product.image_url.startsWith("http")
           ? product.image_url
-          : `${API_BASE_URL}${product.image_url}`;
+          : `${API_BASE}${product.image_url}`;
       }
     }
 
@@ -54,7 +54,7 @@ const Storeshop = () => {
       {/* 🏪 Banner */}
       <div className="storeshop-banner-wrapper">
         <img
-          src={`${API_BASE_URL}/uploads/${shop.banner_image}`}
+          src={`${API_BASE}/uploads/${shop.banner_image}`}
           alt="Banner"
           className="storeshop-banner"
         />
@@ -64,7 +64,7 @@ const Storeshop = () => {
         {/* Header */}
         <div className="storeshop-header">
           <img
-            src={`${API_BASE_URL}/uploads/${shop.logo_image}`}
+            src={`${API_BASE}/uploads/${shop.logo_image}`}
             alt="Logo"
             className="storeshop-logo"
           />
