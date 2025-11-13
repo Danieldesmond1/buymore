@@ -6,16 +6,17 @@ const RelatedProducts = () => {
   const [relatedItems, setRelatedItems] = useState([]);
   const navigate = useNavigate();
 
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchRandomProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products");
+        const res = await fetch(`${BASE_URL}/api/products`);
         const data = await res.json();
 
         if (data.products && data.products.length > 0) {
           // Shuffle products randomly
           const shuffled = data.products.sort(() => 0.5 - Math.random());
-
           // Pick maximum of 4
           const selected = shuffled.slice(0, 4);
 
@@ -27,11 +28,11 @@ const RelatedProducts = () => {
               const first = Array.isArray(parsed) ? parsed[0] : parsed;
               imagePath = first.startsWith("http")
                 ? first
-                : `http://localhost:5000${first}`;
+                : `${BASE_URL}${first}`;
             } catch {
               imagePath = p.image_url?.startsWith("http")
                 ? p.image_url
-                : `http://localhost:5000${p.image_url}`;
+                : `${BASE_URL}${p.image_url}`;
             }
             return { ...p, image: imagePath };
           });
@@ -44,14 +45,17 @@ const RelatedProducts = () => {
     };
 
     fetchRandomProducts();
-  }, []);
+  }, [BASE_URL]);
 
   const handleViewProduct = (productId) => {
     navigate(`/products/${productId}`);
   };
 
   return (
-    <section className="related-products" aria-labelledby="related-products-heading">
+    <section
+      className="related-products"
+      aria-labelledby="related-products-heading"
+    >
       <h2 id="related-products-heading" className="related-products__title">
         You Might Also Like
       </h2>
@@ -66,7 +70,8 @@ const RelatedProducts = () => {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") handleViewProduct(item.id);
+                  if (e.key === "Enter" || e.key === " ")
+                    handleViewProduct(item.id);
                 }}
                 style={{ cursor: "pointer" }}
               >
@@ -79,7 +84,7 @@ const RelatedProducts = () => {
                 <div className="related-products__info">
                   <h3 className="related-products__name">{item.name}</h3>
                   <p className="related-products__price">
-                    ₦{item.price?.toLocaleString()}
+                    ${item.price?.toLocaleString()}
                   </p>
                   <button
                     className="related-products__btn"

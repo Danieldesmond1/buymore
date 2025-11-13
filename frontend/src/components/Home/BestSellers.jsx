@@ -2,6 +2,7 @@ import "./Styles/BestSellers.css";
 import { useInView } from "react-intersection-observer";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import Toast from "../Toast/Toast";
 
@@ -15,6 +16,7 @@ const BestSellers = () => {
   const [toast, setToast] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     let isMounted = true;
@@ -42,7 +44,7 @@ const BestSellers = () => {
     };
   }, []);
 
-  const handleAddToCart = async (product) => {
+  const handleAddToCart = (product) => {
     if (!user) {
       setToast({
         message: "Please log in to add items to your cart.",
@@ -55,47 +57,25 @@ const BestSellers = () => {
               navigate("/login");
             },
           },
-          {
-            label: "Keep Browsing",
-            onClick: () => setToast(null),
-          },
+          { label: "Keep Browsing", onClick: () => setToast(null) },
         ],
       });
       return;
     }
 
-    try {
-      const response = await fetch(`${API_BASE}/api/cart/add`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: user.id,
-          product_id: product.id,
-          quantity: 1,
-        }),
-      });
+    const productForCart = {
+      id: product.id || product.product_id,
+      name: product.name,
+      image_url: product.image_url,
+      price: product.price,
+      quantity: 1,
+    };
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setToast({
-          message: `${product.name} added to cart ✅`,
-          type: "success",
-        });
-        setTimeout(() => setToast(null), 3000);
-      } else {
-        setToast({
-          message: data.message || "Failed to add product to cart",
-          type: "error",
-        });
-      }
-    } catch (error) {
-      setToast({
-        message: "Error connecting to server",
-        type: "error",
-      });
-      console.error("Add to cart error:", error);
-    }
+    // ✅ Call the global addToCart from CartContext exactly like FeaturedProducts
+    addToCart(user.id, productForCart, (msg, type) => {
+      setToast({ message: msg, type });
+      setTimeout(() => setToast(null), 3000);
+    });
   };
 
   const handleViewProduct = (product) => {

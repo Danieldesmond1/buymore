@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext"; // ✅ import this to access user
 
 const CartContext = createContext();
 
@@ -6,34 +7,52 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const { user } = useAuth(); // ✅ so we can know who’s logged in
 
-  // ✅ Use environment variable for backend URL
-  const API_BASE =
-    import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
+  // ✅ Load user cart automatically when logged in or refreshed
+  useEffect(() => {
+    const fetchUserCart = async () => {
+      if (!user) {
+        setCartItems([]); // reset if logged out
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/cart/${user.id}`);
+        if (!res.ok) throw new Error("Failed to load cart");
+        const data = await res.json();
+        setCartItems(data.cart || []);
+      } catch (err) {
+        console.error("Error loading user cart:", err);
+      }
+    };
+
+    fetchUserCart();
+  }, [user, API_BASE]);
+
+  // ✅ Manual fetchCart (can be used elsewhere if needed)
   const fetchCart = async (userId) => {
-  if (!userId) return;
-  try {
-    const response = await fetch(`${API_BASE}/api/cart/${userId}`);
-    const text = await response.text();
-    console.log("Cart fetch response:", text); // 🔍 see what you actually get
-    const data = JSON.parse(text);
-    setCartItems(data.cart || []);
-  } catch (err) {
-    console.error("Cart fetch error (HTML returned?):", err);
-  }
-};
+    if (!userId) return;
+    try {
+      const response = await fetch(`${API_BASE}/api/cart/${userId}`);
+      const text = await response.text();
+      console.log("Cart fetch response:", text);
+      const data = JSON.parse(text);
+      setCartItems(data.cart || []);
+    } catch (err) {
+      console.error("Cart fetch error (HTML returned?):", err);
+    }
+  };
 
+  // ✅ Add to Cart handler
   const addToCart = async (userId, product, showToast = () => {}) => {
     if (!product || !product.id) {
       console.error("Invalid product:", product);
       showToast("Invalid product data", "error");
       return;
     }
-
-    console.log("API_BASE in CartContext =", API_BASE);
-console.log("POSTing to:", `${API_BASE}/api/cart/add`);
-
 
     try {
       const res = await fetch(`${API_BASE}/api/cart/add`, {
