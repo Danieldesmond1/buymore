@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SearchBar from "../Navbar/SearchBar.jsx";
 import ThemeToggle from "../Navbar/ThemeToggle.jsx";
@@ -17,12 +17,22 @@ const Navbar = ({ onSearch }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const { user, logout } = useAuth();
-  const { cartItems } = useCart();
+  const { cartItems, cartUpdated } = useCart(); // <-- add cartUpdated
+  const [showCartTooltip, setShowCartTooltip] = useState(false);
 
   const navigate = useNavigate();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
+
+  // Trigger cart tooltip on any global cart update
+  useEffect(() => {
+    if (cartUpdated) {
+      setShowCartTooltip(true);
+      const timer = setTimeout(() => setShowCartTooltip(false), 1500); // tooltip duration
+      return () => clearTimeout(timer);
+    }
+  }, [cartUpdated]);
 
   const handleProtectedClick = (path) => {
     if (!user) {
@@ -105,6 +115,8 @@ const Navbar = ({ onSearch }) => {
               <span className="cart-label">Cart</span> 
               {totalQuantity > 0 && <span className="cart-badge">{totalQuantity}</span>}
               <FaOpencart />
+              {/* Tooltip for Add to Cart */}
+              {/* {showCartTooltip && <span className="cart-tooltip">🛒 Added!</span>} */}
             </button>
           </li>
 

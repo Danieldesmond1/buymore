@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "./AuthContext"; // ✅ import this to access user
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
@@ -7,7 +7,8 @@ export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-  const { user } = useAuth(); // ✅ so we can know who’s logged in
+  const [cartUpdated, setCartUpdated] = useState(false); // 👈 Add this
+  const { user } = useAuth();
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -15,7 +16,7 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserCart = async () => {
       if (!user) {
-        setCartItems([]); // reset if logged out
+        setCartItems([]);
         return;
       }
 
@@ -32,21 +33,20 @@ export const CartProvider = ({ children }) => {
     fetchUserCart();
   }, [user, API_BASE]);
 
-  // ✅ Manual fetchCart (can be used elsewhere if needed)
+  // ✅ Manual cart refresh
   const fetchCart = async (userId) => {
     if (!userId) return;
     try {
       const response = await fetch(`${API_BASE}/api/cart/${userId}`);
       const text = await response.text();
-      console.log("Cart fetch response:", text);
       const data = JSON.parse(text);
       setCartItems(data.cart || []);
     } catch (err) {
-      console.error("Cart fetch error (HTML returned?):", err);
+      console.error("Cart fetch error:", err);
     }
   };
 
-  // ✅ Add to Cart handler
+  // ✅ Add to Cart (with tooltip trigger)
   const addToCart = async (userId, product, showToast = () => {}) => {
     if (!product || !product.id) {
       console.error("Invalid product:", product);
@@ -70,6 +70,10 @@ export const CartProvider = ({ children }) => {
       if (res.ok) {
         setCartItems((prev) => [...prev, product]);
         showToast(`${product.name} added to cart ✅`, "success");
+
+        // 👇 Trigger navbar tooltip
+        setCartUpdated(true);
+        setTimeout(() => setCartUpdated(false), 1500);
       } else {
         showToast(data.message || "Error adding to cart", "error");
       }
@@ -80,7 +84,15 @@ export const CartProvider = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, setCartItems, addToCart, fetchCart }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        setCartItems,
+        addToCart,
+        fetchCart,
+        cartUpdated, // 👈 Make this accessible
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

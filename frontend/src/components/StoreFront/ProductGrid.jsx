@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 import "./Styles/ProductGrid.css";
 import Toast from "../Toast/Toast";
 
-
 const capitalize = (str) =>
   str
     .split(" ")
@@ -31,6 +30,9 @@ const ProductGrid = ({
   const { user } = useAuth();
   const { addToCart } = useCart();
 
+  // ✅ Base URL (works for local + live)
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const handleViewProduct = (product) => {
     navigate(`/products/${product.id}`);
   };
@@ -40,7 +42,7 @@ const ProductGrid = ({
 
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products");
+        const res = await fetch(`${BASE_URL}/api/products`);
         if (!res.ok) throw new Error("Failed to fetch products");
         const data = await res.json();
 
@@ -58,7 +60,7 @@ const ProductGrid = ({
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [BASE_URL]);
 
   const applyFilters = (products) => {
     return products.filter((product) => {
@@ -116,7 +118,10 @@ const ProductGrid = ({
       )
         return false;
 
-      if (filters.condition.length && !filters.condition.includes(product.condition))
+      if (
+        filters.condition.length &&
+        !filters.condition.includes(product.condition)
+      )
         return false;
 
       if (filters.discount.length) {
@@ -158,16 +163,24 @@ const ProductGrid = ({
 
   const handleAddToCart = (e, product) => {
     e.stopPropagation();
-    if (!user) {
-      setToast({ message: "Please login to add to cart", type: "warning" });
-      return;
-    }
+      if (!user) {
+        setToast({ message: "Please login to add to cart", type: "warning" });
+        return;
+      }
 
-    addToCart(user.id, product, (message, type) => {
-      setToast({ message, type });
-      setTimeout(() => setToast(null), 3000);
-    });
-  };
+      const productForCart = {
+        id: product.id,
+        name: product.name,
+        image_url: product.image_url,
+        price: product.price,
+        quantity: 1, // important!
+      };
+
+      addToCart(user.id, productForCart, (message, type) => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+      });
+    };
 
   if (loading) return <p className="pg-loading">Loading products...</p>;
   if (error) return <p className="pg-error">Error: {error}</p>;
@@ -186,7 +199,8 @@ const ProductGrid = ({
             </p>
           ) : (
             <p>
-              No products found in "{capitalize(selectedCategory || "All")}" with the current filters.
+              No products found in "{capitalize(selectedCategory || "All")}" with
+              the current filters.
             </p>
           )}
           <button
@@ -199,7 +213,7 @@ const ProductGrid = ({
       ) : (
         <div className="pg-grid">
           {filteredProducts.slice(0, visibleCount).map((product, index) => {
-            // Parse the image_url field like in FeaturedProducts
+            // ✅ Parse image URL dynamically
             let parsedImages = [];
             try {
               parsedImages = JSON.parse(product.image_url);
@@ -209,10 +223,10 @@ const ProductGrid = ({
 
             const firstImage =
               parsedImages.length > 0
-                ? (parsedImages[0].startsWith("http")
-                    ? parsedImages[0]
-                    : `http://localhost:5000${parsedImages[0]}`)
-                : "/fallback.jpg"; // fallback placeholder if no image found
+                ? parsedImages[0].startsWith("http")
+                  ? parsedImages[0]
+                  : `${BASE_URL}${parsedImages[0]}`
+                : "/fallback.jpg";
 
             return (
               <motion.article
@@ -250,9 +264,14 @@ const ProductGrid = ({
                   )}
                 </div>
                 <p className="pg-stock">
-                  {product.stock > 0 ? `In stock: ${product.stock}` : "Out of stock"}
+                  {product.stock > 0
+                    ? `In stock: ${product.stock}`
+                    : "Out of stock"}
                 </p>
-                <div className="pg-rating" aria-label={`Rated ${product.rating} stars`}>
+                <div
+                  className="pg-rating"
+                  aria-label={`Rated ${product.rating} stars`}
+                >
                   {"⭐".repeat(Math.floor(product.rating) || 0)}{" "}
                   <span className="pg-rating-score">
                     {typeof product.rating === "number"
@@ -284,7 +303,6 @@ const ProductGrid = ({
       )}
 
       {toast && <Toast message={toast.message} type={toast.type} />}
-
     </section>
   );
 };
