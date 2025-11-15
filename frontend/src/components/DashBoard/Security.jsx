@@ -12,24 +12,29 @@ const SecuritySettings = () => {
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const [show2FAForm, setShow2FAForm] = useState(false);
 
+  // ✅ Use live/local backend dynamically
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetch2FAStatus = async () => {
       try {
-        const res = await axios.get('/api/security/2fa-status', { withCredentials: true });
+        const res = await axios.get(`${API_BASE}/api/security/2fa-status`, {
+          withCredentials: true,
+        });
         setIs2FAEnabled(res.data.enabled);
       } catch {
         // fail silently
       }
     };
     fetch2FAStatus();
-  }, []);
+  }, [API_BASE]);
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setStatus('');
     try {
       const res = await axios.put(
-        '/api/security/change-password',
+        `${API_BASE}/api/security/change-password`,
         { oldPassword, newPassword, confirmPassword },
         { withCredentials: true }
       );
@@ -51,7 +56,7 @@ const SecuritySettings = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        '/api/security/enable-2fa',
+        `${API_BASE}/api/security/enable-2fa`,
         { email },
         { withCredentials: true }
       );
@@ -65,18 +70,18 @@ const SecuritySettings = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        '/api/security/verify-2fa',
+        `${API_BASE}/api/security/verify-2fa`,
         { code },
         { withCredentials: true }
       );
+
       if (res.data.success) {
-        setIs2FAEnabled(true); // or false for disable
+        setIs2FAEnabled(true);
         setShow2FAForm(false);
         setStatus('🎉 2FA enabled successfully! Your account is now more secure.');
 
-        // Delay just enough to show status before reload
         setTimeout(() => {
-          window.location.reload(true); // true forces a full reload
+          window.location.reload(true);
         }, 1200);
       } else {
         setStatus(res.data.message || 'Invalid code.');
@@ -88,11 +93,17 @@ const SecuritySettings = () => {
 
   const disable2FA = async () => {
     try {
-      const res = await axios.post('/api/security/disable-2fa', {}, { withCredentials: true });
+      const res = await axios.post(
+        `${API_BASE}/api/security/disable-2fa`,
+        {},
+        { withCredentials: true }
+      );
+
       if (res.data.success) {
         setIs2FAEnabled(false);
         setShow2FAForm(false);
         setStatus('⚠️ Two-Factor Authentication has been disabled.');
+
         setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -147,7 +158,6 @@ const SecuritySettings = () => {
         {/* 2FA Forms */}
         {show2FAForm && !is2FAEnabled && (
           <div className={`twofa-form-container ${show2FAForm ? 'open' : 'closed'}`}>
-            {/* Step 1: Send Code */}
             <form onSubmit={enable2FA} className="twofa-form">
               <input
                 type="email"
@@ -159,7 +169,6 @@ const SecuritySettings = () => {
               <button type="submit">Send Verification Code</button>
             </form>
 
-            {/* Step 2: Verify */}
             <form onSubmit={verify2FA} className="twofa-form">
               <input
                 type="text"

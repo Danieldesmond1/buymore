@@ -3,12 +3,14 @@ import axios from "axios";
 import "./Styles/Profile.css";
 
 const Profile = () => {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   const [profile, setProfile] = useState({
     username: "",
     email: "",
     location: "",
     bio: "",
-    profile_image: "", // match backend naming exactly
+    profile_image: "",
   });
 
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,8 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/profile", {
+
+        const res = await axios.get(`${API_BASE}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
@@ -29,7 +32,7 @@ const Profile = () => {
           email: user.email || "",
           location: user.location || "",
           bio: user.bio || "",
-          profile_image: user.profile_image || "", // this should be something like "uploads/profile123.jpg"
+          profile_image: user.profile_image || "",
         });
 
         setLoading(false);
@@ -40,7 +43,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [API_BASE]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,9 +60,10 @@ const Profile = () => {
       formData.append("location", profile.location);
       formData.append("bio", profile.bio);
       if (profile.password) formData.append("password", profile.password);
-      if (profile.profile_image_file) formData.append("profile_image", profile.profile_image_file);
+      if (profile.profile_image_file)
+        formData.append("profile_image", profile.profile_image_file);
 
-      const res = await axios.put("http://localhost:5000/api/profile", formData, {
+      const res = await axios.put(`${API_BASE}/api/profile`, formData, {
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -69,7 +73,6 @@ const Profile = () => {
 
       alert("Profile updated!");
 
-      // Update profile image if changed
       setProfile((prev) => ({
         ...prev,
         profile_image: res.data.user.profile_image,
@@ -89,9 +92,9 @@ const Profile = () => {
         <div className="profile-image-section">
           <img
             src={
-              profile.profile_image?.startsWith("http") || profile.profile_image?.startsWith("/uploads")
+              profile.profile_image?.startsWith("http")
                 ? profile.profile_image
-                : `http://localhost:5000/uploads/${profile.profile_image}`
+                : `${API_BASE}${profile.profile_image}`
             }
             alt="Profile"
             style={{

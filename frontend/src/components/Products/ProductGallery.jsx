@@ -8,12 +8,14 @@ const ProductGallery = ({ product }) => {
   const [zoom, setZoom] = useState(1);
   const zoomAreaRef = useRef(null);
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     if (!product) return;
 
     let parsed = [];
 
-    // ✅ Parse image_url safely (from backend)
+    // ✅ Parse image_url safely
     try {
       if (typeof product.image_url === "string") {
         parsed = JSON.parse(product.image_url);
@@ -26,7 +28,7 @@ const ProductGallery = ({ product }) => {
 
     // ✅ Prefix local paths with backend base URL
     const formatted = parsed.map((img) =>
-      img.startsWith("http") ? img : `http://localhost:5000${img}`
+      img.startsWith("http") ? img : `${API_BASE}${img}`
     );
 
     setParsedImages(formatted);
@@ -37,7 +39,7 @@ const ProductGallery = ({ product }) => {
     } else {
       setSelectedImage("/fallback.jpg");
     }
-  }, [product]);
+  }, [product, API_BASE]);
 
   // ✅ Handle thumbnail click
   const handleThumbnailClick = (img) => {

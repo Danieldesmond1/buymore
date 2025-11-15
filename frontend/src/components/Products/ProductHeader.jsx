@@ -7,6 +7,8 @@ const ProductHeader = ({ product }) => {
   const [currentImage, setCurrentImage] = useState(null);
   const [hovering, setHovering] = useState(false);
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   if (!product || (!product.name && !product.price)) {
     return <p className="loading-message">Loading product details...</p>;
   }
@@ -31,7 +33,7 @@ const ProductHeader = ({ product }) => {
   }
 
   const images = parsedImages.map((img) =>
-    img.startsWith("http") ? img : `http://localhost:5000${img}`
+    img.startsWith("http") ? img : `${API_BASE}${img}`
   );
 
   const defaultImage =
@@ -40,7 +42,7 @@ const ProductHeader = ({ product }) => {
       : product.image_url
       ? product.image_url.startsWith("http")
         ? product.image_url
-        : `http://localhost:5000/images/${product.image_url}`
+        : `${API_BASE}/images/${product.image_url}`
       : "/fallback.jpg";
 
   useEffect(() => {
@@ -55,22 +57,25 @@ const ProductHeader = ({ product }) => {
     const interval = setInterval(() => {
       index = (index + 1) % images.length;
       setCurrentImage(images[index]);
-    }, 2000); // slower smooth transition (2s per image)
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [hovering, images]);
 
   const startConversation = async () => {
     try {
+      const token = localStorage.getItem("token");
       const payload = {
         shopId: product.shop_id,
         productId: product.id,
       };
 
-      const res = await fetch("http://localhost:5000/api/messages/conversations", {
+      const res = await fetch(`${API_BASE}/api/messages/conversations`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 
@@ -94,7 +99,7 @@ const ProductHeader = ({ product }) => {
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => {
           setHovering(false);
-          setCurrentImage(defaultImage); // reset to first image
+          setCurrentImage(defaultImage);
         }}
       >
         {currentImage ? (

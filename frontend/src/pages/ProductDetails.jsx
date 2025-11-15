@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import ContactSeller from "../components/Products/ContactSeller";
 import DeliveryOptions from '../components/Products/DeliveryOptions';
-import ProductDetailsInfo from '../components/Products/ProductDetails'; // renamed to avoid conflict
+import ProductDetailsInfo from '../components/Products/ProductDetails';
 import ProductGallery from '../components/Products/ProductGallery';
 import ProductHeader from '../components/Products/ProductHeader';
 import RelatedProducts from '../components/Products/RelatedProducts';
@@ -17,10 +17,13 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // ✅ Use dynamic API base for live/local
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`);
+        const res = await fetch(`${API_BASE}/api/products/${id}`);
         console.log("Fetch status:", res.status);
 
         if (!res.ok) throw new Error("Product not found");
@@ -37,7 +40,7 @@ const ProductDetails = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id, API_BASE]);
 
   // Optional: Scroll to top on product id change
   useEffect(() => {

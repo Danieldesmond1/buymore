@@ -14,11 +14,15 @@ const Addresses = () => {
   const [originalAddress, setOriginalAddress] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // ✅ Use same API_BASE logic as Messages.jsx & Profile.jsx
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchAddress = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/profile", {
+
+        const res = await axios.get(`${API_BASE}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
@@ -41,7 +45,7 @@ const Addresses = () => {
     };
 
     fetchAddress();
-  }, []);
+  }, [API_BASE]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,8 +64,9 @@ const Addresses = () => {
   const handleSave = async () => {
     try {
       const token = localStorage.getItem("token");
+
       await axios.put(
-        "http://localhost:5000/api/profile",
+        `${API_BASE}/api/profile`,
         {
           username: address.name,
           phone: address.phone,
@@ -75,6 +80,7 @@ const Addresses = () => {
 
       setOriginalAddress(address);
       setEditing(false);
+
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 2500);
     } catch (err) {

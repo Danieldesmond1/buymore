@@ -6,10 +6,12 @@ const RelatedProducts = ({ category, currentProductId }) => {
   const [relatedItems, setRelatedItems] = useState([]);
   const navigate = useNavigate();
 
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchRelated = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/products/category/${category}`);
+        const res = await fetch(`${API_BASE}/api/products/category/${category}`);
         const data = await res.json();
 
         if (data.products) {
@@ -24,11 +26,11 @@ const RelatedProducts = ({ category, currentProductId }) => {
               const first = Array.isArray(parsed) ? parsed[0] : parsed;
               imagePath = first.startsWith("http")
                 ? first
-                : `http://localhost:5000${first}`;
+                : `${API_BASE}${first}`;
             } catch {
               imagePath = p.image_url?.startsWith("http")
                 ? p.image_url
-                : `http://localhost:5000${p.image_url}`;
+                : `${API_BASE}${p.image_url}`;
             }
             return { ...p, image: imagePath };
           });

@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { FaTimes } from "react-icons/fa";
 import {
   FaHome, FaBoxOpen, FaHeart, FaEnvelope, FaUser, FaMapMarkerAlt,
-  FaMoneyCheckAlt, FaShieldAlt, FaGavel
+  // FaMoneyCheckAlt, FaShieldAlt, FaGavel
 } from "react-icons/fa";
 
 import "./Styles/Sidebar.css";
@@ -16,9 +16,9 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
     { name: "Messages", icon: <FaEnvelope />, path: "/dashboard/messages" },
     { name: "Profile", icon: <FaUser />, path: "/dashboard/profile" },
     { name: "Addresses", icon: <FaMapMarkerAlt />, path: "/dashboard/addresses" },
-    { name: "Disputes", icon: <FaGavel />, path: "/dashboard/disputes" },
-    { name: "Payments", icon: <FaMoneyCheckAlt />, path: "/dashboard/payments" },
-    { name: "Security", icon: <FaShieldAlt />, path: "/dashboard/security" },
+    // { name: "Disputes", icon: <FaGavel />, path: "/dashboard/disputes" },
+    // { name: "Payments", icon: <FaMoneyCheckAlt />, path: "/dashboard/payments" },
+    // { name: "Security", icon: <FaShieldAlt />, path: "/dashboard/security" },
   ];
 
   return (
