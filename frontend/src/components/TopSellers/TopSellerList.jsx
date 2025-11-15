@@ -10,23 +10,69 @@ const TopSellerList = () => {
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("none");
 
-  // Fetch sellers from backend
+  // ✅ Dynamic API base URL (works on local + live)
+  const BASE_URL =
+    import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const fetchShops = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("http://localhost:5000/api/shops");
-        // We get { shops: [...] } from backend, so we take data.shops
-        setSellers(data.shops || []);
-      } catch (error) {
-        console.error("Error fetching shops:", error);
+
+        const { data } = await axios.get(`${BASE_URL}/api/shops`);
+
+        const shops = data.shops || [];
+
+        // ✅ Format images for live/local
+        const processed = shops.map((s) => {
+          let logo = s.logo_image;
+          let banner = s.banner_image;
+
+          // Logo
+          if (logo) {
+            // Ensure it starts with a slash
+            if (logo) {
+            if (!logo.startsWith("http")) {
+              logo = `/uploads/${logo.replace(/^\/+/, "")}`;
+              logo = `${BASE_URL}${logo}`;
+            }
+          }
+
+          } else {
+            logo = "https://via.placeholder.com/80x80.png?text=No+Logo";
+          }
+
+          // Banner
+          if (banner) {
+            if (!banner.startsWith("http")) {
+              banner = `/uploads/${banner.replace(/^\/+/, "")}`;
+              banner = `${BASE_URL}${banner}`;
+            }
+          }  else {
+            banner = "https://via.placeholder.com/600x200.png?text=No+Banner";
+          }
+          return {
+            id: s.shop_id,
+            name: s.shop_name,
+            logo,
+            banner,
+            rating: s.rating || 0,
+            sales: s.sales || 0,
+            location: s.location,
+            badge: s.store_type,
+          };
+        });
+
+        setSellers(processed);
+      } catch (err) {
+        console.error("Error fetching shops:", err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchShops();
-  }, []);
+  }, [BASE_URL]);
 
   // Reset filters
   const clearAll = () => {
@@ -37,7 +83,7 @@ const TopSellerList = () => {
 
   // Filtering
   let filteredSellers = sellers.filter((seller) => {
-    const matchesSearch = seller.shop_name
+    const matchesSearch = seller.name
       .toLowerCase()
       .includes(search.toLowerCase());
 
@@ -51,13 +97,21 @@ const TopSellerList = () => {
 
   // Sorting
   if (sort === "sales-high") {
-    filteredSellers = [...filteredSellers].sort((a, b) => (b.sales || 0) - (a.sales || 0));
+    filteredSellers = [...filteredSellers].sort(
+      (a, b) => (b.sales || 0) - (a.sales || 0)
+    );
   } else if (sort === "sales-low") {
-    filteredSellers = [...filteredSellers].sort((a, b) => (a.sales || 0) - (b.sales || 0));
+    filteredSellers = [...filteredSellers].sort(
+      (a, b) => (a.sales || 0) - (b.sales || 0)
+    );
   } else if (sort === "rating-high") {
-    filteredSellers = [...filteredSellers].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    filteredSellers = [...filteredSellers].sort(
+      (a, b) => (b.rating || 0) - (a.rating || 0)
+    );
   } else if (sort === "rating-low") {
-    filteredSellers = [...filteredSellers].sort((a, b) => (a.rating || 0) - (b.rating || 0));
+    filteredSellers = [...filteredSellers].sort(
+      (a, b) => (a.rating || 0) - (b.rating || 0)
+    );
   }
 
   return (
@@ -97,7 +151,7 @@ const TopSellerList = () => {
           <option value="rating-low">Rating: Low → High</option>
         </select>
 
-        {/* Clear Button */}
+        {/* Clear */}
         <button onClick={clearAll} className="clear-btn">
           Clear All ✖
         </button>
@@ -110,19 +164,7 @@ const TopSellerList = () => {
         <div className="top-seller-list">
           {filteredSellers.length > 0 ? (
             filteredSellers.map((seller) => (
-              <TopSellerCard
-                key={seller.shop_id}
-                seller={{
-                  id: seller.shop_id,
-                  name: seller.shop_name,
-                  logo: seller.logo_image || "https://via.placeholder.com/80x80.png?text=No+Logo",
-                  banner: seller.banner_image || "https://via.placeholder.com/600x200.png?text=No+Banner",
-                  rating: seller.rating || 0, // Placeholder until shop ratings are implemented
-                  sales: seller.sales || 0,   // Placeholder until sales tracking works
-                  location: seller.location,
-                  badge: seller.store_type, // Use store_type as a badge for now
-                }}
-              />
+              <TopSellerCard key={seller.id} seller={seller} />
             ))
           ) : (
             <p className="no-results">No sellers match your search 🔍</p>

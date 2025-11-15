@@ -4,7 +4,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useState } from "react";
 import Toast from "../Toast/Toast";
 
-const API_BASE_URL = "http://localhost:5000";
+// ✅ Dynamic API base URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const SellerProducts = ({ products }) => {
   const navigate = useNavigate();
@@ -39,28 +40,34 @@ const SellerProducts = ({ products }) => {
     navigate(`/products/${product.id}`);
   };
 
-  // ✅ helper to parse image correctly
-  const getProductImage = (product) => {
-    let imagePath = "/fallback.jpg"; // optional fallback
-
-    try {
-      const parsed = JSON.parse(product.image_url);
-      const first = Array.isArray(parsed) ? parsed[0] : parsed;
-      if (first) {
-        imagePath = first.startsWith("http")
-          ? first
-          : `${API_BASE_URL}${first}`;
-      }
-    } catch {
-      if (product.image_url) {
-        imagePath = product.image_url.startsWith("http")
-          ? product.image_url
-          : `${API_BASE_URL}${product.image_url}`;
-      }
-    }
-
-    return imagePath;
+  // ✅ Helper to format product images for local/live
+  const formatImage = (path, fallback = "/fallback.jpg") => {
+    if (!path) return fallback;
+    return path.startsWith("http")
+      ? path
+      : `${BASE_URL}/uploads/${path.replace(/^\/+/, "")}`;
   };
+
+  const getProductImage = (product) => {
+  let imagePath = "/fallback.jpg"; // default fallback
+
+  try {
+    const parsed = JSON.parse(product.image_url);
+    const first = Array.isArray(parsed) ? parsed[0] : parsed;
+    if (first) {
+      imagePath = first.startsWith("http") ? first : `${BASE_URL}${first}`;
+    }
+  } catch {
+    if (product.image_url) {
+      imagePath = product.image_url.startsWith("http")
+        ? product.image_url
+        : `${BASE_URL}${product.image_url}`;
+    }
+  }
+
+  return imagePath;
+};
+
 
   return (
     <div className="seller-products-container">
@@ -87,14 +94,14 @@ const SellerProducts = ({ products }) => {
               <h4>{product.name}</h4>
 
               <p className="price">
-                {product.discount_price && product.discount_price !== "0"
-                  ? `₦${Number(product.discount_price).toLocaleString()}`
-                  : `₦${Number(product.price).toLocaleString()}`}
+                ${Number(product.price).toLocaleString()}
               </p>
 
               {product.discount_price && product.discount_price !== "0" && (
                 <p className="old-price">
-                  ₦{Number(product.price).toLocaleString()}
+                  {product.discount_price && product.discount_price !== "0"
+                  ? `$${Number(product.discount_price).toLocaleString()}`
+                  : `$${Number(product.price).toLocaleString()}`}
                 </p>
               )}
 

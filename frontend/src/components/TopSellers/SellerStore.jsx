@@ -4,7 +4,8 @@ import axios from "axios";
 import SellerProducts from "./SellerProducts";
 import "./styles/SellerStore.css";
 
-const API_BASE_URL = "http://localhost:5000"; // 👈 Make sure this matches your backend port
+// ✅ Dynamic API base URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const SellerStore = () => {
   const { sellerId } = useParams();
@@ -12,10 +13,18 @@ const SellerStore = () => {
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("products");
 
+  // ✅ Helper to format images for local/live
+  const formatImage = (path) => {
+    if (!path) return "/fallback.jpg"; // fallback for missing image
+    return path.startsWith("http")
+      ? path
+      : `${BASE_URL}/uploads/${path.replace(/^\/+/, "")}`;
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/api/shops/${sellerId}`, {
+        const res = await axios.get(`${BASE_URL}/api/shops/${sellerId}`, {
           withCredentials: true,
         });
 
@@ -32,13 +41,9 @@ const SellerStore = () => {
 
   if (!seller) return <p className="loading">Loading store...</p>;
 
-  // ✅ Prepend /uploads path so images load correctly
-  const bannerUrl = seller.banner_image
-    ? `${API_BASE_URL}/uploads/${seller.banner_image}`
-    : "/fallback-banner.jpg"; // optional fallback
-  const logoUrl = seller.logo_image
-    ? `${API_BASE_URL}/uploads/${seller.logo_image}`
-    : "/fallback-logo.jpg"; // optional fallback
+  // ✅ Use helper for banner and logo
+  const bannerUrl = formatImage(seller.banner_image);
+  const logoUrl = formatImage(seller.logo_image);
 
   return (
     <div className="seller-store-container">
@@ -71,12 +76,6 @@ const SellerStore = () => {
         >
           All Products
         </button>
-        {/* <button
-          className={activeTab === "categories" ? "active" : ""}
-          onClick={() => setActiveTab("categories")}
-        >
-          Categories
-        </button> */}
         <button
           className={activeTab === "about" ? "active" : ""}
           onClick={() => setActiveTab("about")}
