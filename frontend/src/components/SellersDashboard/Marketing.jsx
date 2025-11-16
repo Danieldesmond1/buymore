@@ -81,7 +81,7 @@ const Marketing = () => {
             />
           </div>
           <div className="form-group">
-            <label>Budget (₦)</label>
+            <label>Budget ($)</label>
             <input
               type="number"
               name="campaignBudget"

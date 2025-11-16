@@ -3,79 +3,89 @@ import axios from "axios";
 import "./styles/ProductsTable.css";
 import { useAuth } from "../../context/AuthContext";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 const ProductsTable = ({ setActiveSection, setEditingProduct }) => {
-  const { user } = useAuth();
+  const { user } = useAuth(); // already fetched via cookie
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const token = localStorage.getItem("token");
 
-  const [confirmDelete, setConfirmDelete] = useState(null); // store product id for delete confirmation
-
+  // ✅ Fetch products using cookie automatically
   const fetchProducts = async () => {
+    if (!user || !token) return;
+
     try {
       setLoading(true);
-      const response = await axios.get("/api/products/my-products", {
+      const res = await axios.get(`${BASE_URL}/api/products/my-products`, {
         params: { search, category },
-        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       });
 
-      let fetchedProducts = response.data.products || [];
+      let fetchedProducts = res.data.products || [];
 
       fetchedProducts = fetchedProducts.map((p) => {
         let parsedImages = [];
         try {
           parsedImages = JSON.parse(p.image_url);
-        } catch {
-          parsedImages = [];
-        }
-
+        } catch {}
         const imageArray = parsedImages.map((img) =>
           img.startsWith("http") ? img : `${BASE_URL}${img}`
         );
-
         return { ...p, imageArray };
       });
 
       setProducts(fetchedProducts);
-    } catch (error) {
-      console.error("Error fetching products:", error);
+    } catch (err) {
+      console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Fetch categories
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("/api/products/categories", {
-        withCredentials: true,
+      const res = await axios.get(`${BASE_URL}/api/products/categories`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       });
-      setCategories(response.data.categories || []);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+      setCategories(res.data.categories || []);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, [search, category, user?.shop?.id]);
+    if (user) {
+      fetchProducts();
+      fetchCategories();
+    }
+  }, [search, category, user?.shop?.id]); // refetch when user/shop changes
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/products/${id}`, { withCredentials: true });
+      await axios.delete(`${BASE_URL}/api/products/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
       setProducts((prev) => prev.filter((p) => p.id !== id));
-      setConfirmDelete(null); // close modal
-    } catch (error) {
-      console.error("Error deleting product:", error);
+      setConfirmDelete(null);
+    } catch (err) {
+      console.error("Error deleting product:", err);
     }
   };
 
   const handleEdit = (product) => {
-    setEditingProduct(product); // pass product data to AddProducts.jsx
+    setEditingProduct(product);
     setActiveSection("addProduct");
   };
 
@@ -86,7 +96,7 @@ const ProductsTable = ({ setActiveSection, setEditingProduct }) => {
         <button
           className="add-btn"
           onClick={() => {
-            setEditingProduct(null); // clear edit mode
+            setEditingProduct(null);
             setActiveSection("addProduct");
           }}
         >
@@ -187,13 +197,12 @@ const ProductsTable = ({ setActiveSection, setEditingProduct }) => {
         </table>
       )}
 
-      {/* ✅ Delete confirmation modal */}
       {confirmDelete && (
         <div
           className="modal-overlay"
           onClick={(e) => {
             if (e.target.classList.contains("modal-overlay")) {
-              setConfirmDelete(null); // close when clicking outside
+              setConfirmDelete(null);
             }
           }}
         >

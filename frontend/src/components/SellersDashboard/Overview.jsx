@@ -13,7 +13,8 @@ import {
 
 import "./styles/Overview.css";
 
-const API_BASE_URL = "http://localhost:5000";
+// ✅ Dynamic API base URL (local + live)
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 export default function Overview() {
   const { user } = useAuth();
@@ -33,9 +34,10 @@ export default function Overview() {
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/orders/seller/${user.shop?.id}`, {
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${BASE_URL}/api/orders/seller/${user.shop?.id}`,
+          { credentials: "include" }
+        );
 
         if (!res.ok) throw new Error("Failed to fetch orders");
         const data = await res.json();
@@ -53,20 +55,18 @@ export default function Overview() {
         let pendingCount = 0;
 
         // 🔥 Group orders by actual date
-        const dateMap = {}; // { '2025-09-24': { sales: 2000, orders: 3 } }
+        const dateMap = {}; // { 'YYYY-MM-DD': { sales, orders } }
 
         fetchedOrders.forEach((order) => {
           const createdAt = new Date(order.created_at);
           const dateKey = createdAt.toISOString().split("T")[0]; // YYYY-MM-DD
 
-          if (!dateMap[dateKey]) {
-            dateMap[dateKey] = { sales: 0, orders: 0 };
-          }
+          if (!dateMap[dateKey]) dateMap[dateKey] = { sales: 0, orders: 0 };
 
           dateMap[dateKey].sales += Number(order.total_price);
           dateMap[dateKey].orders += 1;
 
-          // Calculate daily & monthly stats
+          // Daily & monthly stats
           const isToday =
             createdAt.getDate() === today.getDate() &&
             createdAt.getMonth() === thisMonth &&
@@ -84,13 +84,13 @@ export default function Overview() {
             monthRevenueSum += Number(order.total_price);
           }
 
-          if (order.status === "pending") {
-            pendingCount++;
-          }
+          if (order.status === "pending") pendingCount++;
         });
 
-        // Convert dateMap → sorted array
-        const sortedDates = Object.keys(dateMap).sort((a, b) => new Date(a) - new Date(b));
+        // Convert dateMap → sorted arrays
+        const sortedDates = Object.keys(dateMap).sort(
+          (a, b) => new Date(a) - new Date(b)
+        );
         const salesArr = sortedDates.map((date) => ({
           date,
           sales: dateMap[date].sales,
@@ -102,7 +102,6 @@ export default function Overview() {
 
         setSalesData(salesArr);
         setOrdersData(ordersArr);
-
         setTodaySales(todaySalesSum);
         setTodayOrders(todayOrdersCount);
         setMonthlyRevenue(monthRevenueSum);
@@ -125,13 +124,33 @@ export default function Overview() {
 
       {/* Stats Cards */}
       <div className="stats-grid">
-        <StatsCard title="Today’s Sales" value={`$${todaySales.toLocaleString()}`} trend="+8%" type="sales" />
-        <StatsCard title="Orders (Today)" value={todayOrders} trend="+12%" type="orders" />
-        <StatsCard title="Revenue (This Month)" value={`$${monthlyRevenue.toLocaleString()}`} trend="+5%" type="revenue" />
-        <StatsCard title="Pending Orders" value={pendingOrders} trend="-2%" type="pending" />
+        <StatsCard
+          title="Today’s Sales"
+          value={`$${todaySales.toLocaleString()}`}
+          trend="+8%"
+          type="sales"
+        />
+        <StatsCard
+          title="Orders (Today)"
+          value={todayOrders}
+          trend="+12%"
+          type="orders"
+        />
+        <StatsCard
+          title="Revenue (This Month)"
+          value={`$${monthlyRevenue.toLocaleString()}`}
+          trend="+5%"
+          type="revenue"
+        />
+        <StatsCard
+          title="Pending Orders"
+          value={pendingOrders}
+          trend="-2%"
+          type="pending"
+        />
       </div>
 
-      {/* Sales & Orders Graph */}
+      {/* Charts */}
       <div className="charts-section">
         {/* Sales Performance */}
         <div className="chart-card dark-chart">
@@ -144,11 +163,28 @@ export default function Overview() {
                   <stop offset="100%" stopColor="#22c55e" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2d2d2d" vertical={false} />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#2d2d2d"
+                vertical={false}
+              />
               <XAxis dataKey="date" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
-              <Tooltip contentStyle={{ background: "#111827", border: "none", color: "#fff" }} />
-              <Line type="monotone" dataKey="sales" stroke="url(#salesGradient)" strokeWidth={3} dot={false} activeDot={{ r: 6, stroke: "#22c55e", strokeWidth: 2 }} />
+              <Tooltip
+                contentStyle={{
+                  background: "#111827",
+                  border: "none",
+                  color: "#fff",
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="sales"
+                stroke="url(#salesGradient)"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6, stroke: "#22c55e", strokeWidth: 2 }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -164,11 +200,28 @@ export default function Overview() {
                   <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2d2d2d" vertical={false} />
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="#2d2d2d"
+                vertical={false}
+              />
               <XAxis dataKey="date" stroke="#9ca3af" />
               <YAxis stroke="#9ca3af" />
-              <Tooltip contentStyle={{ background: "#111827", border: "none", color: "#fff" }} />
-              <Line type="monotone" dataKey="orders" stroke="url(#ordersGradient)" strokeWidth={3} dot={false} activeDot={{ r: 6, stroke: "#3b82f6", strokeWidth: 2 }} />
+              <Tooltip
+                contentStyle={{
+                  background: "#111827",
+                  border: "none",
+                  color: "#fff",
+                }}
+              />
+              <Line
+                type="monotone"
+                dataKey="orders"
+                stroke="url(#ordersGradient)"
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6, stroke: "#3b82f6", strokeWidth: 2 }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -188,12 +241,8 @@ export default function Overview() {
           </thead>
           <tbody>
             {orders.slice(0, 5).map((order, index) => (
-              // ✅ use order.order_id (or fallback to order.id or index) as key
               <tr key={order.order_id || order.id || index}>
-                <td>
-                  {/* ✅ Clear, formatted Order ID */}
-                  #{order.order_id || order.id || `ORD${index + 1}`}
-                </td>
+                <td>#{order.order_id || order.id || `ORD${index + 1}`}</td>
                 <td>
                   {order.created_at
                     ? new Date(order.created_at).toLocaleDateString()
@@ -204,9 +253,7 @@ export default function Overview() {
                     {order.status || "Unknown"}
                   </span>
                 </td>
-                <td>
-                  ${Number(order.total_price || 0).toLocaleString()}
-                </td>
+                <td>${Number(order.total_price || 0).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

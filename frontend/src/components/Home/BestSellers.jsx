@@ -6,6 +6,8 @@ import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import Toast from "../Toast/Toast";
 
+import { AiTwotoneFire } from "react-icons/ai";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL; // your live backend URL
 
 const BestSellers = () => {
@@ -105,7 +107,7 @@ const BestSellers = () => {
   return (
     <section ref={ref} className={`best-sellers ${inView ? "active" : ""}`}>
       <div className="bestseller-title">
-        <h2 className={inView ? "active" : ""}>🔥 Best Sellers</h2>
+        <h2 className={inView ? "active" : ""}><AiTwotoneFire /> Best Sellers</h2>
         <span className="bestseller-line"></span>
         <p>Most loved items by our customers — shop the hottest deals now.</p>
       </div>

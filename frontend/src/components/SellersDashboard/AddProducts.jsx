@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./styles/AddProducts.css";
 
-const BASE_URL = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => {
+  const token = localStorage.getItem("token"); // ✅ Get token
+
   const [form, setForm] = useState({
     name: "",
     description: "",
@@ -15,19 +17,34 @@ const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => 
     stock: "",
   });
 
-  const [images, setImages] = useState([]);       // new uploads
-  const [existingImages, setExistingImages] = useState([]); // from DB
+  const [images, setImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Load categories
+  // Redirect if not logged in
   useEffect(() => {
-    axios.get("/api/products/categories").then((res) => {
-      setCategories(res.data.categories || []);
-    });
-  }, []);
+    if (!token) {
+      window.location.href = "/login";
+    }
+  }, [token]);
 
-  // ✅ Pre-fill form when editing
+  // Load categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await axios.get(`${API_BASE}/api/products/categories`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCategories(res.data.categories || []);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
+    };
+    fetchCategories();
+  }, [token]);
+
+  // Pre-fill form when editing
   useEffect(() => {
     if (editingProduct) {
       setForm({
@@ -40,7 +57,6 @@ const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => 
         stock: editingProduct.stock || "",
       });
 
-      // handle existing DB images
       setExistingImages(editingProduct.imageArray || []);
     }
   }, [editingProduct]);
@@ -49,7 +65,6 @@ const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => 
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Handle image selection (max 4 total including existing)
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (existingImages.length + images.length + files.length > 4) {
@@ -73,41 +88,33 @@ const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => 
 
     try {
       const formData = new FormData();
+      Object.entries(form).forEach(([key, value]) => formData.append(key, value));
 
-      formData.append("name", form.name);
-      formData.append("description", form.description);
-      formData.append("category", form.category);
-      formData.append("brand", form.brand);
-      formData.append("price", form.price);
-      formData.append("discount_price", form.discount_price);
-      formData.append("stock", form.stock);
-
-      // ✅ Append new images
+      // New images
       images.forEach((image) => formData.append("images", image));
 
-      // ✅ Send existing images as JSON (if editing)
+      // Existing images (if editing)
       if (editingProduct) {
         formData.append("existingImages", JSON.stringify(existingImages));
       }
 
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, // ✅ Add token
+        },
+      };
+
       if (editingProduct) {
-        // UPDATE existing product
-        await axios.put(`${BASE_URL}/api/products/${editingProduct.id}`, formData, {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axios.put(`${API_BASE}/api/products/${editingProduct.id}`, formData, config);
         alert("✅ Product updated successfully!");
       } else {
-        // CREATE new product
-        await axios.post(`${BASE_URL}/api/products`, formData, {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        await axios.post(`${API_BASE}/api/products`, formData, config);
         alert("✅ Product added successfully!");
       }
 
       setActiveSection("products");
-      setEditingProduct(null); // reset edit mode
+      setEditingProduct(null);
     } catch (error) {
       console.error("Error saving product:", error);
       alert("❌ Failed to save product");
@@ -132,7 +139,7 @@ const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => 
       </div>
 
       <form className="product-form" onSubmit={handleSubmit}>
-        {/* PRODUCT INFO */}
+        {/* Product Info */}
         <div className="form-group">
           <label>Product Name</label>
           <input type="text" name="name" value={form.name} onChange={handleChange} required />
@@ -174,26 +181,20 @@ const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => 
           <input type="number" name="stock" value={form.stock} onChange={handleChange} required />
         </div>
 
-        {/* ✅ IMAGE UPLOADS */}
+        {/* Images */}
         <div className="form-group">
           <label>Product Images (max 4)</label>
           <div className="image-upload-container">
-            {/* existing images from DB */}
             {existingImages.map((img, idx) => (
               <div key={`db-${idx}`} className="image-preview">
                 <img src={img} alt={`existing-${idx}`} />
-                <button type="button" className="remove-btn" onClick={() => removeExistingImage(idx)}>
-                  ✕
-                </button>
+                <button type="button" className="remove-btn" onClick={() => removeExistingImage(idx)}>✕</button>
               </div>
             ))}
-            {/* new uploads */}
             {images.map((img, idx) => (
               <div key={idx} className="image-preview">
                 <img src={URL.createObjectURL(img)} alt={`preview-${idx}`} />
-                <button type="button" className="remove-btn" onClick={() => removeNewImage(idx)}>
-                  ✕
-                </button>
+                <button type="button" className="remove-btn" onClick={() => removeNewImage(idx)}>✕</button>
               </div>
             ))}
             {existingImages.length + images.length < 4 && (
@@ -205,16 +206,9 @@ const AddProduct = ({ setActiveSection, editingProduct, setEditingProduct }) => 
           </div>
         </div>
 
-        {/* ACTIONS */}
+        {/* Actions */}
         <div className="form-actions">
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={() => {
-              setActiveSection("products");
-              setEditingProduct(null);
-            }}
-          >
+          <button type="button" className="cancel-btn" onClick={() => { setActiveSection("products"); setEditingProduct(null); }}>
             Cancel
           </button>
           <button type="submit" className="save-btn" disabled={loading}>

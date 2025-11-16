@@ -3,8 +3,10 @@ import axios from "axios";
 import { BsBank } from "react-icons/bs";
 import "./styles/StoreSettings.css";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 const StoreSettings = () => {
-  const sellerId = localStorage.getItem("sellerId"); // 👈 assume sellerId stored at login
+  const sellerId = localStorage.getItem("sellerId");
 
   const [banks, setBanks] = useState([]);
   const [verifying, setVerifying] = useState(false);
@@ -28,11 +30,11 @@ const StoreSettings = () => {
     freeShippingThreshold: "",
   });
 
-  // ✅ Fetch list of banks on mount
+  // ✅ Fetch list of banks
   useEffect(() => {
     const fetchBanks = async () => {
       try {
-        const { data } = await axios.get("http://localhost:5000/api/payment/banks");
+        const { data } = await axios.get(`${API_BASE}/api/payment/banks`);
         setBanks(data);
       } catch (err) {
         console.error("Error fetching banks:", err);
@@ -41,13 +43,13 @@ const StoreSettings = () => {
     fetchBanks();
   }, []);
 
-  // ✅ Handle input changes
+  // Handle input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  // ✅ Handle bank selection
+  // Handle bank selection
   const handleBankChange = (e) => {
     const bankCode = e.target.value;
     const bankName = banks.find((b) => b.code === bankCode)?.name || "";
@@ -55,33 +57,36 @@ const StoreSettings = () => {
     setVerifiedAccount("");
   };
 
-  // ✅ Verify account number
+  // Verify bank account
   const verifyAccount = async () => {
-    if (!form.accountNumber || !form.bankCode) return alert("Enter account number and select bank.");
+    if (!form.accountNumber || !form.bankCode)
+      return alert("Enter account number and select bank.");
 
     setVerifying(true);
+
     try {
-      const { data } = await axios.post("http://localhost:5000/api/payment/verify-bank", {
+      const { data } = await axios.post(`${API_BASE}/api/payment/verify-bank`, {
         account_number: form.accountNumber,
         bank_code: form.bankCode,
       });
+
       setVerifiedAccount(data.account_name);
       setForm({ ...form, accountHolder: data.account_name });
     } catch (err) {
       console.error("Verification failed:", err);
-      alert("❌ Account verification failed. Please check details.");
+      alert("❌ Account verification failed.");
     } finally {
       setVerifying(false);
     }
   };
 
-  // ✅ Save store settings
+  // Save store settings
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:5000/api/shops/update-settings", {
+      await axios.post(`${API_BASE}/api/shops/update-settings`, {
         seller_id: sellerId,
         ...form,
       });
@@ -105,14 +110,17 @@ const StoreSettings = () => {
         {/* Store Info */}
         <div className="settings-section">
           <h3>Store Information</h3>
+
           <div className="form-group">
             <label>Store Logo</label>
             <input type="file" />
           </div>
+
           <div className="form-group">
             <label>Store Banner</label>
             <input type="file" />
           </div>
+
           <div className="form-group">
             <label>Store Name</label>
             <input
@@ -122,6 +130,7 @@ const StoreSettings = () => {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <label>Store Bio</label>
             <textarea
@@ -131,6 +140,7 @@ const StoreSettings = () => {
               rows="3"
             ></textarea>
           </div>
+
           <div className="form-group">
             <label>Contact Email</label>
             <input
@@ -140,6 +150,7 @@ const StoreSettings = () => {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <label>Contact Phone</label>
             <input
@@ -154,6 +165,7 @@ const StoreSettings = () => {
         {/* Business Details */}
         <div className="settings-section">
           <h3>Business Details</h3>
+
           <div className="form-group">
             <label>Business Type</label>
             <select
@@ -165,6 +177,7 @@ const StoreSettings = () => {
               <option>Company</option>
             </select>
           </div>
+
           <div className="form-group">
             <label>Tax ID (optional)</label>
             <input
@@ -174,6 +187,7 @@ const StoreSettings = () => {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <label>Address</label>
             <textarea
@@ -185,7 +199,7 @@ const StoreSettings = () => {
           </div>
         </div>
 
-        {/* Payment Settings */}
+        {/* Bank Settings */}
         <div className="settings-section">
           <h3>Payout Settings</h3>
 
@@ -193,8 +207,8 @@ const StoreSettings = () => {
             <label>Bank Name</label>
             <select name="bankCode" value={form.bankCode} onChange={handleBankChange}>
               <option value="">Select Bank</option>
-              {banks.map((bank) => (
-                <option key={bank.code} value={bank.code}>
+              {banks.map((bank, idx) => (
+                <option key={`${bank.code}-${idx}`} value={bank.code}>
                   {bank.name}
                 </option>
               ))}
@@ -207,9 +221,9 @@ const StoreSettings = () => {
               <input
                 type="text"
                 name="accountNumber"
+                maxLength="10"
                 value={form.accountNumber}
                 onChange={handleChange}
-                maxLength="10"
               />
               <button
                 type="button"
@@ -223,11 +237,13 @@ const StoreSettings = () => {
           </div>
 
           {verifiedAccount && (
-            <p className="verified-account"><BsBank /> {verifiedAccount}</p>
+            <p className="verified-account">
+              <BsBank /> {verifiedAccount}
+            </p>
           )}
 
           <div className="form-group">
-            <label>Account Holder Name</label>
+            <label>Account Holder</label>
             <input
               type="text"
               name="accountHolder"
@@ -237,9 +253,10 @@ const StoreSettings = () => {
           </div>
         </div>
 
-        {/* Shipping Settings */}
+        {/* Shipping */}
         <div className="settings-section">
           <h3>Shipping & Fulfillment</h3>
+
           <div className="form-group">
             <label>Shipping Regions</label>
             <input
@@ -249,6 +266,7 @@ const StoreSettings = () => {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
             <label>Handling Time</label>
             <input
@@ -258,8 +276,9 @@ const StoreSettings = () => {
               onChange={handleChange}
             />
           </div>
+
           <div className="form-group">
-            <label>Free Shipping Threshold (₦)</label>
+            <label>Free Shipping Threshold ($)</label>
             <input
               type="number"
               name="freeShippingThreshold"

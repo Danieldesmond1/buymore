@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "./styles/Payments.css";
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export default function Payments({ setActiveSection }) {
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export default function Payments({ setActiveSection }) {
 
     const fetchPayments = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/orders/seller/${user.shop.id}`, {
+        const res = await fetch(`${API_BASE}/api/orders/seller/${user.shop.id}`, {
           credentials: "include",
         });
 

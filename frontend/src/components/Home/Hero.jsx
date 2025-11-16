@@ -7,6 +7,8 @@ import Toast from "../Toast/Toast"; // 👈 custom toast
 import { TbTruckDelivery } from "react-icons/tb";
 import { RiSecurePaymentFill } from "react-icons/ri";
 import { GiShoppingCart } from "react-icons/gi";
+import { AiTwotoneFire } from "react-icons/ai";
+import { ImCheckmark } from "react-icons/im";
 
 const Hero = () => {
   const [animate, setAnimate] = useState(false);
@@ -48,7 +50,7 @@ const Hero = () => {
     <section className="hero">
       {/* Left Side: CTA Content */}
       <div className={`hero-content ${animate ? "animate-cta" : ""}`}>
-        <p className="hero-subtitle">🔥 Exclusive Offers Just for You!</p>
+        <p className="hero-subtitle"><AiTwotoneFire /> Exclusive Offers Just for You!</p>
         <h1>Shop the Best Deals Now!</h1>
         <p className="hero-description">
           Discover top-quality products at unbeatable prices. Get fast delivery and secure payment options.
@@ -59,16 +61,16 @@ const Hero = () => {
           <button onClick={handleShopNowClick} className="btn primary-btn">
             Shop Now
           </button>
-          <button onClick={() => navigate("/deals")} className="btn secondary-btn">
+          <button onClick={() => navigate("/")} className="btn secondary-btn">
             Learn More
           </button>
         </div>
 
         {/* Trust Points */}
         <div className="hero-trust">
-          <span><TbTruckDelivery /> Fast Delivery ✔️</span>
-          <span><RiSecurePaymentFill /> 100% Secure Payment ✔️</span>
-          <span><GiShoppingCart /> Best Deals, Always ✔️</span>
+          <span><TbTruckDelivery /> Fast Delivery <ImCheckmark /></span>
+          <span><RiSecurePaymentFill /> 100% Secure Payment <ImCheckmark /></span>
+          <span><GiShoppingCart /> Best Deals, Always <ImCheckmark /></span>
         </div>
       </div>
 

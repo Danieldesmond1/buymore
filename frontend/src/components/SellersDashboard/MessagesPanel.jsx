@@ -13,15 +13,30 @@ const MessagesPanel = () => {
 
   const messagesEndRef = useRef(null);
 
-  // Logged-in seller
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+  const token = localStorage.getItem("token");
   const sellerId = JSON.parse(localStorage.getItem("user"))?.id;
 
-  // Fetch all conversations for seller
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!token) {
+      window.location.href = "/login";
+    }
+  }, [token]);
+
+  // Fetch all conversations
   const fetchConversations = async () => {
     try {
-      const res = await axios.get("/api/messages/seller", { withCredentials: true });
+      const res = await axios.get(
+        `${API_BASE}/api/messages/seller`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setConversations(res.data);
-      if (res.data.length > 0) setSelectedConversation(res.data[0]);
+
+      // Auto-select first conversation initially
+      if (!selectedConversation && res.data.length > 0) {
+        setSelectedConversation(res.data[0]);
+      }
     } catch (err) {
       console.error("Error fetching seller conversations:", err);
     }
@@ -30,22 +45,44 @@ const MessagesPanel = () => {
   // Fetch messages for selected conversation
   const fetchMessages = async (conversationId) => {
     try {
-      const res = await axios.get(`/api/messages/${conversationId}`, { withCredentials: true });
+      const res = await axios.get(
+        `${API_BASE}/api/messages/${conversationId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setMessages(res.data);
     } catch (err) {
       console.error("Error fetching messages:", err);
     }
   };
 
+  // Auto-refresh messages every 7 seconds like buyer side
+  useEffect(() => {
+    if (!selectedConversation) return;
+
+    fetchMessages(selectedConversation.id);
+    const interval = setInterval(() => {
+      fetchMessages(selectedConversation.id);
+    }, 7000);
+
+    return () => clearInterval(interval);
+  }, [selectedConversation]);
+
+  // Initial conversation fetch
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
   // Send message
   const handleSend = async () => {
     if (!newMessage.trim() || !selectedConversation) return;
+
     try {
       const res = await axios.post(
-        `/api/messages/${selectedConversation.id}`,
+        `${API_BASE}/api/messages/${selectedConversation.id}`,
         { text: newMessage },
-        { withCredentials: true }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setMessages((prev) => [...prev, res.data]);
       setNewMessage("");
     } catch (err) {
@@ -53,20 +90,12 @@ const MessagesPanel = () => {
     }
   };
 
-  // Scroll to latest message
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  useEffect(() => {
-    fetchConversations();
-  }, []);
-
-  useEffect(() => {
-    if (selectedConversation) fetchMessages(selectedConversation.id);
-  }, [selectedConversation]);
-
-  // Helper to parse product image
+  // Parse product image correctly (LOCAL + LIVE)
   const getProductImage = (productImage) => {
     let parsedImages = [];
     try {
@@ -74,13 +103,14 @@ const MessagesPanel = () => {
     } catch {
       parsedImages = [];
     }
-    return parsedImages.length > 0
-      ? parsedImages[0].startsWith("http")
-        ? parsedImages[0]
-        : `http://localhost:5000${parsedImages[0]}`
-      : "/fallback.jpg";
+
+    if (parsedImages.length === 0) return "/fallback.jpg";
+
+    const img = parsedImages[0];
+    return img.startsWith("http") ? img : `${API_BASE}${img}`;
   };
 
+  // Filter + search
   const filteredConversations = conversations.filter((conv) => {
     const matchesSearch =
       conv.shop_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -97,9 +127,10 @@ const MessagesPanel = () => {
 
   return (
     <div className="messages-container">
-      {/* Sidebar */}
+      {/* SIDEBAR */}
       <div className={`messages-sidebar ${isMobileView ? "hide-sidebar" : ""}`}>
         <h3>Conversations</h3>
+
         <div className="sidebar-controls">
           <input
             type="text"
@@ -107,6 +138,7 @@ const MessagesPanel = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+
           <select value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="all">All</option>
             <option value="unread">Unread</option>
@@ -118,6 +150,7 @@ const MessagesPanel = () => {
           {filteredConversations.length === 0 && (
             <li style={{ textAlign: "center" }}>No conversations yet.</li>
           )}
+
           {filteredConversations.map((conv) => (
             <li
               key={conv.id}
@@ -135,36 +168,40 @@ const MessagesPanel = () => {
                 </div>
                 {conv.unread && <span className="unread-badge">•</span>}
               </div>
+
               <div className="conv-preview">{conv.last_message}</div>
-              <div className="conv-time">{new Date(conv.created_at).toLocaleString()}</div>
+              <div className="conv-time">
+                {new Date(conv.created_at).toLocaleString()}
+              </div>
             </li>
           ))}
         </ul>
       </div>
 
-      {/* Chat Panel */}
+      {/* CHAT PANEL */}
       <div className={`chat-panel ${isMobileView ? "show-chat" : ""}`}>
-      {selectedConversation ? (
-        <>
-          <div className="chat-header">
-            {isMobileView && (
-              <button className="back-btn" onClick={() => setIsMobileView(false)}>
-                ←
-              </button>
-            )}
-            <div className="chat-product-header">
-              <img
-                src={getProductImage(selectedConversation.product_image)}
-                alt={selectedConversation.product_name}
-              />
-              <div className="chat-product-info">
-                <h4>{selectedConversation.product_name}</h4>
-                <span>From: {selectedConversation.shop_name}</span>
+        {selectedConversation ? (
+          <>
+            <div className="chat-header">
+              {isMobileView && (
+                <button className="back-btn" onClick={() => setIsMobileView(false)}>
+                  ←
+                </button>
+              )}
+
+              <div className="chat-product-header">
+                <img
+                  src={getProductImage(selectedConversation.product_image)}
+                  alt={selectedConversation.product_name}
+                />
+                <div className="chat-product-info">
+                  <h4>{selectedConversation.product_name}</h4>
+                  <span>From: {selectedConversation.shop_name}</span>
+                </div>
               </div>
             </div>
-          </div>
 
-            {/* Chat Body */}
+            {/* Messages Body */}
             <div className="chat-messages">
               {messages.map((msg, idx) => (
                 <div
@@ -173,7 +210,6 @@ const MessagesPanel = () => {
                     msg.sender_id === sellerId ? "sent" : "received"
                   }`}
                 >
-                  {/* Show product thumbnail only on first message */}
                   {idx === 0 && (
                     <img
                       src={getProductImage(selectedConversation.product_image)}
@@ -181,7 +217,9 @@ const MessagesPanel = () => {
                       className="chat-message-product"
                     />
                   )}
+
                   <p>{msg.message_text}</p>
+
                   <span className="chat-time">
                     {new Date(msg.created_at).toLocaleTimeString([], {
                       hour: "2-digit",
@@ -190,10 +228,11 @@ const MessagesPanel = () => {
                   </span>
                 </div>
               ))}
+
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Chat Input */}
+            {/* Input Box */}
             <div className="chat-input">
               <input
                 type="text"
@@ -202,13 +241,12 @@ const MessagesPanel = () => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
               />
+
               <button onClick={handleSend}>Send</button>
             </div>
           </>
         ) : (
-          <div style={{ padding: "20px", textAlign: "center" }}>
-            Select a conversation to start chatting
-          </div>
+          <div className="empty-chat">Select a conversation to start chatting</div>
         )}
       </div>
     </div>

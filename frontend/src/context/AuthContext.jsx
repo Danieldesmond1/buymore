@@ -8,15 +8,14 @@ export const AuthProvider = ({ children }) => {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // ✅ use your environment variable for backend
-  const API_BASE =
-    import.meta.env.VITE_API_BASE_URL;
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
+  // ✅ Fetch current user using cookie
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch(`${API_BASE}/api/users/me`, {
-          credentials: "include",
+          credentials: "include", // send cookie
         });
 
         if (res.ok) {
@@ -35,11 +34,29 @@ export const AuthProvider = ({ children }) => {
     };
 
     if (!user) fetchUser();
-  }, []); // ✅ only run once on mount
+  }, []);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
+  const login = async (email, password) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        credentials: "include", // important to receive cookie
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        return true;
+      }
+
+      return false;
+    } catch (err) {
+      console.error("Login error:", err);
+      return false;
+    }
   };
 
   const logout = async () => {
@@ -51,7 +68,6 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Logout error:", err);
     }
-
     localStorage.removeItem("user");
     setUser(null);
   };

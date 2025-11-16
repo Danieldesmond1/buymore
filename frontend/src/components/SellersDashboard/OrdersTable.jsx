@@ -1,29 +1,38 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "../../context/AuthContext"; // <- use auth context
+import { useAuth } from "../../context/AuthContext";
 import "./styles/OrdersTable.css";
 
 const OrdersTable = () => {
-  const { user } = useAuth(); // get current user from context
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
 
+  const token = localStorage.getItem("token"); // ✅ Use unified JWT system
+
   const fetchOrders = async () => {
     try {
       setLoading(true);
 
-      // safe seller id
       const sellerId = user?.role === "seller" ? user?.shop?.id : null;
+
+      // If not a seller or no seller shop available
       if (!sellerId) {
         setOrders([]);
         return;
       }
 
-      const res = await axios.get(`/api/orders/seller/${sellerId}`, {
-        withCredentials: true,
-      });
+      // 🔥 FIXED: Removed withCredentials, added token auth
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/orders/seller/${sellerId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setOrders(Array.isArray(res.data.orders) ? res.data.orders : []);
     } catch (error) {
@@ -35,18 +44,21 @@ const OrdersTable = () => {
   };
 
   useEffect(() => {
-    // only run when user is available (and will re-run if user changes)
-    fetchOrders();
+    if (user && token) fetchOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const filteredOrders = orders.filter((order) => {
-    const buyerName = (order.buyer_name || order.buyer_name === 0) ? String(order.buyer_name) : "";
+    const buyerName = order.buyer_name ? String(order.buyer_name) : "";
     const status = order.status ? String(order.status) : "";
 
-    const matchesSearch = buyerName.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = buyerName
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
     const matchesStatus =
-      statusFilter === "All Status" || status.toLowerCase() === statusFilter.toLowerCase();
+      statusFilter === "All Status" ||
+      status.toLowerCase() === statusFilter.toLowerCase();
 
     return matchesSearch && matchesStatus;
   });
@@ -110,9 +122,17 @@ const OrdersTable = () => {
                         ? new Date(order.created_at).toLocaleDateString()
                         : "-"}
                     </td>
-                    <td>{typeof order.total_price === "number" ? `$${order.total_price.toLocaleString()}` : `$${order.total_price}`}</td>
                     <td>
-                      <span className={`status ${String(order.status || "").toLowerCase()}`}>
+                      {typeof order.total_price === "number"
+                        ? `$${order.total_price.toLocaleString()}`
+                        : `$${order.total_price}`}
+                    </td>
+                    <td>
+                      <span
+                        className={`status ${String(
+                          order.status || ""
+                        ).toLowerCase()}`}
+                      >
                         {order.status}
                       </span>
                     </td>
@@ -127,39 +147,50 @@ const OrdersTable = () => {
           </table>
         )}
 
-          {/* Mobile Card View */}
-          <div className="orders-card-list">
-            {filteredOrders.length === 0 ? (
-              <p style={{ textAlign: "center" }}>You haven’t received any orders yet.</p>
-            ) : (
-              filteredOrders.map((order) => (
-                <div className="order-card" key={order.order_id}>
-                  <div className="order-card-row">
-                    <strong>Order:</strong> #{order.order_id}
-                  </div>
-                  <div className="order-card-row">
-                    <strong>Customer:</strong> {order.buyer_name}
-                  </div>
-                  <div className="order-card-row">
-                    <strong>Date:</strong> {order.created_at ? new Date(order.created_at).toLocaleDateString() : "-"}
-                  </div>
-                  <div className="order-card-row">
-                    <strong>Total:</strong> ${order.total_price?.toLocaleString?.() || order.total_price}
-                  </div>
-                  <div className="order-card-row">
-                    <strong>Status:</strong>
-                    <span className={`status ${String(order.status || "").toLowerCase()}`}>
-                      {order.status}
-                    </span>
-                  </div>
-                  <div className="order-card-actions">
-                    <button className="btn-view">View</button>
-                    <button className="btn-update">Update</button>
-                  </div>
+        {/* Mobile Card View */}
+        <div className="orders-card-list">
+          {filteredOrders.length === 0 ? (
+            <p style={{ textAlign: "center" }}>
+              You haven’t received any orders yet.
+            </p>
+          ) : (
+            filteredOrders.map((order) => (
+              <div className="order-card" key={order.order_id}>
+                <div className="order-card-row">
+                  <strong>Order:</strong> #{order.order_id}
                 </div>
-              ))
-            )}
-          </div>
+                <div className="order-card-row">
+                  <strong>Customer:</strong> {order.buyer_name}
+                </div>
+                <div className="order-card-row">
+                  <strong>Date:</strong>{" "}
+                  {order.created_at
+                    ? new Date(order.created_at).toLocaleDateString()
+                    : "-"}
+                </div>
+                <div className="order-card-row">
+                  <strong>Total:</strong> $
+                  {order.total_price?.toLocaleString?.() ||
+                    order.total_price}
+                </div>
+                <div className="order-card-row">
+                  <strong>Status:</strong>
+                  <span
+                    className={`status ${String(
+                      order.status || ""
+                    ).toLowerCase()}`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+                <div className="order-card-actions">
+                  <button className="btn-view">View</button>
+                  <button className="btn-update">Update</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );

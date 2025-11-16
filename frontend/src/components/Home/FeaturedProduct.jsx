@@ -6,6 +6,8 @@ import { useCart } from "../../context/CartContext";
 import { useState, useEffect } from "react";
 import Toast from "../Toast/Toast";
 
+import { AiTwotoneFire } from "react-icons/ai";
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 const FeaturedProducts = ({ onLoaded }) => {
@@ -98,7 +100,7 @@ const FeaturedProducts = ({ onLoaded }) => {
     <section ref={ref} className={`feature-section ${inView ? "active" : ""}`}>
       <div className="feature-title scroll-reveal active">
         <span className="feature-line"></span>
-        <h2>🔥 Featured Products</h2>
+        <h2><AiTwotoneFire /> Featured Products</h2>
         <p>Shop our top-selling items, carefully selected just for you!</p>
       </div>
 

@@ -2,6 +2,9 @@ import "./Styles/SpecialOffer.css";
 import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 
+import { AiTwotoneFire } from "react-icons/ai";
+import { GiSandsOfTime } from "react-icons/gi";
+
 const specialOffers = [
   {
     id: 1,
@@ -69,7 +72,7 @@ const SpecialOffers = () => {
 
   return (
     <section ref={ref} className="exclusive-offers">
-      <h2 className={inView ? "fade-in-title" : ""}>🔥 Exclusive Special Offers</h2>
+      <h2 className={inView ? "fade-in-title" : ""}><AiTwotoneFire /> Exclusive Special Offers</h2>
       <p className={inView ? "fade-in-description" : ""}>
         Unlock **limited-time deals** and **massive discounts** on top products!
       </p>
@@ -87,7 +90,7 @@ const SpecialOffers = () => {
                 <span className="offer-discount-badge">{offer.discount}</span>
                 {offer.timeLimited && timeLeftData && (
                   <div className="offer-countdown-timer">
-                    ⏳ Offer ends in: {timeLeftData.hours}h {timeLeftData.minutes}m {timeLeftData.seconds}s
+                    <GiSandsOfTime /> Offer ends in: {timeLeftData.hours}h {timeLeftData.minutes}m {timeLeftData.seconds}s
                   </div>
                 )}
               </div>

@@ -6,6 +6,9 @@ import { useAuth } from "../../context/AuthContext";
 import "./Styles/ProductGrid.css";
 import Toast from "../Toast/Toast";
 
+import { PiShoppingBagOpenFill } from "react-icons/pi";
+import { TbFileSad } from "react-icons/tb";
+
 const capitalize = (str) =>
   str
     .split(" ")
@@ -188,19 +191,19 @@ const ProductGrid = ({
   return (
     <section className="pg-section">
       <h2 className="pg-title">
-        🛍️ {selectedCategory ? capitalize(selectedCategory) : "All Products"}
+        <PiShoppingBagOpenFill /> {selectedCategory ? capitalize(selectedCategory) : "All Products"}
       </h2>
 
       {filteredProducts.length === 0 ? (
         <div className="pg-no-products">
           {searchQuery && searchQuery.trim() !== "" ? (
             <p>
-              Sorry, "{searchQuery}" isn’t available on any seller’s store. 😥
+              Sorry, "{searchQuery}" isn’t available on any seller’s store. <TbFileSad />
             </p>
           ) : (
             <p>
               No products found in "{capitalize(selectedCategory || "All")}" with
-              the current filters.
+              the current filters <TbFileSad />.
             </p>
           )}
           <button

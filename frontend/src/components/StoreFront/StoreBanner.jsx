@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "./Styles/StoreFront.css";
 
+import { AiTwotoneFire } from "react-icons/ai";
+
 import bannerImage from "../../assets/store_image_banner.png";
 
 const StoreBanner = ({ onSearch }) => {
@@ -59,7 +61,7 @@ const StoreBanner = ({ onSearch }) => {
     >
       <div className="storefront-overlay">
         <div className="storefront-banner-content">
-          <div className="promo-badge">🔥 Flash Sale</div>
+          <div className="promo-badge"><AiTwotoneFire /> Flash Sale</div>
           <h1>Unbeatable Deals Everyday</h1>
           <p>Shop top-rated products at the best prices. Limited-time offers!</p>
 

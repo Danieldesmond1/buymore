@@ -67,10 +67,10 @@ export default function Topbar({ onSearch, onAddProduct, onMenuClick }) {
         </button>
 
         {/* Quick action */}
-        <button className="tb-btn primary" onClick={onAddProduct}>
+        {/* <button className="tb-btn primary" onClick={onAddProduct}>
           <FiPlus />
           <span>Add Product</span>
-        </button>
+        </button> */}
 
         {/* Notifications */}
         <button className="tb-btn icon-only" aria-label="Notifications">
