@@ -255,7 +255,7 @@ const ProductGrid = ({
                 <h3 className="pg-name">{product.name}</h3>
                 <p className="pg-brand">{product.brand}</p>
                 <p className="pg-category">{capitalize(product.category)}</p>
-                <p className="pg-description">{product.description}</p>
+                {/* <p className="pg-description">{product.description}</p> */}
                 <div className="pg-price">
                   <span className="pg-current-price">
                     ${parseFloat(product.price).toFixed(2)}
@@ -266,11 +266,11 @@ const ProductGrid = ({
                     </span>
                   )}
                 </div>
-                <p className="pg-stock">
+                {/* <p className="pg-stock">
                   {product.stock > 0
                     ? `In stock: ${product.stock}`
                     : "Out of stock"}
-                </p>
+                </p> */}
                 <div
                   className="pg-rating"
                   aria-label={`Rated ${product.rating} stars`}

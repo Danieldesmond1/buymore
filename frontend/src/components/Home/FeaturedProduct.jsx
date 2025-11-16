@@ -142,8 +142,8 @@ const FeaturedProducts = ({ onLoaded }) => {
                 <p className="feature-price">
                   {product.discount_price && product.discount_price !== "0" ? (
                     <>
-                      <span className="current-price">${parseFloat(product.discount_price).toFixed(2)}</span>
-                      <span className="old-price">${parseFloat(product.price).toFixed(2)}</span>
+                      <span className="current-price">${parseFloat(product.price).toFixed(2)}</span>
+                      <span className="old-price">${parseFloat(product.discount_price).toFixed(2)}</span>
                     </>
                   ) : (
                     <span className="current-price">${parseFloat(product.price).toFixed(2)}</span>
