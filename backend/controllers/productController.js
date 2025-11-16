@@ -1,6 +1,21 @@
 import pool from "../utils/dbConnect.js";
+import cloudinary from "../utils/cloudinary.js";
 
-// ✅ Add a Product (Admin Only)
+// Helper function to upload a file buffer to Cloudinary
+const uploadToCloudinary = (fileBuffer, folder = "products") => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: "image" },
+      (error, result) => {
+        if (result) resolve(result.secure_url);
+        else reject(error);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+};
+
+// ✅ Add a Product (Seller/Admin)
 export const addProduct = async (req, res) => {
   try {
     const { name, description, price, discount_price, stock, category, brand } = req.body;
@@ -19,8 +34,14 @@ export const addProduct = async (req, res) => {
 
     const shop_id = req.user.role === "seller" ? req.user.shop.id : null;
 
-    // ✅ Handle multiple images from multer
-    const imageUrls = req.files?.map((file) => `/uploads/${file.filename}`) || [];
+    // ✅ Upload images to Cloudinary
+    let imageUrls = [];
+    if (req.files?.length > 0) {
+      for (const file of req.files) {
+        const url = await uploadToCloudinary(file.buffer, "products");
+        imageUrls.push(url);
+      }
+    }
 
     const result = await pool.query(
       `INSERT INTO products 
@@ -35,7 +56,7 @@ export const addProduct = async (req, res) => {
         stock,
         category,
         brand,
-        JSON.stringify(imageUrls), // store as JSON array in DB
+        JSON.stringify(imageUrls), // store as JSON array
         shop_id,
       ]
     );
@@ -191,12 +212,12 @@ export const getProductById = async (req, res) => {
 //   }
 // };
 
+// ✅ Update a Product (Seller/Admin)
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
   const { name, description, price, discount_price, stock, category, brand } = req.body;
 
   try {
-    // ✅ Check if product exists
     const existing = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ message: "Product not found" });
@@ -204,15 +225,19 @@ export const updateProduct = async (req, res) => {
 
     const product = existing.rows[0];
 
-    // ✅ Sellers can only edit their own product
     if (req.user.role === "seller" && product.shop_id !== req.user.shop?.id) {
       return res.status(403).json({ message: "You can only update your own products" });
     }
 
-    // ✅ Handle images
-    let imageUrls = product.image_url;
+    // ✅ Handle Cloudinary image uploads
+    let imageUrls = product.image_url ? JSON.parse(product.image_url) : [];
     if (req.files?.length > 0) {
-      imageUrls = JSON.stringify(req.files.map((file) => `/uploads/${file.filename}`));
+      let newImages = [];
+      for (const file of req.files) {
+        const url = await uploadToCloudinary(file.buffer, "products");
+        newImages.push(url);
+      }
+      imageUrls = newImages; // replace with new images
     }
 
     const result = await pool.query(
@@ -228,16 +253,15 @@ export const updateProduct = async (req, res) => {
          image_url = COALESCE($8, image_url)
        WHERE id = $9
        RETURNING *`,
-      [name, description, price, discount_price, stock, category, brand, imageUrls, id]
+      [name, description, price, discount_price, stock, category, brand, JSON.stringify(imageUrls), id]
     );
 
     res.status(200).json({ message: "Product updated successfully", product: result.rows[0] });
   } catch (error) {
-    console.error("Error updating product:", error);
+    console.error("❌ Error updating product:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 // ✅ Delete a Product (Admin Only)
 export const deleteProduct = async (req, res) => {
