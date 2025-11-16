@@ -31,9 +31,20 @@ app.use(cors({
   credentials: true
 }));
 
-
-// Serve uploads folder statically so images can be accessed publicly
-app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
+// Serve uploads folder with NO CACHE (fixes Render 304 blank image issue)
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    res.setHeader("Cache-Control", "no-store"); // prevent any caching
+    next();
+  },
+  express.static(path.join(path.resolve(), "uploads"), {
+    etag: false,
+    lastModified: false,
+    cacheControl: false,
+    maxAge: 0
+  })
+);
 
 app.use(cookieParser());
 
