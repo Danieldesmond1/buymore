@@ -9,10 +9,14 @@ const fileFilter = (req, file, cb) => {
   else cb(new Error("Only image files are allowed"));
 };
 
+if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  console.warn("⚠️ Cloudinary API credentials are missing!");
+}
+
 export const multerUpload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB
 });
 
 
