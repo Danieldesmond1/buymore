@@ -5,15 +5,29 @@ import cloudinary from "../utils/cloudinary.js";
 const uploadToCloudinary = (fileBuffer, folder = "products") => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: "image" },
+      {
+        folder,
+        resource_type: "image",
+
+        // 🔥 Auto-compress & convert to WebP
+        quality: "auto",
+        fetch_format: "auto",
+
+        // 🔥 Prevent extremely large uploads by resizing
+        transformation: [
+          { width: 2000, crop: "limit" } // prevents 8k/4k 50MB images
+        ]
+      },
       (error, result) => {
         if (result) resolve(result.secure_url);
         else reject(error);
       }
     );
+
     stream.end(fileBuffer);
   });
 };
+
 
 // ✅ Add a Product (Seller/Admin)
 export const addProduct = async (req, res) => {
